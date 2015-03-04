@@ -12,7 +12,7 @@ window.onload = function() {
                'android-asset/Hit.mp3',
                'android-asset/bgm.mp3');
                
-  /*mp3file = new Media("/android_asset/bgm.mp3",
+  mp3file = new Media("/android_asset/bgm.mp3",
   function() {
       alert("playAudio():Audio Success");
   },
@@ -20,7 +20,7 @@ window.onload = function() {
           alert(err);
   }
   );
-  mp3file.play();*/
+  mp3file.play();
 	// 5 - Game settings
 	game.fps = 30;
 	//game.scale = 1;
