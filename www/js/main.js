@@ -17,7 +17,7 @@ window.onload = function() {
       alert("Audio Success");
   },
       function(err) {
-          alert("Audio Error");
+          alert(JSON.stringify(err));
   }
   );
   mp3file.play();
