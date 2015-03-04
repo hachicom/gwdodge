@@ -9,10 +9,10 @@ window.onload = function() {
 	game.preload('res/BG.png',
                'res/penguinSheet.png',
                'res/Ice.png',
-               'android-asset/Hit.mp3',
-               'android-asset/bgm.mp3');
+               '/android-assets/www/android-asset/Hit.mp3',
+               '/android-assets/www/android-asset/bgm.mp3');
                
-  mp3file = new Media("file:///android/assets/www/android-asset/bgm.mp3",
+  mp3file = new Media("file:///android-asset/www/android-asset/bgm.mp3",
   function() {
       alert("Audio Success");
   },
@@ -78,7 +78,7 @@ window.onload = function() {
       this.hitDuration = 0; 
       
       // Background music
-      this.bgm = game.assets['android-asset/bgm.mp3']; // Add this line
+      this.bgm = game.assets['/android-assets/www/android-asset/bgm.mp3']; // Add this line
       // Start BGM
       //this.bgm.play();
       
@@ -136,7 +136,7 @@ window.onload = function() {
           var ice;
           ice = this.iceGroup.childNodes[i];
           if (ice.intersect(this.penguin)){
-            game.assets['android-asset/Hit.mp3'].play();
+            game.assets['/android-assets/www/android-asset/Hit.mp3'].play();
             this.gotHit = true; 
             // this.iceGroup.removeChild(ice);
             // this.bgm.stop();
