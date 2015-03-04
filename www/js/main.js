@@ -11,6 +11,16 @@ window.onload = function() {
                'res/Ice.png',
                'android-asset/Hit.mp3',
                'android-asset/bgm.mp3');
+               
+  mp3file = new Media("/android_asset/bgm.mp3",
+  function() {
+      alert("playAudio():Audio Success");
+  },
+      function(err) {
+          alert(err);
+  }
+  );
+  mp3file.play();
 	// 5 - Game settings
 	game.fps = 30;
 	//game.scale = 1;
@@ -70,7 +80,7 @@ window.onload = function() {
       // Background music
       this.bgm = game.assets['android-asset/bgm.mp3']; // Add this line
       // Start BGM
-      this.bgm.play();
+      //this.bgm.play();
       
       // 4 - Add child nodes        
       this.addChild(bg);
@@ -150,7 +160,7 @@ window.onload = function() {
       
       // Loop BGM
       if (this.bgm.currentTime >= this.bgm.duration ){
-        this.bgm.play();
+        //this.bgm.play();
       }
     }
   });
