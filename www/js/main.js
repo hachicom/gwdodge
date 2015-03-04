@@ -9,8 +9,8 @@ window.onload = function() {
 	game.preload('res/BG.png',
                'res/penguinSheet.png',
                'res/Ice.png',
-               'res/Hit.mp3',
-               'res/bgm.mp3');
+               'android-asset/Hit.mp3',
+               'android-asset/bgm.mp3');
 	// 5 - Game settings
 	game.fps = 30;
 	//game.scale = 1;
@@ -24,19 +24,7 @@ window.onload = function() {
 	}
 	// 7 - Start
 	game.start();
-  window.scrollTo(0, 1);
-  var i = document.getElementById("enchant-stage");
- 
-  // go full-screen
-  if (i.requestFullscreen) {
-      i.requestFullscreen();
-  } else if (i.webkitRequestFullscreen) {
-      i.webkitRequestFullscreen();
-  } else if (i.mozRequestFullScreen) {
-      i.mozRequestFullScreen();
-  } else if (i.msRequestFullscreen) {
-      i.msRequestFullscreen();
-  }
+  //window.scrollTo(0, 1);
   
   // SceneGame  
   var SceneGame = Class.create(Scene, {
@@ -80,7 +68,7 @@ window.onload = function() {
       this.hitDuration = 0; 
       
       // Background music
-      this.bgm = game.assets['res/bgm.mp3']; // Add this line
+      this.bgm = game.assets['android-asset/bgm.mp3']; // Add this line
       // Start BGM
       this.bgm.play();
       
@@ -138,7 +126,7 @@ window.onload = function() {
           var ice;
           ice = this.iceGroup.childNodes[i];
           if (ice.intersect(this.penguin)){
-            game.assets['res/Hit.mp3'].play();
+            game.assets['android-asset/Hit.mp3'].play();
             this.gotHit = true; 
             // this.iceGroup.removeChild(ice);
             // this.bgm.stop();
