@@ -93,7 +93,7 @@ window.onload = function() {
       
       // Background music
       if( /Android/i.test(navigator.userAgent) ) {
-        //bgm.play();
+        bgm.play();
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
         // Start BGM
@@ -192,7 +192,7 @@ window.onload = function() {
       
       // Loop BGM
       if( /Android/i.test(navigator.userAgent) ) {
-        if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
+        //if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
       }
       else
       if (this.bgm.currentTime >= this.bgm.duration ){
