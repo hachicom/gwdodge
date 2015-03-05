@@ -65,6 +65,7 @@ window.onload = function() {
       Scene.apply(this);
       // 2 - Access to the game singleton instance
       game = Game.instance;
+      keeploop=true;
       // 3 - Create child nodes
       // Background
       bg = new Sprite(320,440);
