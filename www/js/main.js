@@ -12,7 +12,7 @@ window.onload = function() {
                'res/Hit.mp3',
                'res/bgm.mp3');
                
-  mp3file = new Media("file:///android_asset/www/res/bgm.mp3",
+  /*var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
   function() {
       alert("Audio Success");
   },
@@ -20,7 +20,7 @@ window.onload = function() {
           alert(JSON.stringify(err));
   }
   );
-  mp3file.play();
+  mp3file.play();*/
 	// 5 - Game settings
 	game.fps = 30;
 	//game.scale = 1;
@@ -78,9 +78,13 @@ window.onload = function() {
       this.hitDuration = 0; 
       
       // Background music
-      this.bgm = game.assets['res/bgm.mp3']; // Add this line
-      // Start BGM
-      this.bgm.play();
+      if( /Android/i.test(navigator.userAgent) ) {
+        playMP3("bgm");
+      }else{
+        this.bgm = game.assets['res/bgm.mp3']; // Add this line
+        // Start BGM
+        this.bgm.play();
+      }
       
       // 4 - Add child nodes        
       this.addChild(bg);
@@ -136,7 +140,11 @@ window.onload = function() {
           var ice;
           ice = this.iceGroup.childNodes[i];
           if (ice.intersect(this.penguin)){
-            game.assets['res/Hit.mp3'].play();
+            if( /Android/i.test(navigator.userAgent) ) {        
+              playSound("Hit");
+            }else{
+              game.assets['res/Hit.mp3'].play();
+            }
             this.gotHit = true; 
             // this.iceGroup.removeChild(ice);
             // this.bgm.stop();
@@ -159,8 +167,11 @@ window.onload = function() {
       }
       
       // Loop BGM
+      if( /Android/i.test(navigator.userAgent) ) {        
+      }
+      else
       if (this.bgm.currentTime >= this.bgm.duration ){
-        //this.bgm.play();
+        this.bgm.play();
       }
     }
   });
