@@ -13,9 +13,10 @@ window.onload = function() {
                'res/bgm.mp3');
                
   if( /Android/i.test(navigator.userAgent) ) {
+    var keeploop = true;
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
-        //alert("Audio Success");
+        if(keeploop == true) this.play();
       },
       function(err) {
         alert(JSON.stringify(err));
@@ -92,7 +93,7 @@ window.onload = function() {
       
       // Background music
       if( /Android/i.test(navigator.userAgent) ) {
-        bgm.play();
+        //bgm.play();
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
         // Start BGM
@@ -179,6 +180,7 @@ window.onload = function() {
           //this.iceGroup.removeChild(ice);
           //game.resume();
           if( /Android/i.test(navigator.userAgent) ) {        
+            keeploop = false; 
             bgm.stop();
           }else{
             this.bgm.stop();
