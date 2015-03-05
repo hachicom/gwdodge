@@ -137,16 +137,16 @@ window.onload = function() {
         this.levelup=0;
         this.level = this.level+1;
       }
-      this.scoreLabel.text = 'SCORE<br>' + this.score + ' - ' + this.level;
+      this.scoreLabel.text = 'SCORE<br>' + this.score;
     },
     
     update: function(evt) {
       if(this.gotHit!=true){
         // Check if it's time to create a new set of obstacles
         this.generateIceTimer += evt.elapsed * 0.001;
-        if (this.generateIceTimer >= 1.5) {
+        if (this.generateIceTimer >= (1.5 - (0.1*this.level))) {
           var ice;
-          this.generateIceTimer -= 1.5;
+          this.generateIceTimer = 0;
           ice = new Ice(Math.floor(Math.random()*3),this.level);
           //this.addChild(ice);
           this.iceGroup.addChild(ice);
