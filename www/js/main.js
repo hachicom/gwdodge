@@ -1,3 +1,5 @@
+var keeploop = true;
+
 // 1 - Start enchant.js
 enchant();
  
@@ -13,18 +15,18 @@ window.onload = function() {
                'res/bgm.mp3');
                
   if( /Android/i.test(navigator.userAgent) ) {
-    var keeploop = true;
+    //var keeploop = true;
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
-        //this.play();
+        if(keeploop==true) this.play();
       },
       function(err) {
         alert(JSON.stringify(err));
       },
       function(status){
-      	 if (status === Media.MEDIA_STOPPED && keeploop === true) {
-	   this.play();
-	 }
+      	 //if (status === Media.MEDIA_STOPPED && keeploop === true) {
+	 //  this.play();
+	 //}
       }
     );
     
