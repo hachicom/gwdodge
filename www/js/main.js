@@ -16,7 +16,7 @@ window.onload = function() {
       alert("Audio Success");
   },
       function(err) {
-          alert(JSON.stringify(err));
+          alert(JSON.stringify(err)+" "+err.message);
   }
   );
   mp3file.play();
@@ -135,7 +135,7 @@ window.onload = function() {
           var ice;
           ice = this.iceGroup.childNodes[i];
           if (ice.intersect(this.penguin)){
-            game.asset['android-asset/www/res/Hit.mp3'].play();
+            game.asset['res/Hit.mp3'].play();
             this.gotHit = true; 
             // this.iceGroup.removeChild(ice);
             // this.bgm.stop();
