@@ -12,15 +12,15 @@ window.onload = function() {
                'res/Hit.mp3',
                'res/bgm.mp3');
                
-  /*var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
+  var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
   function() {
-      alert("Audio Success");
+      //alert("Audio Success");
   },
       function(err) {
           alert(JSON.stringify(err));
   }
   );
-  mp3file.play();*/
+  
 	// 5 - Game settings
 	game.fps = 30;
 	//game.scale = 1;
@@ -79,7 +79,7 @@ window.onload = function() {
       
       // Background music
       if( /Android/i.test(navigator.userAgent) ) {
-        playMP3("bgm");
+        bgm.play();
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
         // Start BGM
@@ -141,7 +141,7 @@ window.onload = function() {
           ice = this.iceGroup.childNodes[i];
           if (ice.intersect(this.penguin)){
             if( /Android/i.test(navigator.userAgent) ) {        
-              playSound("Hit");
+              //playSound("Hit");
             }else{
               game.assets['res/Hit.mp3'].play();
             }
