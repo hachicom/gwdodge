@@ -144,7 +144,7 @@ window.onload = function() {
       if(this.gotHit!=true){
         // Check if it's time to create a new set of obstacles
         this.generateIceTimer += evt.elapsed * 0.001;
-        if (this.generateIceTimer >= (1.5 - (0.1*this.level))) {
+        if (this.generateIceTimer >= (1.5 - (0.05*this.level))) {
           var ice;
           this.generateIceTimer = 0;
           ice = new Ice(Math.floor(Math.random()*3),this.level);
