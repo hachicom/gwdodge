@@ -79,7 +79,7 @@ window.onload = function() {
       
       // Background music
       if( /Android/i.test(navigator.userAgent) ) {
-        //playMP3("bgm");
+        playMP3("bgm");
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
         // Start BGM
