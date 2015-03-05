@@ -11,15 +11,15 @@ window.onload = function() {
                'res/Ice.png',
                'android-asset/www/res/Hit.mp3');
                
-  mp3file = new Media("/android-asset/www/res/bgm.mp3",
-  function() {
-      alert("Audio Success");
-  },
-      function(err) {
-          alert(JSON.stringify(err));
-  }
-  );
-  mp3file.play();
+  //mp3file = new Media("/android-asset/www/res/bgm.mp3",
+  //function() {
+  //    alert("Audio Success");
+  //},
+  //    function(err) {
+  //        alert(JSON.stringify(err));
+  //}
+  //);
+  //mp3file.play();
 	// 5 - Game settings
 	game.fps = 30;
 	//game.scale = 1;
