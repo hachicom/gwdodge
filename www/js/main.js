@@ -12,7 +12,7 @@ window.onload = function() {
                'res/Hit.mp3',
                'res/bgm.mp3');
                
-  mp3file = new Media("file:///android-asset/www/res/bgm.mp3",
+  mp3file = new Media("file:///android_asset/www/res/bgm.mp3",
   function() {
       alert("Audio Success");
   },
