@@ -16,10 +16,15 @@ window.onload = function() {
     var keeploop = true;
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
-        this.play();
+        //this.play();
       },
       function(err) {
         alert(JSON.stringify(err));
+      },
+      function(status){
+      	 if (status === Media.MEDIA_STOPPED && keeploop === true) {
+	   this.play();
+	 }
       }
     );
     
