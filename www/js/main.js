@@ -183,7 +183,7 @@ window.onload = function() {
       
       // Loop BGM
       if( /Android/i.test(navigator.userAgent) ) {
-        bgm.play();
+        if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
       }
       else
       if (this.bgm.currentTime >= this.bgm.duration ){
