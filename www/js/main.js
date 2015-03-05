@@ -85,6 +85,8 @@ window.onload = function() {
       this.generateIceTimer = 0;
       this.scoreTimer = 0;
       this.score = 0;
+      this.level = 0;
+      this.levelup = 0;
       this.gotHit = false;
       this.hitDuration = 0; 
       
@@ -124,7 +126,12 @@ window.onload = function() {
     
     setScore: function (value) {
       this.score = value;
-      this.scoreLabel.text = 'SCORE<br>' + this.score;
+      this.levelup = this.levelup+1;
+      if(this.levelup>=10) {
+        this.levelup=0;
+        this.level = this.level+1;
+      }
+      this.scoreLabel.text = 'SCORE<br>' + this.score + ' - ' + this.level;
     },
     
     update: function(evt) {
@@ -134,7 +141,7 @@ window.onload = function() {
         if (this.generateIceTimer >= 1.5) {
           var ice;
           this.generateIceTimer -= 1.5;
-          ice = new Ice(Math.floor(Math.random()*3));
+          ice = new Ice(Math.floor(Math.random()*3),this.level);
           //this.addChild(ice);
           this.iceGroup.addChild(ice);
         }

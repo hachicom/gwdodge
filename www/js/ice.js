@@ -1,11 +1,12 @@
 // Ice Boulder
 var Ice = Class.create(Sprite, {
   // The obstacle that the penguin must avoid
-  initialize: function(lane) {
+  initialize: function(lane,level) {
     // Call superclass constructor
     Sprite.apply(this,[48, 49]);
     this.image  = Game.instance.assets['res/Ice.png'];      
     this.rotationSpeed = 0;
+    this.ySpeed = 100;
     this.setLane(lane);
     this.addEventListener(Event.ENTER_FRAME, this.update);
   },
@@ -26,10 +27,10 @@ var Ice = Class.create(Sprite, {
     var ySpeed, game;
    
     game = Game.instance;
-    ySpeed = 100;
+    level = this.parentNode.parentNode.level;
    
     if(this.parentNode.parentNode.gotHit!=true){
-      this.y += ySpeed * evt.elapsed * 0.001;
+      this.y += (this.ySpeed + (level*10)) * evt.elapsed * 0.001;
       this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
       if (this.y > game.height) {
         this.parentNode.removeChild(this);        
