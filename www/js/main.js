@@ -19,9 +19,6 @@ window.onload = function() {
       },
       function(err) {
         alert(JSON.stringify(err));
-      },
-      function(status) {
-        if( status==Media.MEDIA_STOPPED ) this.play();
       }
     );
     
@@ -185,7 +182,8 @@ window.onload = function() {
       }
       
       // Loop BGM
-      if( /Android/i.test(navigator.userAgent) ) {        
+      if( /Android/i.test(navigator.userAgent) ) {
+        bgm.play();
       }
       else
       if (this.bgm.currentTime >= this.bgm.duration ){
