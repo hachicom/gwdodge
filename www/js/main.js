@@ -16,7 +16,7 @@ window.onload = function() {
     var keeploop = true;
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
-        if(keeploop == true) this.play();
+        this.play();
       },
       function(err) {
         alert(JSON.stringify(err));
