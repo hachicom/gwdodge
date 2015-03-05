@@ -9,10 +9,9 @@ window.onload = function() {
 	game.preload('res/BG.png',
                'res/penguinSheet.png',
                'res/Ice.png',
-               'android-asset/www/res/Hit.mp3',
-               'android-asset/www/res/bgm.mp3');
+               'android-asset/www/res/Hit.mp3');
                
-  mp3file = new Media("file:///android-asset/www/res/bgm.mp3",
+  mp3file = new Media("/android-asset/www/res/bgm.mp3",
   function() {
       alert("Audio Success");
   },
@@ -78,7 +77,7 @@ window.onload = function() {
       this.hitDuration = 0; 
       
       // Background music
-      this.bgm = game.asset['android-asset/www/res/bgm.mp3']; // Add this line
+      //this.bgm = game.asset['android-asset/www/res/bgm.mp3']; // Add this line
       // Start BGM
       //this.bgm.play();
       
@@ -152,16 +151,16 @@ window.onload = function() {
         if(this.hitDuration >= 1){
           //this.iceGroup.removeChild(ice);
           //game.resume();
-          this.bgm.stop();
+          //this.bgm.stop();
           game.replaceScene(new SceneGameOver(this.score)); 
           //break;
         }
       }
       
       // Loop BGM
-      if (this.bgm.currentTime >= this.bgm.duration ){
+      //if (this.bgm.currentTime >= this.bgm.duration ){
         //this.bgm.play();
-      }
+      //}
     }
   });
   
