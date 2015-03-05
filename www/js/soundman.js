@@ -7,7 +7,7 @@ var media;
 
 function playMP3(m) {
     var mp3URL = getMediaURL("res/"+m+".mp3");
-    media = new Media(mp3URL, null, mediaError, onStatus);
+    media = new Media("file:///android_asset/www/res/bgm.mp3", null, mediaError, onStatus);
     media.play();
 }
 
