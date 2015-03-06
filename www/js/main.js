@@ -57,6 +57,7 @@ window.onload = function() {
   {
     document.addEventListener("pause", function() {
       cr_setSuspended(true);
+      keeploop=false;
       bgm.pause();
       game.stop();
       console.log("paused");
@@ -64,6 +65,7 @@ window.onload = function() {
 
     document.addEventListener("resume", function() {
       cr_setSuspended(false);
+      keeploop=true;
       bgm.play();
       game.resume();
       console.log("resumed");
@@ -93,6 +95,7 @@ window.onload = function() {
           console.log("exiting device");
         }
       }
+      keeploop=false;
       bgm.stop();
       bgm.release();
       console.log("exited");
