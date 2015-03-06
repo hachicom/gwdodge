@@ -76,6 +76,7 @@ window.onload = function() {
     }, false);
 
   function onBackKeyDown(){
+    game.stop();
     navigator.notification.confirm(
       'Deseja sair do jogo?', // message
       onConfirm, // callback to invoke with index of button pressed
@@ -99,7 +100,7 @@ window.onload = function() {
       bgm.stop();
       bgm.release();
       console.log("exited");
-    }
+    }else game.resume();
   }
   
 	// 7 - Start
