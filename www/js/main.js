@@ -1,33 +1,5 @@
 var keeploop = true;
 
-// Set Phonegap Events
-document.addEventListener("deviceready", function ()
-{
-  document.addEventListener("pause", function() {
-    cr_setSuspended(true);
-  }, false);
-
-  document.addEventListener("resume", function() {
-    cr_setSuspended(false);
-  }, false);
-
-  document.addEventListener("backbutton", onBackKeyDown, false);
-    
-  }, false);
-
-function onBackKeyDown(){
-  navigator.notification.confirm(
-    'Deseja sair do jogo?', // message
-    onConfirm, // callback to invoke with index of button pressed
-    'Confirmar', // title
-    ['Cancelar','Sair'] // buttonLabels
-  );
-}
-
-function onConfirm(buttonIndex) {
-  if(buttonIndex == 2){navigator.app.exitApp();}
-}
-
 // 1 - Start enchant.js
 enchant();
  
@@ -79,6 +51,39 @@ window.onload = function() {
     scene = new SceneGame();
     game.pushScene(scene);
 	}
+  
+  // Set Phonegap Events
+  document.addEventListener("deviceready", function ()
+  {
+    document.addEventListener("pause", function() {
+      cr_setSuspended(true);
+    }, false);
+
+    document.addEventListener("resume", function() {
+      cr_setSuspended(false);
+    }, false);
+
+    document.addEventListener("backbutton", onBackKeyDown, false);
+      
+    }, false);
+
+  function onBackKeyDown(){
+    navigator.notification.confirm(
+      'Deseja sair do jogo?', // message
+      onConfirm, // callback to invoke with index of button pressed
+      'Confirmar', // title
+      ['Cancelar','Sair'] // buttonLabels
+    );
+  }
+
+  function onConfirm(buttonIndex) {
+    if(buttonIndex == 2){
+      navigator.app.exitApp();
+      bgm.stop();
+      bgm.release();
+    }
+  }
+  
 	// 7 - Start
 	game.start();
   //window.scrollTo(0, 1);
