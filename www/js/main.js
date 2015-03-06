@@ -57,10 +57,12 @@ window.onload = function() {
   {
     document.addEventListener("pause", function() {
       cr_setSuspended(true);
+      bgm.pause();
     }, false);
 
     document.addEventListener("resume", function() {
       cr_setSuspended(false);
+      bgm.play();
     }, false);
 
     document.addEventListener("backbutton", onBackKeyDown, false);
