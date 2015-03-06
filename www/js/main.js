@@ -59,12 +59,14 @@ window.onload = function() {
       cr_setSuspended(true);
       bgm.pause();
       game.stop();
+      console.log("paused");
     }, false);
 
     document.addEventListener("resume", function() {
       cr_setSuspended(false);
       bgm.play();
       game.resume();
+      console.log("resumed");
     }, false);
 
     document.addEventListener("backbutton", onBackKeyDown, false);
@@ -82,9 +84,18 @@ window.onload = function() {
 
   function onConfirm(buttonIndex) {
     if(buttonIndex == 2){
-      navigator.app.exitApp();
+      if (navigator && navigator.app) {
+        navigator.app.exitApp();
+        console.log("exiting app");
+      } else {
+        if (navigator && navigator.device) {
+          navigator.device.exitApp();
+          console.log("exiting device");
+        }
+      }
       bgm.stop();
       bgm.release();
+      console.log("exited");
     }
   }
   
