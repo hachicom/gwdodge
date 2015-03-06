@@ -58,11 +58,13 @@ window.onload = function() {
     document.addEventListener("pause", function() {
       cr_setSuspended(true);
       bgm.pause();
+      game.stop();
     }, false);
 
     document.addEventListener("resume", function() {
       cr_setSuspended(false);
       bgm.play();
+      game.resume();
     }, false);
 
     document.addEventListener("backbutton", onBackKeyDown, false);
