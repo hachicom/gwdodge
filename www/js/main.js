@@ -56,19 +56,19 @@ window.onload = function() {
   document.addEventListener("deviceready", function ()
   {
     document.addEventListener("pause", function() {
-      cr_setSuspended(true);
       keeploop=false;
       bgm.pause();
       game.stop();
       console.log("paused");
+      //cr_setSuspended(true);
     }, false);
 
     document.addEventListener("resume", function() {
-      cr_setSuspended(false);
       keeploop=true;
       bgm.play();
       game.resume();
       console.log("resumed");
+      //cr_setSuspended(false);
     }, false);
 
     document.addEventListener("backbutton", onBackKeyDown, false);
