@@ -130,6 +130,15 @@ window.onload = function() {
       label.textAlign = 'center';
       label._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
       this.scoreLabel = label;
+      
+      label2 = new Label('Time<br>0');
+      label2.x = 20;
+      label2.y = 32;        
+      label2.color = 'white';
+      label2.font = '16px strong';
+      label2.textAlign = 'right';
+      label2._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
+      this.debugLabel = label2;
       // Penguin
       penguin = new Penguin();
       penguin.x = game.width/2 - penguin.width/2;
@@ -163,6 +172,7 @@ window.onload = function() {
       this.addChild(iceGroup);
       this.addChild(penguin);
       this.addChild(label);
+      this.addChild(label2);
       
       // Touch listener
       this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
@@ -194,10 +204,11 @@ window.onload = function() {
     },
     
     update: function(evt) {
+      this.debugLabel.text = 'LEVEL<br>' + this.level;
       if(this.gotHit!=true){
         // Check if it's time to create a new set of obstacles
-        this.generateIceTimer += evt.elapsed * 0.001;
-        if (this.generateIceTimer >= (1.5 - (0.05*this.level))) {
+        this.generateIceTimer += 2 + this.level;
+        if (this.generateIceTimer >= 60) {
           var ice;
           this.generateIceTimer = 0;
           ice = new Ice(Math.floor(Math.random()*3),this.level);
@@ -206,27 +217,33 @@ window.onload = function() {
         }
         
         // Score increase as time passes
-        this.scoreTimer += evt.elapsed * 0.001;
-        if (this.scoreTimer >= 0.5) {
-          this.setScore(this.score + 1);
-          this.scoreTimer -= 0.5;
-        }
+        // this.scoreTimer += evt.elapsed * 0.001;
+        // if (this.scoreTimer >= 0.5) {
+          // this.setScore(this.score + 1);
+          // this.scoreTimer -= 0.5;
+        // }
       
         // Check collision
         for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
           var ice;
           ice = this.iceGroup.childNodes[i];
-          if (ice.intersect(this.penguin)){
-            if( /Android/i.test(navigator.userAgent) ) {        
-              hit.play();
-            }else{
-              game.assets['res/Hit.mp3'].play();
+          if(ice.y<=250){
+            if (ice.intersect(this.penguin)){
+              if( /Android/i.test(navigator.userAgent) ) {
+                hit.play();
+              }else{
+                game.assets['res/Hit.mp3'].play();
+              }
+              //alert(ice.y);
+              this.gotHit = true; 
+              // this.iceGroup.removeChild(ice);
+              // this.bgm.stop();
+              // game.replaceScene(new SceneGameOver(this.score)); 
+              break;
             }
-            this.gotHit = true; 
-            // this.iceGroup.removeChild(ice);
-            // this.bgm.stop();
-            // game.replaceScene(new SceneGameOver(this.score)); 
-            break;
+          }else{
+            this.iceGroup.removeChild(ice);
+            this.setScore(this.score + 1);
           }
         }
       }
