@@ -15,7 +15,7 @@ window.onload = function() {
                'res/bgm.mp3');
                
   if( /Android/i.test(navigator.userAgent) ) {
-    //var keeploop = true;
+    var bgmstatus = 0; //play, stop, pause
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
         if(keeploop==true) this.play();
@@ -24,9 +24,7 @@ window.onload = function() {
         alert(JSON.stringify(err));
       },
       function(status){
-      	 //if (status === Media.MEDIA_STOPPED && keeploop === true) {
-	 //  this.play();
-	 //}
+      	 bgmstatus=status; console.log(bgmstatus);
       }
     );
     
@@ -57,7 +55,7 @@ window.onload = function() {
   {
     document.addEventListener("pause", function() {
       keeploop=false;
-      bgm.pause();
+      if(bgmstatus==2)bgm.pause();
       game.stop();
       console.log("paused");
       //cr_setSuspended(true);
@@ -97,7 +95,7 @@ window.onload = function() {
         }
       }
       keeploop=false;
-      bgm.stop();
+      if(bgmstatus==2)bgm.stop();
       bgm.release();
       console.log("exited");
     }else game.resume();
