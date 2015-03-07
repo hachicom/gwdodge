@@ -181,7 +181,7 @@ window.onload = function() {
       this.addChild(label2);
       
       // Touch listener
-      this.addEventListener(Event.TAP,this.handleTouchControl);
+      this.addEventListener(Event.TOUCH_END,this.handleTouchControl);
       // Update
       this.addEventListener(Event.ENTER_FRAME, this.update);
     },
