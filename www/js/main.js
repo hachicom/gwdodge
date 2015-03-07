@@ -16,7 +16,7 @@ window.onload = function() {
                
   if( /Android/i.test(navigator.userAgent) ) {
     var bgmstatus = 0; //play, stop, pause
-    var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
+    var bgm = new Media("file:///android_asset/www/res/bgm.ogg",
       function() {
         if(keeploop==true) this.play();
       },
