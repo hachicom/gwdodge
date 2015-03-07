@@ -30,7 +30,7 @@ var Ice = Class.create(Sprite, {
     level = this.parentNode.parentNode.level;
    
     if(this.parentNode.parentNode.gotHit!=true){
-      this.y += this.ySpeed + this.level;
+      this.y += this.ySpeed + level;
       this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
       if (this.y > game.height) {
         this.parentNode.removeChild(this);        
