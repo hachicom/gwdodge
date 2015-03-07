@@ -8,11 +8,17 @@ window.onload = function() {
 	// 3 - Starting point
 	var game = new Core(320, 440);
 	// 4 - Preload resources
-	game.preload('res/BG.png',
-               'res/penguinSheet.png',
-               'res/Ice.png',
-               'res/Hit.mp3',
-               'res/bgm.mp3');
+	if( /Android/i.test(navigator.userAgent) ) {
+    game.preload('res/BG.png',
+                 'res/penguinSheet.png',
+                 'res/Ice.png');
+  }else{
+    game.preload('res/BG.png',
+                 'res/penguinSheet.png',
+                 'res/Ice.png',
+                 'res/Hit.mp3',
+                 'res/bgm.mp3');
+  }
                
   if( /Android/i.test(navigator.userAgent) ) {
     var bgmstatus = 0; //play, stop, pause
