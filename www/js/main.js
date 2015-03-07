@@ -147,7 +147,7 @@ window.onload = function() {
       this.debugLabel = label2;
       // Penguin
       penguin = new Penguin();
-      penguin.x = game.width/2 - penguin.width/2;
+      penguin.x = 145;
       penguin.y = 280;
       this.penguin = penguin;
       
