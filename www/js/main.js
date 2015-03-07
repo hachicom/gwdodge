@@ -178,7 +178,7 @@ window.onload = function() {
       if(this.gotHit!=true){
         if(evt.x > game.width/2) lane=1;
         else lane=-1;
-        console.log(evt.x);
+        //console.log(evt.x);
         this.penguin.switchToLaneNumber(lane);
       }
     },
