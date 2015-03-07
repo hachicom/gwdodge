@@ -28,6 +28,6 @@ var Penguin = Class.create(Sprite, {
     if(this.lane>2) this.lane=2;
     //var targetX = 160 - this.width/2 + (this.lane-1)*90;
     this.x = this.positions[this.lane];
-    console.log(this.x+' - '+this.lane);
+    console.log(this.x+' - '+this.lane+' '+lane);
   }
 });
