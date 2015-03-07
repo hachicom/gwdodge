@@ -8,6 +8,7 @@ var Penguin = Class.create(Sprite, {
       // 2 - Animate
       this.animationDuration = 0;
       this.lane = 1;
+      this.positions = [55,145,235];
       this.addEventListener(Event.ENTER_FRAME, this.updateAnimation);
   },
   
@@ -25,7 +26,8 @@ var Penguin = Class.create(Sprite, {
     this.lane = this.lane + lane;
     if(this.lane<0) this.lane=0;
     if(this.lane>2) this.lane=2;
-    var targetX = 160 - this.width/2 + (this.lane-1)*90;
-    this.x = targetX;
+    //var targetX = 160 - this.width/2 + (this.lane-1)*90;
+    this.x = this.positions[this.lane];
+    console.log(this.x);
   }
 });
