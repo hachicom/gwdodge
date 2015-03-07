@@ -63,7 +63,7 @@ window.onload = function() {
 
     document.addEventListener("resume", function() {
       keeploop=true;
-      bgm.play();
+      if(bgmstatus==3)bgm.play();
       game.resume();
       console.log("resumed");
       //cr_setSuspended(false);
