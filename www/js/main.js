@@ -209,8 +209,8 @@ window.onload = function() {
         console.log(evt.x);
         this.penguin.switchToLaneNumber(lane);
       }
-      //evt.stopPropagation();
-      //evt.preventDefault();
+      evt.stopPropagation();
+      evt.preventDefault();
     },
     
     setScore: function (value) {
@@ -329,6 +329,7 @@ window.onload = function() {
     },
     
     touchToRestart: function(evt) {
+      console.log("restart");
       var game = Game.instance;
       game.replaceScene(new SceneGame());
     }
