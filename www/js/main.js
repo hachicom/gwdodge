@@ -76,6 +76,9 @@ window.onload = function() {
     }, false);
 
     document.addEventListener("backbutton", onBackKeyDown, false);
+    
+    document.addEventListener("touchstart", function(e) { e.preventDefault(); }, false);
+    document.addEventListener("touchend", function(e) { e.preventDefault(); }, false);
       
     }, false);
 
