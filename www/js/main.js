@@ -209,8 +209,8 @@ window.onload = function() {
         console.log(evt.x);
         this.penguin.switchToLaneNumber(lane);
       }
-      evt.stopPropagation();
-      evt.preventDefault();
+      //evt.stopPropagation();
+      //evt.preventDefault();
     },
     
     setScore: function (value) {
