@@ -198,6 +198,7 @@ window.onload = function() {
     },
     
     handleTouchControl: function (evt) {
+      evt.preventDefault();
       var laneWidth, lane;
       // laneWidth = 320/3;
       // lane = Math.floor(evt.x/laneWidth);
