@@ -77,9 +77,23 @@ window.onload = function() {
 
     document.addEventListener("backbutton", onBackKeyDown, false);
     
-    var last_click_time = new Date().getTime();
+    //Desligando os eventos de mouse (Android hack)
     document.addEventListener('mousedown', function (e) {
-      console.log("cliquei");
+      //console.log("cliquei");
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return false;
+    }, true);
+    
+    document.addEventListener('mouseup', function (e) {
+      //console.log("cliquei");
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return false;
+    }, true);
+    
+    document.addEventListener('mousemove', function (e) {
+      //console.log("cliquei");
       e.stopImmediatePropagation();
       e.preventDefault();
       return false;
