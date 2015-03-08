@@ -80,13 +80,9 @@ window.onload = function() {
     var last_click_time = new Date().getTime();
     document.addEventListener('mousedown', function (e) {
       console.log("cliquei");
-      click_time = e['timeStamp'];
-      if (click_time && (click_time - last_click_time) < 1000) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return false;
-      }
-      last_click_time = click_time;
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return false;
     }, true);
       
   }, false);
