@@ -78,7 +78,7 @@ window.onload = function() {
     document.addEventListener("backbutton", onBackKeyDown, false);
     
     var last_click_time = new Date().getTime();
-    document.addEventListener('click', function (e) {
+    document.addEventListener('touchstart', function (e) {
       click_time = e['timeStamp'];
       if (click_time && (click_time - last_click_time) < 1000) {
         e.stopImmediatePropagation();
@@ -192,7 +192,7 @@ window.onload = function() {
       this.addChild(label2);
       
       // Touch listener
-      this.addEventListener(Event.TOUCH_END,this.handleTouchControl);
+      this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       // Update
       this.addEventListener(Event.ENTER_FRAME, this.update);
     },
@@ -207,8 +207,8 @@ window.onload = function() {
         else lane=-1;
         console.log(evt.x);
         this.penguin.switchToLaneNumber(lane);
+        evt.preventDefault();
       }
-      evt.preventDefault();
     },
     
     setScore: function (value) {
