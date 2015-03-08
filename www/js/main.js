@@ -80,11 +80,11 @@ window.onload = function() {
     var last_click_time = new Date().getTime();
     document.addEventListener('click', function (e) {
       console.log("cliquei");
-      // click_time = e['timeStamp'];
-      // if (click_time && (click_time - last_click_time) < 1000) {
-        // e.stopImmediatePropagation();
+      click_time = e['timeStamp'];
+      //if (click_time && (click_time - last_click_time) < 1000) {
+        e.stopImmediatePropagation();
         e.preventDefault();
-        return false;
+        //return false;
       //}
       last_click_time = click_time;
     }, true);
@@ -208,8 +208,9 @@ window.onload = function() {
         else lane=-1;
         console.log(evt.x);
         this.penguin.switchToLaneNumber(lane);
-        evt.preventDefault();
       }
+      evt.stopPropagation();
+      evt.preventDefault();
     },
     
     setScore: function (value) {
