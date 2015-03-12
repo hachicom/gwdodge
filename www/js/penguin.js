@@ -3,7 +3,7 @@ var Penguin = Class.create(Sprite, {
   // The player character.     
   initialize: function() {
       // 1 - Call superclass constructor
-      Sprite.apply(this,[30, 43]);
+      Sprite.apply(this,[32, 32]);
       this.image = Game.instance.assets['res/penguinSheet.png'];
       // 2 - Animate
       this.animationDuration = 0;
