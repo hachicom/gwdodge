@@ -8,10 +8,10 @@ enchant();
  
 // 2 - On document load 
 window.onload = function() {
-  alert(screen.width+"X"+screen.height);
-  
+  console.log(screen.width+"X"+screen.height);
+  var gameheight = (320 * screen.height)/screen.width;
 	// 3 - Starting point
-	var game = new Core(320, 640);
+	var game = new Core(320, gameheight);
 	// 4 - Preload resources
 	if( isAndroid ) {
     game.preload('res/penguinSheet.png',
