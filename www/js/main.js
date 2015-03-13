@@ -1,4 +1,7 @@
 var keeploop = true;
+var isAndroid = /Android/i.test(navigator.userAgent);
+//A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
+isAndroid = false;
 
 // 1 - Start enchant.js
 enchant();
@@ -6,21 +9,23 @@ enchant();
 // 2 - On document load 
 window.onload = function() {
 	// 3 - Starting point
-	var game = new Core(320, 440);
+	var game = new Core(320, 480);
 	// 4 - Preload resources
-	if( /Android/i.test(navigator.userAgent) ) {
-    game.preload('res/BG.png',
-                 'res/penguinSheet.png',
-                 'res/Ice.png');
-  }else{
-    game.preload('res/BG.png',
-                 'res/penguinSheet.png',
+	if( isAndroid ) {
+    game.preload('res/penguinSheet.png',
                  'res/Ice.png',
+                 'res/mountain.png',
+                 'res/groundSheet.png');
+  }else{
+    game.preload('res/penguinSheet.png',
+                 'res/Ice.png',
+                 'res/mountain.png',
+                 'res/groundSheet.png',
                  'res/Hit.mp3',
                  'res/bgm.mp3');
   }
                
-  if( /Android/i.test(navigator.userAgent) ) {
+  if( isAndroid ) {
     var bgmstatus = 0; //play, stop, pause
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
@@ -57,76 +62,78 @@ window.onload = function() {
 	}
   
   // Set Phonegap Events
-  document.addEventListener("deviceready", function ()
-  {
-    document.addEventListener("pause", function() {
-      keeploop=false;
-      if(bgmstatus==2)bgm.pause();
-      game.stop();
-      console.log("paused");
-      //cr_setSuspended(true);
-    }, false);
+  if( isAndroid ) {
+    document.addEventListener("deviceready", function ()
+    {
+      document.addEventListener("pause", function() {
+        keeploop=false;
+        if(bgmstatus==2)bgm.pause();
+        game.stop();
+        console.log("paused");
+        //cr_setSuspended(true);
+      }, false);
 
-    document.addEventListener("resume", function() {
-      keeploop=true;
-      if(bgmstatus==3)bgm.play();
-      game.resume();
-      console.log("resumed");
-      //cr_setSuspended(false);
-    }, false);
+      document.addEventListener("resume", function() {
+        keeploop=true;
+        if(bgmstatus==3)bgm.play();
+        game.resume();
+        console.log("resumed");
+        //cr_setSuspended(false);
+      }, false);
 
-    document.addEventListener("backbutton", onBackKeyDown, false);
-    
-    //Desligando os eventos de mouse (Android hack)
-    document.addEventListener('mousedown', function (e) {
-      //console.log("cliquei");
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      return false;
-    }, true);
-    
-    document.addEventListener('mouseup', function (e) {
-      //console.log("cliquei");
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      return false;
-    }, true);
-    
-    document.addEventListener('mousemove', function (e) {
-      //console.log("cliquei");
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      return false;
-    }, true);
+      document.addEventListener("backbutton", onBackKeyDown, false);
       
-  }, false);
+      //Desligando os eventos de mouse (Android hack)
+      document.addEventListener('mousedown', function (e) {
+        //console.log("cliquei");
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return false;
+      }, true);
+      
+      document.addEventListener('mouseup', function (e) {
+        //console.log("cliquei");
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return false;
+      }, true);
+      
+      document.addEventListener('mousemove', function (e) {
+        //console.log("cliquei");
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return false;
+      }, true);
+        
+    }, false);
 
-  function onBackKeyDown(){
-    game.stop();
-    navigator.notification.confirm(
-      'Deseja sair do jogo?', // message
-      onConfirm, // callback to invoke with index of button pressed
-      'Confirmar', // title
-      ['Cancelar','Sair'] // buttonLabels
-    );
-  }
+    function onBackKeyDown(){
+      game.stop();
+      navigator.notification.confirm(
+        'Deseja sair do jogo?', // message
+        onConfirm, // callback to invoke with index of button pressed
+        'Confirmar', // title
+        ['Cancelar','Sair'] // buttonLabels
+      );
+    }
 
-  function onConfirm(buttonIndex) {
-    if(buttonIndex == 2){
-      if (navigator && navigator.app) {
-        navigator.app.exitApp();
-        console.log("exiting app");
-      } else {
-        if (navigator && navigator.device) {
-          navigator.device.exitApp();
-          console.log("exiting device");
+    function onConfirm(buttonIndex) {
+      if(buttonIndex == 2){
+        if (navigator && navigator.app) {
+          navigator.app.exitApp();
+          console.log("exiting app");
+        } else {
+          if (navigator && navigator.device) {
+            navigator.device.exitApp();
+            console.log("exiting device");
+          }
         }
-      }
-      keeploop=false;
-      if(bgmstatus==2)bgm.stop();
-      bgm.release();
-      console.log("exited");
-    }else game.resume();
+        keeploop=false;
+        if(bgmstatus==2)bgm.stop();
+        bgm.release();
+        console.log("exited");
+      }else game.resume();
+    }
   }
   
 	// 7 - Start
@@ -137,7 +144,7 @@ window.onload = function() {
   var SceneGame = Class.create(Scene, {
      // The main gameplay scene.     
     initialize: function() {
-      var game, label, bg, penguin, iceGroup;
+      var game, label, bg, penguin, iceGroup, map;
 
       // 1 - Call superclass constructor
       Scene.apply(this);
@@ -146,31 +153,48 @@ window.onload = function() {
       keeploop=true;
       // 3 - Create child nodes
       // Background
-      bg = new Sprite(320,440);
-      bg.image = game.assets['res/BG.png'];
+      bg = new Sprite(320,128);
+      bg.y = 190;
+      //bg.scale(2,2);
+      bg.image = game.assets['res/mountain.png'];      
+      this.backgroundColor = '#00fffa';
+      map = new Map(32, 32);
+      map.y = 315;
+      map.image = game.assets['res/groundSheet.png'];
+      map.loadData([
+        [0,0,0,0,0,0,0,0,0,0],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1]
+        ]);
+      
       //UI
       // Label
-      label = new Label('SCORE<br>0');
-      label.x = 9;
-      label.y = 32;        
+      label = new Label('SCORE: 0');
+      label.x = 8;
+      label.y = 0;
       label.color = 'white';
-      label.font = '16px strong';
-      label.textAlign = 'center';
-      label._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
+      label.font = '16px monospace';
+      label.textAlign = 'left';
+      label.backgroundColor = "rgba(0,0,0,0.6)";label.width = 304;label.height = 32;
       this.scoreLabel = label;
+      //console.dir(label);
       
-      label2 = new Label('Time<br>0');
-      label2.x = 20;
-      label2.y = 32;        
+      label2 = new Label('LEVEL: 0');
+      label2.x = 220;
+      label2.y = 0;        
       label2.color = 'white';
-      label2.font = '16px strong';
-      label2.textAlign = 'right';
-      label2._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
+      label2.font = '16px monospace';
+      //label2.textAlign = 'right';
       this.debugLabel = label2;
       // Penguin
       penguin = new Penguin();
       penguin.x = 145;
-      penguin.y = 280;
+      penguin.y = 285;
       this.penguin = penguin;
       
       // Ice group
@@ -187,7 +211,7 @@ window.onload = function() {
       this.hitDuration = 0; 
       
       // Background music
-      if( /Android/i.test(navigator.userAgent) ) {
+      if( isAndroid ) {
         bgm.play();
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
@@ -199,6 +223,7 @@ window.onload = function() {
       this.addChild(bg);
       this.addChild(iceGroup);
       this.addChild(penguin);
+      this.addChild(map);
       this.addChild(label);
       this.addChild(label2);
       
@@ -230,11 +255,11 @@ window.onload = function() {
         this.levelup=0;
         this.level = this.level+1;
       }
-      this.scoreLabel.text = 'SCORE<br>' + this.score;
+      this.scoreLabel.text = 'SCORE: ' + this.score;
     },
     
     update: function(evt) {
-      this.debugLabel.text = 'LEVEL<br>' + this.level;
+      this.debugLabel.text = 'LEVEL: ' + this.level;
       if(this.gotHit!=true){
         // Check if it's time to create a new set of obstacles
         this.generateIceTimer += 2 + this.level;
@@ -257,9 +282,9 @@ window.onload = function() {
         for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
           var ice;
           ice = this.iceGroup.childNodes[i];
-          if(ice.y<=250){
+          if(ice.y<=255){
             if (ice.intersect(this.penguin)){
-              if( /Android/i.test(navigator.userAgent) ) {
+              if( isAndroid ) {
                 hit.play();
               }else{
                 game.assets['res/Hit.mp3'].play();
@@ -284,7 +309,7 @@ window.onload = function() {
         if(this.hitDuration >= 1){
           //this.iceGroup.removeChild(ice);
           //game.resume();
-          if( /Android/i.test(navigator.userAgent) ) {        
+          if( isAndroid ) {        
             keeploop = false; 
             bgm.stop();
           }else{
@@ -296,7 +321,7 @@ window.onload = function() {
       }
       
       // Loop BGM
-      if( /Android/i.test(navigator.userAgent) ) {
+      if( isAndroid ) {
         //if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
       }
       else
