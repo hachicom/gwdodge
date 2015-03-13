@@ -1,15 +1,17 @@
 var keeploop = true;
 var isAndroid = /Android/i.test(navigator.userAgent);
 //A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
-//isAndroid = false;
+isAndroid = false;
 
 // 1 - Start enchant.js
 enchant();
  
 // 2 - On document load 
 window.onload = function() {
+  alert(screen.width+"X"+screen.height);
+  
 	// 3 - Starting point
-	var game = new Core(320, 480);
+	var game = new Core(320, 568);
 	// 4 - Preload resources
 	if( isAndroid ) {
     game.preload('res/penguinSheet.png',
