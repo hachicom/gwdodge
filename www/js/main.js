@@ -1,7 +1,7 @@
 var keeploop = true;
 var isAndroid = /Android/i.test(navigator.userAgent);
 //A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
-isAndroid = false;
+//isAndroid = false;
 
 // 1 - Start enchant.js
 enchant();
