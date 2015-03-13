@@ -23,11 +23,13 @@ var Penguin = Class.create(Sprite, {
   },
   
   switchToLaneNumber: function(lane){     
+    playsnd = true;
     this.lane = this.lane + lane;
-    if(this.lane<0) this.lane=0;
-    if(this.lane>2) this.lane=2;
+    if(this.lane<0) {this.lane=0; playsnd = false;}
+    if(this.lane>2) {this.lane=2; playsnd = false;}
     //var targetX = 160 - this.width/2 + (this.lane-1)*90;
     this.x = this.positions[this.lane];
-    console.log(this.x+' - '+this.lane+' '+lane);
+    return playsnd;
+    //console.log(this.x+' - '+this.lane+' '+lane);
   }
 });

@@ -1,4 +1,5 @@
 var keeploop = true;
+var jumpSnd;
 var isAndroid = /Android/i.test(navigator.userAgent);
 //A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
 //isAndroid = false;
@@ -24,6 +25,7 @@ window.onload = function() {
                  'res/mountain.png',
                  'res/groundSheet.png',
                  'res/Hit.mp3',
+                 'res/jump.wav',
                  'res/bgm.mp3');
   }
                
@@ -42,6 +44,15 @@ window.onload = function() {
     );
     
     var hit = new Media("file:///android_asset/www/res/Hit.mp3",
+      function() {
+        //alert("Audio Success");
+      },
+      function(err) {
+        alert(JSON.stringify(err));
+      }
+    );
+    
+    jumpSnd = new Media("file:///android_asset/www/res/jump.wav",
       function() {
         //alert("Audio Success");
       },
@@ -215,8 +226,10 @@ window.onload = function() {
       // Background music
       if( isAndroid ) {
         bgm.play();
+        this.jumpSnd = jumpSnd;
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
+        this.jumpSnd = game.assets['res/jump.wav'];
         // Start BGM
         this.bgm.play();
       }
@@ -236,15 +249,17 @@ window.onload = function() {
     },
     
     handleTouchControl: function (evt) {
-      var laneWidth, lane;
+      var playSnd, lane;
       // laneWidth = 320/3;
       // lane = Math.floor(evt.x/laneWidth);
       // lane = Math.max(Math.min(2,lane),0);
       if(this.gotHit!=true){
         if(evt.x > game.width/2) lane=1;
         else lane=-1;
-        console.log(evt.x);
-        this.penguin.switchToLaneNumber(lane);
+        //console.log(evt.x);
+        //this.jumpSnd.play();
+        playSnd = this.penguin.switchToLaneNumber(lane);
+        if (playSnd) this.jumpSnd.play();
       }
       evt.stopPropagation();
       evt.preventDefault();
