@@ -30,7 +30,8 @@ window.onload = function() {
   }
                
   if( isAndroid ) {
-    var bgmstatus = 0; //play, stop, pause
+    var bgmstatus = 0; 
+    var jmpstatus = 0; //play, stop, pause
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
         if(keeploop==true) this.play();
@@ -58,6 +59,9 @@ window.onload = function() {
       },
       function(err) {
         alert(JSON.stringify(err));
+      },
+      function(status){
+      	 jmpstatus=status; console.log(bgmstatus);
       }
     );
   }
@@ -259,7 +263,12 @@ window.onload = function() {
         //console.log(evt.x);
         //this.jumpSnd.play();
         playSnd = this.penguin.switchToLaneNumber(lane);
-        if (playSnd) this.jumpSnd.play();
+        if (playSnd) {
+          if( isAndroid ){
+            if (jmpstatus===0) this.jumpSnd.stop();
+          }
+          this.jumpSnd.play();
+        }
       }
       evt.stopPropagation();
       evt.preventDefault();
