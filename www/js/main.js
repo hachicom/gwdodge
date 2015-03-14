@@ -308,6 +308,7 @@ window.onload = function() {
               }
               //alert(ice.y);
               this.gotHit = true; 
+              this.penguin.gotHit();
               // this.iceGroup.removeChild(ice);
               // this.bgm.stop();
               // game.replaceScene(new SceneGameOver(this.score)); 

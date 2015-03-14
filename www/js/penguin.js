@@ -5,6 +5,7 @@ var Penguin = Class.create(Sprite, {
       // 1 - Call superclass constructor
       Sprite.apply(this,[32, 32]);
       this.image = Game.instance.assets['res/penguinSheet.png'];
+      this.frame = [0,1];
       // 2 - Animate
       this.animationDuration = 0;
       this.lane = 1;
@@ -30,6 +31,11 @@ var Penguin = Class.create(Sprite, {
     //var targetX = 160 - this.width/2 + (this.lane-1)*90;
     this.x = this.positions[this.lane];
     return playsnd;
+    //console.log(this.x+' - '+this.lane+' '+lane);
+  },
+  
+  gotHit: function(lane){     
+    this.frame = [2];
     //console.log(this.x+' - '+this.lane+' '+lane);
   }
 });
