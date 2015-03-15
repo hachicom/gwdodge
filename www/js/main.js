@@ -2,7 +2,7 @@ var keeploop = true;
 var jumpSnd;
 var isAndroid = /Android/i.test(navigator.userAgent);
 //A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
-//isAndroid = false;
+isAndroid = false;
 
 // 1 - Start enchant.js
 enchant();
@@ -264,9 +264,9 @@ window.onload = function() {
         //this.jumpSnd.play();
         playSnd = this.penguin.switchToLaneNumber(lane);
         if (playSnd) {
-          if( isAndroid ){
-            if (jmpstatus===0) this.jumpSnd.stop();
-          }
+          // if( isAndroid ){
+            // if (jmpstatus===0) this.jumpSnd.stop();
+          // }
           this.jumpSnd.play();
         }
       }
@@ -354,6 +354,18 @@ window.onload = function() {
       else
       if (this.bgm.currentTime >= this.bgm.duration ){
         this.bgm.play();
+      }
+      
+      // If Samsung android browser is detected
+      if (window.navigator && window.navigator.userAgent.indexOf('534.30') > 0) {
+
+        // Tweak the canvas opacity, causing it to redraw
+        $('canvas').css('opacity', '0.99');
+
+        // Set the canvas opacity back to normal after 5ms
+        setTimeout(function() {
+            $('canvas').css('opacity', '1');
+        }, 5);
       }
     }
   });
