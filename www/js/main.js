@@ -266,7 +266,7 @@ window.onload = function() {
         if (playSnd) {
           if( isAndroid ){
             //if (jmpstatus===0) {
-              this.jumpSnd.pause();
+              //this.jumpSnd.pause();
               this.jumpSnd.seekTo(0);
             //}
           }
