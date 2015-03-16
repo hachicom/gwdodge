@@ -4,10 +4,11 @@
     xmlns:gap = "http://phonegap.com/ns/1.0"
     id = "com.hachicom.gwdodge"
     version = "1.0.0">
-    <name> </name>
+    <name>Ice and Fish</name>
     
     <description>
-      Simple tutorial game in enchant.js
+      Simple LCD handheld like game powered with enchant.js
+      Help Artie dodge the ice cube storm while collecting fish
     </description>
     
     <author email="adinan0803@gmail.com">
