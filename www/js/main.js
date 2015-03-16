@@ -265,10 +265,10 @@ window.onload = function() {
         playSnd = this.penguin.switchToLaneNumber(lane);
         if (playSnd) {
           if( isAndroid ){
-            if (jmpstatus===0) {
+            //if (jmpstatus===0) {
               this.jumpSnd.pause();
               this.jumpSnd.seekTo(0);
-            }
+            //}
           }
           this.jumpSnd.play();
         }
