@@ -2,12 +2,14 @@
 <!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
 <widget xmlns = "http://www.w3.org/ns/widgets"
     xmlns:gap = "http://phonegap.com/ns/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android" 
     id = "com.hachicom.gwdodge"
     version = "1.0.0">
     <name>Ice and Fish</name>
     
     <description>
       Simple LCD handheld like game powered with enchant.js
+      Help Artie dodge the ice cube storm while collecting fish
     </description>
     
     <author email="adinan0803@gmail.com">
@@ -53,14 +55,13 @@
     <gap:plugin name="Example" />
     A list of available plugins are available at https://build.phonegap.com/docs/plugins
     -->
-    <!--
+    
     <gap:config-file platform="android" parent="/manifest" mode="delete">
       <uses-permission android:name="android.permission.RECORD_AUDIO" />
       <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
       <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     </gap:config-file>
-    -->
     
     <!-- Define app icon for each platform. -->
     <!--
