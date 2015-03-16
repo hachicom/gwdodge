@@ -4,7 +4,7 @@
     xmlns:gap = "http://phonegap.com/ns/1.0"
     id = "com.hachicom.gwdodge"
     version = "1.0.0">
-    <name>GW Dodge</name>
+    <name> </name>
     
     <description>
       Simple tutorial game in enchant.js
@@ -53,6 +53,13 @@
     <gap:plugin name="Example" />
     A list of available plugins are available at https://build.phonegap.com/docs/plugins
     -->
+    
+    <gap:config-file platform="android" parent="/manifest" mode="delete">
+      <uses-permission android:name="android.permission.RECORD_AUDIO" />
+      <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+      <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    </gap:config-file>
     
     <!-- Define app icon for each platform. -->
     <!--

@@ -35,7 +35,7 @@ var Penguin = Class.create(Sprite, {
   },
   
   gotHit: function(lane){     
-    this.frame = [2];
+    this.frame = [2,3];
     //console.log(this.x+' - '+this.lane+' '+lane);
   }
 });

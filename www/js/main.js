@@ -264,9 +264,12 @@ window.onload = function() {
         //this.jumpSnd.play();
         playSnd = this.penguin.switchToLaneNumber(lane);
         if (playSnd) {
-          // if( isAndroid ){
-            // if (jmpstatus===0) this.jumpSnd.stop();
-          // }
+          if( isAndroid ){
+            if (jmpstatus===0) {
+              this.jumpSnd.pause();
+              this.jumpSnd.seekTo(0);
+            }
+          }
           this.jumpSnd.play();
         }
       }
@@ -308,7 +311,7 @@ window.onload = function() {
         for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
           var ice;
           ice = this.iceGroup.childNodes[i];
-          if(ice.y<=255){
+          if(ice.y<=260){
             if (ice.intersect(this.penguin)){
               if( isAndroid ) {
                 hit.play();
