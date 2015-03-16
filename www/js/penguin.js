@@ -14,13 +14,13 @@ var Penguin = Class.create(Sprite, {
   },
   
   updateAnimation: function (evt) {        
-    if(this.parentNode.gotHit!=true){
+    //if(this.parentNode.gotHit!=true){
       this.animationDuration += evt.elapsed * 0.001;       
       if (this.animationDuration >= 0.25) {
         this.frame = (this.frame + 1) % 2;
         this.animationDuration -= 0.25;
       }
-    }
+    //}
   },
   
   switchToLaneNumber: function(lane){     
