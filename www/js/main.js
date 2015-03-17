@@ -1,15 +1,13 @@
 var keeploop = true;
 var jumpSnd;
-var isAndroid = /Android/i.test(navigator.userAgent);
-//A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
-//isAndroid = false;
+var isAndroid = isMobile();
 
 // 1 - Start enchant.js
 enchant();
  
 // 2 - On document load 
 window.onload = function() {
-  console.log(screen.width+"X"+screen.height);
+  //console.log(screen.width+"X"+screen.height);
   var gameheight = (320 * screen.height)/screen.width;
 	// 3 - Starting point
 	var game = new Core(320, gameheight);
@@ -17,11 +15,17 @@ window.onload = function() {
 	if( isAndroid ) {
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
+                 'res/fishSheet.png',
+                 'res/yukiSheet.png',
+                 'res/iglooSheet.png',
                  'res/mountain.png',
                  'res/groundSheet.png');
   }else{
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
+                 'res/fishSheet.png',
+                 'res/yukiSheet.png',
+                 'res/iglooSheet.png',
                  'res/mountain.png',
                  'res/groundSheet.png',
                  'res/Hit.mp3',
@@ -74,7 +78,7 @@ window.onload = function() {
 		// 1 - Variables
     var scene;
     // 2 - New scene
-    scene = new SceneGame();
+    scene = new SceneTitle();
     game.pushScene(scene);
 	}
   
@@ -217,9 +221,14 @@ window.onload = function() {
       // Ice group
       iceGroup = new Group();
       this.iceGroup = iceGroup;
+      // Fish group
+      fishGroup = new Group();
+      this.fishGroup = fishGroup;
       
       // Instance variables
       this.generateIceTimer = 0;
+      this.cubesGenerated = 0;
+      this.generateFish = getRandom(3,5);
       this.scoreTimer = 0;
       this.score = 0;
       this.level = 0;
@@ -241,6 +250,7 @@ window.onload = function() {
       // 4 - Add child nodes        
       this.addChild(bg);
       this.addChild(iceGroup);
+      this.addChild(fishGroup);
       this.addChild(penguin);
       this.addChild(map);
       this.addChild(label);
@@ -295,9 +305,17 @@ window.onload = function() {
         if (this.generateIceTimer >= 60) {
           var ice;
           this.generateIceTimer = 0;
-          ice = new Ice(Math.floor(Math.random()*3),this.level);
-          //this.addChild(ice);
-          this.iceGroup.addChild(ice);
+          this.cubesGenerated += 1;
+          if (this.cubesGenerated >= this.generateFish){
+            fish = new Fish(Math.floor(Math.random()*3),this.level);
+            this.fishGroup.addChild(fish);
+            this.generateFish = getRandom(3,5);
+            this.cubesGenerated = 0;
+          }else{
+            ice = new Ice(Math.floor(Math.random()*3),this.level);
+            //this.addChild(ice);
+            this.iceGroup.addChild(ice);
+          }
         }
         
         // Score increase as time passes
@@ -308,6 +326,7 @@ window.onload = function() {
         // }
       
         // Check collision
+        // Ice collision
         for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
           var ice;
           ice = this.iceGroup.childNodes[i];
@@ -329,6 +348,22 @@ window.onload = function() {
           }else{
             this.iceGroup.removeChild(ice);
             this.setScore(this.score + 1);
+          }
+        }
+        
+        // Fish collision
+        for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
+          var fish;
+          fish = this.fishGroup.childNodes[i];
+          if (fish.intersect(this.penguin)){
+            // if( isAndroid ) {
+              // hit.play();
+            // }else{
+              // game.assets['res/Hit.mp3'].play();
+            // }
+            this.setScore(this.score + 5);
+            this.fishGroup.removeChild(fish);
+            break;
           }
         }
       }
@@ -377,8 +412,8 @@ window.onload = function() {
   var SceneGameOver = Class.create(Scene, {
     initialize: function(score) {
       var gameOverLabel, scoreLabel;
-      Scene.apply(this);
-      this.backgroundColor = '#0026FF';
+      Scene.apply(this);    
+      this.backgroundColor = '#00fffa';
       
       // Game Over label
       gameOverLabel = new Label("FIM DE JOGO<br><br>Toque para Reiniciar");
@@ -387,6 +422,26 @@ window.onload = function() {
       gameOverLabel.color = 'white';
       gameOverLabel.font = '32px strong';
       gameOverLabel.textAlign = 'center';
+      
+      // Background
+      bg = new Sprite(320,128);
+      bg.y = 190;
+      //bg.scale(2,2);
+      bg.image = game.assets['res/mountain.png'];      
+      this.backgroundColor = '#00fffa';
+      map = new Map(32, 32);
+      map.y = 315;
+      map.image = game.assets['res/groundSheet.png'];
+      map.loadData([
+        [0,0,0,0,0,0,0,0,0,0],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1]
+        ]);
       
       // Score label
       scoreLabel = new Label('SCORE<br>' + score);
@@ -398,8 +453,70 @@ window.onload = function() {
       scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
       
       // Add labels
+      this.addChild(bg);
+      this.addChild(map);
       this.addChild(gameOverLabel);
       this.addChild(scoreLabel);
+      
+      // Listen for taps
+      this.addEventListener(Event.TOUCH_START, this.touchToRestart);
+    },
+    
+    touchToRestart: function(evt) {
+      console.log("restart");
+      var game = Game.instance;
+      game.replaceScene(new SceneGame());
+    }
+  });
+
+  // SceneTitle
+  var SceneTitle = Class.create(Scene, {
+    initialize: function(score) {
+      var TitleLabel, scoreLabel;
+      Scene.apply(this);
+      //this.backgroundColor = '#0026FF';
+      
+      // Background
+      bg = new Sprite(320,128);
+      bg.y = 190;
+      //bg.scale(2,2);
+      bg.image = game.assets['res/mountain.png'];      
+      this.backgroundColor = '#00fffa';
+      map = new Map(32, 32);
+      map.y = 315;
+      map.image = game.assets['res/groundSheet.png'];
+      map.loadData([
+        [0,0,0,0,0,0,0,0,0,0],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1]
+        ]);
+      
+      // Game Over label
+      TitleLabel = new Label("ICE'N FISH<br><br>Toque para Iniciar");
+      TitleLabel.x = 8;
+      TitleLabel.y = 128;
+      TitleLabel.color = 'white';
+      TitleLabel.font = '32px strong';
+      TitleLabel.textAlign = 'center';
+      
+      // Score label
+      scoreLabel = new Label('SCORE<br>' + score);
+      scoreLabel.x = 9;
+      scoreLabel.y = 32;        
+      scoreLabel.color = 'white';
+      scoreLabel.font = '16px strong';
+      scoreLabel.textAlign = 'center';
+      scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
+      
+      // Add labels  
+      this.addChild(bg);
+      this.addChild(map);
+      this.addChild(TitleLabel); 
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);

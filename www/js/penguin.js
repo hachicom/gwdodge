@@ -5,22 +5,26 @@ var Penguin = Class.create(Sprite, {
       // 1 - Call superclass constructor
       Sprite.apply(this,[32, 32]);
       this.image = Game.instance.assets['res/penguinSheet.png'];
-      this.frame = [0,1];
+      this.frame = 0;
+      this.iniFrame = 0;
+      this.endFrame = 1;
       // 2 - Animate
       this.animationDuration = 0;
+      this.animationSpeed = 0.25;
       this.lane = 1;
       this.positions = [55,145,235];
       this.addEventListener(Event.ENTER_FRAME, this.updateAnimation);
   },
   
   updateAnimation: function (evt) {        
-    if(this.parentNode.gotHit!=true){
+    //if(this.parentNode.gotHit!=true){
       this.animationDuration += evt.elapsed * 0.001;       
-      if (this.animationDuration >= 0.25) {
-        this.frame = (this.frame + 1) % 2;
-        this.animationDuration -= 0.25;
+      if (this.animationDuration >= this.animationSpeed) {
+        if(this.frame<this.endFrame) this.frame ++;
+        else this.frame = this.iniFrame;
+        this.animationDuration = 0;
       }
-    }
+    //}
   },
   
   switchToLaneNumber: function(lane){     
@@ -35,7 +39,11 @@ var Penguin = Class.create(Sprite, {
   },
   
   gotHit: function(lane){     
-    this.frame = [2,2,3,3];
+    this.frame = 2;
+    this.iniFrame = 2;
+    this.endFrame = 3;
+    this.animationDuration = 0;
+    this.animationSpeed = 0.1;
     //console.log(this.x+' - '+this.lane+' '+lane);
   }
 });
