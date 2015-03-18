@@ -65,6 +65,6 @@ var Penguin = Class.create(Sprite, {
   },
   
   isVulnerable: function(){
-    return (this.x==this.nextpos||this.visible);
+    return (this.x==this.nextpos&&this.visible);
   }
 });

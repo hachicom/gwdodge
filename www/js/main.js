@@ -274,6 +274,7 @@ window.onload = function() {
       this.generateFish = getRandom(3,5);
       this.scoreTimer = 0;
       this.score = 0;
+      this.multiplier = 1;
       this.coins = 0;
       this.level = 0;
       this.levelup = 0;
@@ -332,7 +333,7 @@ window.onload = function() {
             game.assets['res/powerup.wav'].play();
           }
           this.buying=true;
-          this.setCoins(this.coins - shopPrice);
+          this.setCoins(shopPrice*(-1));
         }
       }
       evt.stopPropagation();
@@ -340,12 +341,12 @@ window.onload = function() {
     },
     
     setScore: function (value) {
-      this.score = value;
-      this.scoreLabel.text = 'SCORE: ' + this.score;
+      this.score = this.score + (value * this.multiplier);
+      this.scoreLabel.text = 'SCORE: ' + this.score + '<BR>X' + this.multiplier;
     },
     
     setCoins: function (value) {
-      this.coins = value;
+      this.coins = this.coins + value;
       this.coinsLabel.text = 'FISH: ' + this.coins;
       this.igloo.turnLights(this.coins);
     },
@@ -357,7 +358,7 @@ window.onload = function() {
         this.level = this.level+1;
         this.debugLabel.text = 'LEVEL: ' + this.level
       }
-    }
+    },
     
     update: function(evt) {
       
@@ -410,7 +411,7 @@ window.onload = function() {
               game.assets['res/break.wav'].play();
             }
             ice.crashToPieces();
-            this.setScore(this.score + 1);
+            this.setScore(1);
             this.incLevelUp();
           }
         }
@@ -427,7 +428,7 @@ window.onload = function() {
               game.assets['res/fish.wav'].play();
             }
             //this.setScore(this.score + 5);
-            this.setCoins(this.coins + 1);
+            this.setCoins(1);
             this.fishGroup.removeChild(fish);
             break;
           }
@@ -458,8 +459,7 @@ window.onload = function() {
           var ice;
           ice = this.iceGroup.childNodes[i];
           if(ice.y>=200){
-            ice.crashToPieces();            
-            //this.setScore(this.score + 1);
+            ice.crashToPieces();
           }
         }
         //game.stop();
@@ -473,7 +473,8 @@ window.onload = function() {
           this.buying=false; 
           this.penguin.visible = true;
           this.buyDuration = 0;
-          this.setScore(this.score + (2*shopPrice));
+          this.setScore((2*shopPrice));
+          this.multiplier+=1;
           //break;
         }
       }
