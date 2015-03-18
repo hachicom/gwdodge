@@ -61,7 +61,7 @@ window.onload = function() {
       }
     );
     
-    var fish = new Media("file:///android_asset/www/res/fish.wav",
+    var coin = new Media("file:///android_asset/www/res/fish.wav",
       function() {
         //alert("Audio Success");
       },
@@ -402,7 +402,7 @@ window.onload = function() {
           fish = this.fishGroup.childNodes[i];
           if (fish.intersect(this.penguin)){
             if( isAndroid ) {
-              fish.play();
+              coin.play();
             }else{
               game.assets['res/fish.wav'].play();
             }
