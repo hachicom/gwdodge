@@ -1,20 +1,23 @@
 // Penguin
 var Penguin = Class.create(Sprite, {
   // The player character.     
-  initialize: function() {
+  initialize: function(x,y) {
       // 1 - Call superclass constructor
       Sprite.apply(this,[32, 32]);
       this.image = Game.instance.assets['res/penguinSheet.png'];
+      this.lane = 1;
+      this.positions = [55,145,235];
+      this.nextpos = x;
+      this.movespeed = 30
+      this.x = x;
+      this.y = y;
+    
+      // 2 - Animate
       this.frame = 0;
       this.iniFrame = 0;
       this.endFrame = 1;
-      // 2 - Animate
       this.animationDuration = 0;
       this.animationSpeed = 0.25;
-      this.lane = 1;
-      this.positions = [55,145,235];
-      this.nextpos = 145;
-      this.movespeed = 30
       this.addEventListener(Event.ENTER_FRAME, this.updateAnimation);
   },
   
@@ -36,12 +39,16 @@ var Penguin = Class.create(Sprite, {
     }
   },
   
-  switchToLaneNumber: function(lane){     
+  switchToLaneNumber: function(lane,isLit){
     if(this.x==this.nextpos){
-      playsnd = true;
+      playsnd = 'jump';
       this.lane = this.lane + lane;
       if(this.lane<0) {this.lane=0; playsnd = false;}
-      if(this.lane>2) {this.lane=2; playsnd = false;}
+      if(this.lane>2) {
+        this.lane=2; 
+        if(isLit) playsnd = 'powerup';
+        else playsnd = false;
+      }
       //var targetX = 160 - this.width/2 + (this.lane-1)*90;
       this.nextpos = this.positions[this.lane];
       return playsnd;
@@ -55,5 +62,9 @@ var Penguin = Class.create(Sprite, {
     this.animationDuration = 0;
     this.animationSpeed = 0.1;
     //console.log(this.x+' - '+this.lane+' '+lane);
+  },
+  
+  isVulnerable: function(){
+    return (this.x==this.nextpos||this.visible);
   }
 });

@@ -2,6 +2,10 @@ var keeploop = true;
 var jumpSnd;
 var isAndroid = isMobile();
 
+//game global difficulty variables
+var shopPrice = 5;
+var levelUpAt = 10;
+
 // 1 - Start enchant.js
 enchant();
  
@@ -34,12 +38,12 @@ window.onload = function() {
                  'res/jump.wav',
                  'res/fish.wav',
                  'res/break.wav',
+                 'res/powerup.wav',
                  'res/bgm.mp3');
   }
                
   if( isAndroid ) {
-    var bgmstatus = 0; 
-    var jmpstatus = 0; //play, stop, pause
+    var bgmstatus = 0;
     var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
       function() {
         if(keeploop==true) this.play();
@@ -79,15 +83,21 @@ window.onload = function() {
       }
     );
     
+    var powerup = new Media("file:///android_asset/www/res/powerup.wav",
+      function() {
+        //alert("Audio Success");
+      },
+      function(err) {
+        alert(JSON.stringify(err));
+      }
+    );
+    
     jumpSnd = new Media("file:///android_asset/www/res/jump.wav",
       function() {
         //alert("Audio Success");
       },
       function(err) {
         alert(JSON.stringify(err));
-      },
-      function(status){
-      	 jmpstatus=status; console.log(bgmstatus);
       }
     );
   }
@@ -244,10 +254,12 @@ window.onload = function() {
       this.coinsLabel = label3;
       
       // Penguin
-      penguin = new Penguin();
-      penguin.x = 145;
-      penguin.y = 285;
+      penguin = new Penguin(145,285);
       this.penguin = penguin;
+      
+      // Igloo
+      igloo = new Igloo(272,269,shopPrice);
+      this.igloo = igloo;
       
       // Ice group
       iceGroup = new Group();
@@ -266,12 +278,14 @@ window.onload = function() {
       this.level = 0;
       this.levelup = 0;
       this.gotHit = false;
-      this.hitDuration = 0; 
+      this.hitDuration = 0;
+      this.buying = false;
+      this.buyDuration = 0; 
       
       // Background music
       if( isAndroid ) {
         bgm.play();
-        this.jumpSnd = jumpSnd;
+        //this.jumpSnd = jumpSnd;
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
         this.jumpSnd = game.assets['res/jump.wav'];
@@ -282,6 +296,7 @@ window.onload = function() {
       // 4 - Add child nodes        
       this.addChild(bg);
       this.addChild(penguin);
+      this.addChild(igloo);
       this.addChild(map);
       this.addChild(iceGroup);
       this.addChild(fishGroup);
@@ -297,22 +312,27 @@ window.onload = function() {
     
     handleTouchControl: function (evt) {
       var playSnd, lane;
-      // laneWidth = 320/3;
-      // lane = Math.floor(evt.x/laneWidth);
-      // lane = Math.max(Math.min(2,lane),0);
-      if(this.gotHit!=true){
+      if(this.gotHit!=true && this.buying!=true){
         if(evt.x > game.width/2) lane=1;
         else lane=-1;
-        //console.log(evt.x);
-        //this.jumpSnd.play();
-        playSnd = this.penguin.switchToLaneNumber(lane);
-        if (playSnd) {
+        
+        //Verifica a posição do pinguim e dependendo do caso dispara um som
+        playSnd = this.penguin.switchToLaneNumber(lane,this.igloo.isLit);
+        if (playSnd=='jump') { //apenas moveu o pinguim
           if( isAndroid ){
-              jumpSnd.seekTo(1);
-              jumpSnd.play();
+            jumpSnd.seekTo(1);
+            jumpSnd.play();
           }else{
             this.jumpSnd.play();
           }
+        }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
+          if( isAndroid ) {
+            powerup.play();
+          }else{
+            game.assets['res/powerup.wav'].play();
+          }
+          this.buying=true;
+          this.setCoins(this.coins - shopPrice);
         }
       }
       evt.stopPropagation();
@@ -321,22 +341,27 @@ window.onload = function() {
     
     setScore: function (value) {
       this.score = value;
-      this.levelup = this.levelup+1;
-      if(this.levelup>=10) {
-        this.levelup=0;
-        this.level = this.level+1;
-      }
       this.scoreLabel.text = 'SCORE: ' + this.score;
     },
     
     setCoins: function (value) {
       this.coins = value;
       this.coinsLabel.text = 'FISH: ' + this.coins;
+      this.igloo.turnLights(this.coins);
     },
     
+    incLevelUp: function(){
+      this.levelup = this.levelup+1;
+      if(this.levelup>=levelUpAt) {
+        this.levelup=0;
+        this.level = this.level+1;
+        this.debugLabel.text = 'LEVEL: ' + this.level
+      }
+    }
+    
     update: function(evt) {
-      this.debugLabel.text = 'LEVEL: ' + this.level;
-      if(this.gotHit!=true){
+      
+      if(this.gotHit!=true && this.buying!=true){
         // Check if it's time to create a new set of obstacles
         this.generateIceTimer += 2 + this.level;
         if (this.generateIceTimer >= 60) {
@@ -354,13 +379,6 @@ window.onload = function() {
             this.iceGroup.addChild(ice);
           }
         }
-        
-        // Score increase as time passes
-        // this.scoreTimer += evt.elapsed * 0.001;
-        // if (this.scoreTimer >= 0.5) {
-          // this.setScore(this.score + 1);
-          // this.scoreTimer -= 0.5;
-        // }
       
         // Check collision
         // Ice collision
@@ -368,7 +386,7 @@ window.onload = function() {
           var ice;
           ice = this.iceGroup.childNodes[i];
           if(ice.y<=260){
-            if (ice.intersect(this.penguin)){
+            if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
               if( isAndroid ) {
                 hit.play();
               }else{
@@ -391,8 +409,9 @@ window.onload = function() {
             }else{
               game.assets['res/break.wav'].play();
             }
-            ice.crashToPieces();            
+            ice.crashToPieces();
             this.setScore(this.score + 1);
+            this.incLevelUp();
           }
         }
         
@@ -407,7 +426,7 @@ window.onload = function() {
             }else{
               game.assets['res/fish.wav'].play();
             }
-            this.setScore(this.score + 5);
+            //this.setScore(this.score + 5);
             this.setCoins(this.coins + 1);
             this.fishGroup.removeChild(fish);
             break;
@@ -415,6 +434,7 @@ window.onload = function() {
         }
       }
       
+      //Atingido: dispara o timer e parte para o game over no término
       if(this.gotHit==true){
         //game.stop();
         this.hitDuration += evt.elapsed * 0.001; 
@@ -428,6 +448,32 @@ window.onload = function() {
             this.bgm.stop();
           }
           game.replaceScene(new SceneGameOver(this.score)); 
+          //break;
+        }
+      }
+      
+      //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
+      if(this.buying==true){
+        for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
+          var ice;
+          ice = this.iceGroup.childNodes[i];
+          if(ice.y>=200){
+            ice.crashToPieces();            
+            //this.setScore(this.score + 1);
+          }
+        }
+        //game.stop();
+        this.buyDuration += evt.elapsed * 0.001; 
+        this.penguin.visible = false;
+        // if(this.hitDuration <= 1 && this.duration){
+        // }
+        if(this.buyDuration >= 2){
+          //this.iceGroup.removeChild(ice);
+          //game.resume();
+          this.buying=false; 
+          this.penguin.visible = true;
+          this.buyDuration = 0;
+          this.setScore(this.score + (2*shopPrice));
           //break;
         }
       }

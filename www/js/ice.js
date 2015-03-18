@@ -42,7 +42,7 @@ var Ice = Class.create(Sprite, {
     game = Game.instance;
     level = this.parentNode.parentNode.level;
    
-    if(this.parentNode.parentNode.gotHit!=true){
+    if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
       this.y += this.ySpeed + level;
       this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
       if (this.y > game.height) {
