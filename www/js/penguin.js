@@ -19,13 +19,13 @@ var Penguin = Class.create(Sprite, {
   },
   
   updateAnimation: function (evt) {        
-    //if(this.parentNode.gotHit!=true){
-      this.animationDuration += evt.elapsed * 0.001;       
-      if (this.animationDuration >= this.animationSpeed) {
-        if(this.frame<this.endFrame) this.frame ++;
-        else this.frame = this.iniFrame;
-        this.animationDuration = 0;
-      }
+    this.animationDuration += evt.elapsed * 0.001;       
+    if (this.animationDuration >= this.animationSpeed) {
+      if(this.frame<this.endFrame) this.frame ++;
+      else this.frame = this.iniFrame;
+      this.animationDuration = 0;
+    }
+    if(this.parentNode.gotHit!=true){
       if(this.x<this.nextpos) {
         this.x+=this.movespeed;
         if(this.x>=this.nextpos) this.x=this.nextpos;
@@ -33,7 +33,7 @@ var Penguin = Class.create(Sprite, {
         this.x-=this.movespeed;
         if(this.x<=this.nextpos) this.x=this.nextpos;
       }
-    //}
+    }
   },
   
   switchToLaneNumber: function(lane){     

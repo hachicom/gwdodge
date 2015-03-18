@@ -308,12 +308,11 @@ window.onload = function() {
         playSnd = this.penguin.switchToLaneNumber(lane);
         if (playSnd) {
           if( isAndroid ){
-            if (jmpstatus===2) {
-              //this.jumpSnd.pause();
-              this.jumpSnd.seekTo(1);
-            }
+              jumpSnd.seekTo(1);
+              jumpSnd.play();
+          }else{
+            this.jumpSnd.play();
           }
-          this.jumpSnd.play();
         }
       }
       evt.stopPropagation();
@@ -403,6 +402,7 @@ window.onload = function() {
           fish = this.fishGroup.childNodes[i];
           if (fish.intersect(this.penguin)){
             if( isAndroid ) {
+              coin.seekTo(1);
               coin.play();
             }else{
               game.assets['res/fish.wav'].play();
