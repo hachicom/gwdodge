@@ -387,6 +387,7 @@ window.onload = function() {
           }else{
             //this.iceGroup.removeChild(ice);
             if( isAndroid ) {
+              crash.seekTo(1);
               crash.play();
             }else{
               game.assets['res/break.wav'].play();
