@@ -15,6 +15,7 @@ window.onload = function() {
 	if( isAndroid ) {
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
+                 'res/IceFrag.png',
                  'res/fishSheet.png',
                  'res/yukiSheet.png',
                  'res/iglooSheet.png',
@@ -23,13 +24,16 @@ window.onload = function() {
   }else{
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
+                 'res/IceFrag.png',
                  'res/fishSheet.png',
                  'res/yukiSheet.png',
                  'res/iglooSheet.png',
                  'res/mountain.png',
                  'res/groundSheet.png',
-                 'res/Hit.mp3',
+                 'res/hit.wav',
                  'res/jump.wav',
+                 'res/fish.wav',
+                 'res/break.wav',
                  'res/bgm.mp3');
   }
                
@@ -48,7 +52,25 @@ window.onload = function() {
       }
     );
     
-    var hit = new Media("file:///android_asset/www/res/Hit.mp3",
+    var hit = new Media("file:///android_asset/www/res/hit.wav",
+      function() {
+        //alert("Audio Success");
+      },
+      function(err) {
+        alert(JSON.stringify(err));
+      }
+    );
+    
+    var fish = new Media("file:///android_asset/www/res/fish.wav",
+      function() {
+        //alert("Audio Success");
+      },
+      function(err) {
+        alert(JSON.stringify(err));
+      }
+    );
+    
+    var crash = new Media("file:///android_asset/www/res/break.wav",
       function() {
         //alert("Audio Success");
       },
@@ -212,6 +234,15 @@ window.onload = function() {
       label2.font = '16px monospace';
       //label2.textAlign = 'right';
       this.debugLabel = label2;
+      
+      label3 = new Label('FISH: 0');
+      label3.x = 120;
+      label3.y = 0;        
+      label3.color = 'white';
+      label3.font = '16px monospace';
+      //label2.textAlign = 'right';
+      this.coinsLabel = label3;
+      
       // Penguin
       penguin = new Penguin();
       penguin.x = 145;
@@ -231,6 +262,7 @@ window.onload = function() {
       this.generateFish = getRandom(3,5);
       this.scoreTimer = 0;
       this.score = 0;
+      this.coins = 0;
       this.level = 0;
       this.levelup = 0;
       this.gotHit = false;
@@ -249,12 +281,13 @@ window.onload = function() {
       
       // 4 - Add child nodes        
       this.addChild(bg);
-      this.addChild(iceGroup);
-      this.addChild(fishGroup);
       this.addChild(penguin);
       this.addChild(map);
+      this.addChild(iceGroup);
+      this.addChild(fishGroup);
       this.addChild(label);
       this.addChild(label2);
+      this.addChild(label3);
       
       // Touch listener
       this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
@@ -275,10 +308,10 @@ window.onload = function() {
         playSnd = this.penguin.switchToLaneNumber(lane);
         if (playSnd) {
           if( isAndroid ){
-            //if (jmpstatus===0) {
+            if (jmpstatus===2) {
               //this.jumpSnd.pause();
-              this.jumpSnd.seekTo(0);
-            //}
+              this.jumpSnd.seekTo(1);
+            }
           }
           this.jumpSnd.play();
         }
@@ -295,6 +328,11 @@ window.onload = function() {
         this.level = this.level+1;
       }
       this.scoreLabel.text = 'SCORE: ' + this.score;
+    },
+    
+    setCoins: function (value) {
+      this.coins = value;
+      this.coinsLabel.text = 'FISH: ' + this.coins;
     },
     
     update: function(evt) {
@@ -335,9 +373,10 @@ window.onload = function() {
               if( isAndroid ) {
                 hit.play();
               }else{
-                game.assets['res/Hit.mp3'].play();
+                game.assets['res/hit.wav'].play();
               }
               //alert(ice.y);
+              ice.crashToPieces();
               this.gotHit = true; 
               this.penguin.gotHit();
               // this.iceGroup.removeChild(ice);
@@ -346,7 +385,13 @@ window.onload = function() {
               break;
             }
           }else{
-            this.iceGroup.removeChild(ice);
+            //this.iceGroup.removeChild(ice);
+            if( isAndroid ) {
+              crash.play();
+            }else{
+              game.assets['res/break.wav'].play();
+            }
+            ice.crashToPieces();            
             this.setScore(this.score + 1);
           }
         }
@@ -356,12 +401,13 @@ window.onload = function() {
           var fish;
           fish = this.fishGroup.childNodes[i];
           if (fish.intersect(this.penguin)){
-            // if( isAndroid ) {
-              // hit.play();
-            // }else{
-              // game.assets['res/Hit.mp3'].play();
-            // }
+            if( isAndroid ) {
+              fish.play();
+            }else{
+              game.assets['res/fish.wav'].play();
+            }
             this.setScore(this.score + 5);
+            this.setCoins(this.coins + 1);
             this.fishGroup.removeChild(fish);
             break;
           }

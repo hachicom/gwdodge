@@ -13,6 +13,8 @@ var Penguin = Class.create(Sprite, {
       this.animationSpeed = 0.25;
       this.lane = 1;
       this.positions = [55,145,235];
+      this.nextpos = 145;
+      this.movespeed = 30
       this.addEventListener(Event.ENTER_FRAME, this.updateAnimation);
   },
   
@@ -24,18 +26,26 @@ var Penguin = Class.create(Sprite, {
         else this.frame = this.iniFrame;
         this.animationDuration = 0;
       }
+      if(this.x<this.nextpos) {
+        this.x+=this.movespeed;
+        if(this.x>=this.nextpos) this.x=this.nextpos;
+      }else if(this.x>this.nextpos){
+        this.x-=this.movespeed;
+        if(this.x<=this.nextpos) this.x=this.nextpos;
+      }
     //}
   },
   
   switchToLaneNumber: function(lane){     
-    playsnd = true;
-    this.lane = this.lane + lane;
-    if(this.lane<0) {this.lane=0; playsnd = false;}
-    if(this.lane>2) {this.lane=2; playsnd = false;}
-    //var targetX = 160 - this.width/2 + (this.lane-1)*90;
-    this.x = this.positions[this.lane];
-    return playsnd;
-    //console.log(this.x+' - '+this.lane+' '+lane);
+    if(this.x==this.nextpos){
+      playsnd = true;
+      this.lane = this.lane + lane;
+      if(this.lane<0) {this.lane=0; playsnd = false;}
+      if(this.lane>2) {this.lane=2; playsnd = false;}
+      //var targetX = 160 - this.width/2 + (this.lane-1)*90;
+      this.nextpos = this.positions[this.lane];
+      return playsnd;
+    }
   },
   
   gotHit: function(lane){     

@@ -3,7 +3,7 @@ var Fish = Class.create(Sprite, {
   // The obstacle that the penguin must avoid
   initialize: function(lane,level) {
     // Call superclass constructor
-    Sprite.apply(this,[16, 16]);
+    Sprite.apply(this,[24, 24]);
     this.image  = Game.instance.assets['res/fishSheet.png'];    
     this.frame = 0;  
     this.rotationSpeed = 0;
@@ -21,7 +21,7 @@ var Fish = Class.create(Sprite, {
     this.rotationSpeed = Math.random() * 100 - 50;
    
     this.x = game.width/2 - this.width/2 + (lane - 1) * distance;
-    this.y = -32;    
+    this.y = -40;    
     this.rotation = Math.floor( Math.random() * 360 );    
   },
   
