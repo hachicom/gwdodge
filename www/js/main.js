@@ -207,14 +207,24 @@ window.onload = function() {
       // 3 - Create child nodes
       // Background
       bg = new Sprite(320,128);
-      bg.y = 190;
+      bg.y = 193;
       //bg.scale(2,2);
       bg.image = game.assets['res/mountain.png'];      
       this.backgroundColor = '#00fffa';
       map = new Map(32, 32);
-      map.y = 315;
+      //map.y = 315;
       map.image = game.assets['res/groundSheet.png'];
       map.loadData([
+        [-1,2,0,0,0,0,0,0,4,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,3,1,1,1,1,1,1,5,-1],
         [0,0,0,0,0,0,0,0,0,0],
         [1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1],
@@ -254,13 +264,13 @@ window.onload = function() {
       this.coinsLabel = label3;
       
       // Penguin
-      penguin = new Penguin(145,285);
+      penguin = new Penguin(145,288);
       this.penguin = penguin;
       
       // Igloo & Yuki
-      igloo = new Igloo(272,269,shopPrice);
+      igloo = new Igloo(272,272,shopPrice);
       this.igloo = igloo;
-      yuki = new Yuki(8,285,shopPrice);
+      yuki = new Yuki(8,288,shopPrice);
       this.yuki = yuki;
       
       // Ice group
@@ -298,10 +308,10 @@ window.onload = function() {
       
       // 4 - Add child nodes        
       this.addChild(bg);
+      this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
       this.addChild(yuki);
-      this.addChild(map);
       this.addChild(iceGroup);
       this.addChild(fishGroup);
       this.addChild(label);
@@ -528,9 +538,9 @@ window.onload = function() {
       this.backgroundColor = '#00fffa';
       
       // Game Over label
-      gameOverLabel = new Label("FIM DE JOGO<br><br>Toque para Reiniciar");
+      gameOverLabel = new Label("FIM DE JOGO<br>Toque para Reiniciar");
       gameOverLabel.x = 8;
-      gameOverLabel.y = 128;
+      gameOverLabel.y = 98;
       gameOverLabel.color = 'white';
       gameOverLabel.font = '32px strong';
       gameOverLabel.textAlign = 'center';
@@ -609,9 +619,9 @@ window.onload = function() {
         ]);
       
       // Game Over label
-      TitleLabel = new Label("ICE'N FISH<br><br>Toque para Iniciar");
+      TitleLabel = new Label("Benji & Yuki<br>ICYFALL<br><br>Toque para Iniciar");
       TitleLabel.x = 8;
-      TitleLabel.y = 128;
+      TitleLabel.y = 98;
       TitleLabel.color = 'white';
       TitleLabel.font = '32px strong';
       TitleLabel.textAlign = 'center';
