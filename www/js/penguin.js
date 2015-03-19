@@ -39,11 +39,15 @@ var Penguin = Class.create(Sprite, {
     }
   },
   
-  switchToLaneNumber: function(lane,isLit){
+  switchToLaneNumber: function(lane,isLit,isThere){
     if(this.x==this.nextpos){
       playsnd = 'jump';
       this.lane = this.lane + lane;
-      if(this.lane<0) {this.lane=0; playsnd = false;}
+      if(this.lane<0) {
+        this.lane=0; 
+        if(isThere) playsnd = 'powerup';
+        else playsnd = false;
+      }
       if(this.lane>2) {
         this.lane=2; 
         if(isLit) playsnd = 'powerup';
@@ -64,7 +68,28 @@ var Penguin = Class.create(Sprite, {
     //console.log(this.x+' - '+this.lane+' '+lane);
   },
   
+  shopping: function(buying){     
+    if(buying){
+      if(this.lane==2){
+        this.frame = 4;
+        this.iniFrame = 4;
+        this.endFrame = 4;
+        this.nextpos = 262;
+      }else{
+        this.frame = 5;
+        this.iniFrame = 5;
+        this.endFrame = 5;
+        this.nextpos = 26;
+      }
+    }else{
+      this.frame = 0;
+      this.iniFrame = 0;
+      this.endFrame = 1;
+      this.nextpos = this.positions[this.lane];
+    }
+  },
+  
   isVulnerable: function(){
-    return (this.x==this.nextpos&&this.visible);
+    return (this.x==this.nextpos);
   }
 });
