@@ -387,7 +387,7 @@ window.onload = function() {
           this.generateFishTimer = 0;
           //this.cubesGenerated += 1;
           //fish = new Fish(Math.floor(Math.random()*3),this.level);
-          this.fishGroup.addChild(fish);
+          //this.fishGroup.addChild(fish);
           this.fishTimer = getRandom(3,6)*20;
         }
       
