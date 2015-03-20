@@ -5,8 +5,8 @@ function getRandom(min, max) {
 function isMobile(){
   var vMobile;
   vMobile = /Android/i.test(navigator.userAgent);
-  //A linha abaixo é para debug. Ao compilar, comentá-la para usar funções do Phonegap
-  vMobile = false;
+  //A linha abaixo Ã© para debug. Ao compilar, comentÃ¡-la para usar funÃ§Ãµes do Phonegap
+  //vMobile = false;
   
   return vMobile;
 }
