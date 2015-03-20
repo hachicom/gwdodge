@@ -24,7 +24,8 @@ window.onload = function() {
                  'res/yukiSheet.png',
                  'res/iglooSheet.png',
                  'res/mountain.png',
-                 'res/groundSheet.png');
+                 'res/groundSheet.png',
+                 'res/title.png');
   }else{
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
@@ -34,6 +35,7 @@ window.onload = function() {
                  'res/iglooSheet.png',
                  'res/mountain.png',
                  'res/groundSheet.png',
+                 'res/title.png',
                  'res/hit.wav',
                  'res/jump.wav',
                  'res/fish.wav',
@@ -210,21 +212,21 @@ window.onload = function() {
       bg.y = 193;
       //bg.scale(2,2);
       bg.image = game.assets['res/mountain.png'];      
-      this.backgroundColor = '#00fffa';
+      this.backgroundColor = '#000000';
       map = new Map(32, 32);
       //map.y = 315;
       map.image = game.assets['res/groundSheet.png'];
       map.loadData([
-        [-1,2,0,0,0,0,0,0,4,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
-        [-1,3,1,1,1,1,1,1,5,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [4,-1,-1,-1,-1,-1,-1,-1,-1,2],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
         [0,0,0,0,0,0,0,0,0,0],
         [1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1],
@@ -237,7 +239,7 @@ window.onload = function() {
       
       //UI
       // Label
-      label = new Label('SCORE: 0');
+      label = new Label('SCORE<br>0');
       label.x = 8;
       label.y = 0;
       label.color = 'white';
@@ -247,7 +249,7 @@ window.onload = function() {
       this.scoreLabel = label;
       //console.dir(label);
       
-      label2 = new Label('LEVEL: 0');
+      label2 = new Label('LEVEL<br>0');
       label2.x = 220;
       label2.y = 0;        
       label2.color = 'white';
@@ -255,7 +257,7 @@ window.onload = function() {
       //label2.textAlign = 'right';
       this.debugLabel = label2;
       
-      label3 = new Label('FISH: 0');
+      label3 = new Label('FISH<br>0');
       label3.x = 120;
       label3.y = 0;        
       label3.color = 'white';
@@ -377,9 +379,9 @@ window.onload = function() {
     },
     
     update: function(evt) {
-      this.scoreLabel.text = 'SCORE: ' + this.score + '<BR>X' + this.multiplier;
-      this.coinsLabel.text = 'FISH: ' + this.coins;
-      this.debugLabel.text = 'LEVEL: ' + this.level + '<BR>next: ' + (levelUpAt - this.levelup);
+      this.scoreLabel.text = 'SCORE X' + this.multiplier + '<BR>' + this.score;
+      this.coinsLabel.text = 'FISH<br>' + this.coins;
+      this.debugLabel.text = 'LEVEL<br>' + this.level;
       
       if(this.gotHit!=true && this.buying!=true){
         // Check if it's time to create a new set of obstacles
@@ -535,10 +537,10 @@ window.onload = function() {
     initialize: function(score) {
       var gameOverLabel, scoreLabel;
       Scene.apply(this);    
-      this.backgroundColor = '#00fffa';
+      this.backgroundColor = '#000000';
       
       // Game Over label
-      gameOverLabel = new Label("FIM DE JOGO<br>Toque para Reiniciar");
+      gameOverLabel = new Label("FIM DE JOGO");
       gameOverLabel.x = 8;
       gameOverLabel.y = 98;
       gameOverLabel.color = 'white';
@@ -547,14 +549,23 @@ window.onload = function() {
       
       // Background
       bg = new Sprite(320,128);
-      bg.y = 190;
+      bg.y = 193;
       //bg.scale(2,2);
-      bg.image = game.assets['res/mountain.png'];      
-      this.backgroundColor = '#00fffa';
+      bg.image = game.assets['res/mountain.png'];
       map = new Map(32, 32);
-      map.y = 315;
+      //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
       map.loadData([
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [4,-1,-1,-1,-1,-1,-1,-1,-1,2],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
         [0,0,0,0,0,0,0,0,0,0],
         [1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1],
@@ -574,11 +585,20 @@ window.onload = function() {
       scoreLabel.textAlign = 'center';
       scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
       
+      // Press Start label
+      PressStart = new Label("toque para jogar novamente");
+      PressStart.x = 8;
+      PressStart.y = 160;
+      PressStart.color = 'white';
+      PressStart.font = '20px strong';
+      PressStart.textAlign = 'center';
+      
       // Add labels
       this.addChild(bg);
       this.addChild(map);
       this.addChild(gameOverLabel);
       this.addChild(scoreLabel);
+      this.addChild(PressStart);
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);
@@ -599,18 +619,29 @@ window.onload = function() {
       //this.backgroundColor = '#0026FF';
       
       // Background
-      bg = new Sprite(320,128);
-      bg.y = 190;
+      title = new Sprite(256,160);
+      title.x = 32;
+      title.y = 32;
       //bg.scale(2,2);
-      bg.image = game.assets['res/mountain.png'];      
-      this.backgroundColor = '#00fffa';
+      title.image = game.assets['res/title.png'];      
+      this.backgroundColor = '#000000';
       map = new Map(32, 32);
-      map.y = 315;
+      //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
       map.loadData([
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
+        [4,-1,-1,-1,-1,-1,-1,-1,-1,2],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
+        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
         [0,0,0,0,0,0,0,0,0,0],
         [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
+        [1,1,-1,-1,-1,-1,-1,-1,1,1],
         [1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1],
@@ -618,27 +649,45 @@ window.onload = function() {
         [1,1,1,1,1,1,1,1,1,1]
         ]);
       
-      // Game Over label
-      TitleLabel = new Label("Benji & Yuki<br>ICYFALL<br><br>Toque para Iniciar");
+      // Title label
+      TitleLabel = new Label("ICEFALL");
       TitleLabel.x = 8;
-      TitleLabel.y = 98;
+      TitleLabel.y = 198;
       TitleLabel.color = 'white';
       TitleLabel.font = '32px strong';
       TitleLabel.textAlign = 'center';
       
-      // Score label
-      scoreLabel = new Label('SCORE<br>' + score);
-      scoreLabel.x = 9;
-      scoreLabel.y = 32;        
+      // Press Start label
+      PressStart = new Label("toque para iniciar");
+      PressStart.x = 8;
+      PressStart.y = 264;
+      PressStart.color = 'white';
+      PressStart.font = '20px strong';
+      PressStart.textAlign = 'center';
+      
+      // Copyright label
+      copyright = new Label("© 2015 HACHICOM");
+      copyright.x = 8;
+      copyright.y = 390;
+      copyright.color = 'white';
+      copyright.font = '20px strong';
+      copyright.textAlign = 'center';
+      
+      // Hiscore label
+      scoreLabel = new Label('HISCORE: ' + score);
+      scoreLabel.x = 0;
+      scoreLabel.y = 0;        
       scoreLabel.color = 'white';
       scoreLabel.font = '16px strong';
       scoreLabel.textAlign = 'center';
       scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
       
       // Add labels  
-      this.addChild(bg);
+      this.addChild(title);
       this.addChild(map);
+      this.addChild(copyright);
       this.addChild(TitleLabel); 
+      this.addChild(PressStart);
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);
