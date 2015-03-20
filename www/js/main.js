@@ -4,7 +4,7 @@ var isAndroid = isMobile();
 
 //game global difficulty variables
 var shopPrice = 5;
-var levelUpAt = 10;
+var levelUpAt = 5;
 
 // 1 - Start enchant.js
 enchant();
@@ -185,7 +185,7 @@ window.onload = function() {
         }
         keeploop=false;
         if(bgmstatus==2)bgm.stop();
-        bgm.release();
+        //bgm.release();
         console.log("exited");
       }else game.resume();
     }
@@ -216,26 +216,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 315;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData([
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [4,-1,-1,-1,-1,-1,-1,-1,-1,2],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [0,0,0,0,0,0,0,0,0,0],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1]
-        ]);
+      map.loadData(arrMap1Top,arrMap1Sub);
       
       //UI
       // Label
@@ -285,13 +266,15 @@ window.onload = function() {
       // Instance variables
       this.generateIceTimer = 0;
       this.cubesGenerated = 0;
-      this.generateFish = getRandom(3,5);
+      this.generateFishTimer = 0;
+      this.fishTimer = getRandom(3,6)*20;
       this.scoreTimer = 0;
       this.score = 0;
       this.multiplier = 1;
       this.coins = 0;
       this.level = 0;
       this.levelup = 0;
+      this.iceTimer = 320;
       this.gotHit = false;
       this.hitDuration = 0;
       this.buying = false;
@@ -309,7 +292,7 @@ window.onload = function() {
       }
       
       // 4 - Add child nodes        
-      this.addChild(bg);
+      //this.addChild(bg);
       this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
@@ -370,36 +353,42 @@ window.onload = function() {
       if(this.levelup>=levelUpAt) {
         this.levelup=0;
         this.level = this.level+1;
+        if(this.level<3) this.iceTimer = this.iceTimer/2;
       }
     },
     
     decLevelDown: function(){
       this.levelup = 0;
-      if(this.level>1) this.level = this.level-1;
+      //if(this.level>1) this.level = this.level-1;
     },
     
     update: function(evt) {
       this.scoreLabel.text = 'SCORE X' + this.multiplier + '<BR>' + this.score;
-      this.coinsLabel.text = 'FISH<br>' + this.coins;
-      this.debugLabel.text = 'LEVEL<br>' + this.level;
+      this.coinsLabel.text = 'FISH<br>' + this.coins + ' - ' + this.fishTimer+ '<br>' + this.generateFishTimer;
+      this.debugLabel.text = 'LEVEL<br>' + this.level + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
       
       if(this.gotHit!=true && this.buying!=true){
         // Check if it's time to create a new set of obstacles
-        this.generateIceTimer += 2 + this.level;
-        if (this.generateIceTimer >= 60) {
+        if(this.level<3) this.generateIceTimer += 2;
+        else this.generateIceTimer += 2 + (this.level - 2);
+        if (this.generateIceTimer >= this.iceTimer) {
           var ice;
           this.generateIceTimer = 0;
           this.cubesGenerated += 1;
-          if (this.cubesGenerated >= this.generateFish){
-            fish = new Fish(Math.floor(Math.random()*3),this.level);
-            this.fishGroup.addChild(fish);
-            this.generateFish = getRandom(3,5);
-            this.cubesGenerated = 0;
-          }else{
-            ice = new Ice(Math.floor(Math.random()*3),this.level);
-            //this.addChild(ice);
-            this.iceGroup.addChild(ice);
-          }
+          //this.cubesGenerated = 0;
+          ice = new Ice(Math.floor(Math.random()*3),this.level);
+          this.iceGroup.addChild(ice);
+        }
+        
+        // Check if it's time to make fish jump
+        this.generateFishTimer += 1;
+        if (this.generateFishTimer >= this.fishTimer) {
+          var ice;
+          this.generateFishTimer = 0;
+          //this.cubesGenerated += 1;
+          fish = new Fish(Math.floor(Math.random()*3),this.level);
+          this.fishGroup.addChild(fish);
+          this.fishTimer = getRandom(3,6)*20;
         }
       
         // Check collision
@@ -441,7 +430,7 @@ window.onload = function() {
         for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
           var fish;
           fish = this.fishGroup.childNodes[i];
-          if (fish.intersect(this.penguin)){
+          if (fish.ascending===false && fish.intersect(this.penguin)){
             if( isAndroid ) {
               coin.seekTo(1);
               coin.play();
@@ -555,26 +544,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData([
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [4,-1,-1,-1,-1,-1,-1,-1,-1,2],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [0,0,0,0,0,0,0,0,0,0],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1]
-        ]);
+      map.loadData(arrMap1Top,arrMap1Sub);
       
       // Score label
       scoreLabel = new Label('SCORE<br>' + score);
@@ -594,7 +564,7 @@ window.onload = function() {
       PressStart.textAlign = 'center';
       
       // Add labels
-      this.addChild(bg);
+      //this.addChild(bg);
       this.addChild(map);
       this.addChild(gameOverLabel);
       this.addChild(scoreLabel);
@@ -628,33 +598,14 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData([
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [-1,-1,-1,-1,-1,-1,-1,,-1,-1,-1],
-        [4,-1,-1,-1,-1,-1,-1,-1,-1,2],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [5,-1,-1,-1,-1,-1,-1,-1,-1,3],
-        [0,0,0,0,0,0,0,0,0,0],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,-1,-1,-1,-1,-1,-1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1]
-        ]);
+      map.loadData(arrMap1Top,arrMap1Sub);
       
       // Title label
       TitleLabel = new Label("ICEFALL");
       TitleLabel.x = 8;
       TitleLabel.y = 198;
       TitleLabel.color = 'white';
-      TitleLabel.font = '32px strong';
+      TitleLabel.font = '32px system';
       TitleLabel.textAlign = 'center';
       
       // Press Start label
@@ -662,7 +613,7 @@ window.onload = function() {
       PressStart.x = 8;
       PressStart.y = 264;
       PressStart.color = 'white';
-      PressStart.font = '20px strong';
+      PressStart.font = '20px system';
       PressStart.textAlign = 'center';
       
       // Copyright label
@@ -670,7 +621,7 @@ window.onload = function() {
       copyright.x = 8;
       copyright.y = 390;
       copyright.color = 'white';
-      copyright.font = '20px strong';
+      copyright.font = '20px system';
       copyright.textAlign = 'center';
       
       // Hiscore label
@@ -678,7 +629,7 @@ window.onload = function() {
       scoreLabel.x = 0;
       scoreLabel.y = 0;        
       scoreLabel.color = 'white';
-      scoreLabel.font = '16px strong';
+      scoreLabel.font = '16px system';
       scoreLabel.textAlign = 'center';
       scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
       

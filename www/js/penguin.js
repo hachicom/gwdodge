@@ -6,7 +6,7 @@ var Penguin = Class.create(Sprite, {
       Sprite.apply(this,[32, 32]);
       this.image = Game.instance.assets['res/penguinSheet.png'];
       this.lane = 1;
-      this.positions = [55,145,235];
+      this.positions = [65,145,225];
       this.nextpos = x;
       this.movespeed = 30
       this.x = x;

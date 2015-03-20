@@ -14,7 +14,7 @@ var Ice = Class.create(Sprite, {
   setLane: function(lane) {
     var game, distance;
     game = Game.instance;        
-    distance = 90;
+    distance = 70;
    
     this.rotationSpeed = Math.random() * 100 - 50;
    
@@ -37,10 +37,12 @@ var Ice = Class.create(Sprite, {
   },
   
   update: function(evt) { 
-    var game;
+    var game,level;
    
     game = Game.instance;
     level = this.parentNode.parentNode.level;
+    if(level<3) level=0;
+    else level-=2;
    
     if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
       this.y += this.ySpeed + level;

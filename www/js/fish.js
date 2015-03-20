@@ -8,7 +8,9 @@ var Fish = Class.create(Sprite, {
     this.frame = 0;  
     this.rotationSpeed = 0;
     this.animationDuration = 0;
-    this.ySpeed = 2;
+    this.ySpeed = 10;
+    this.rotationTime = 1;
+    this.ascending = true;
     this.setLane(lane);
     this.addEventListener(Event.ENTER_FRAME, this.update);
   },
@@ -16,13 +18,13 @@ var Fish = Class.create(Sprite, {
   setLane: function(lane) {
     var game, distance;
     game = Game.instance;        
-    distance = 90;
+    distance = 70;
    
-    this.rotationSpeed = Math.random() * 100 - 50;
+    this.rotationSpeed = 200;
    
     this.x = game.width/2 - this.width/2 + (lane - 1) * distance;
-    this.y = -40;    
-    this.rotation = Math.floor( Math.random() * 360 );    
+    this.y = game.height;    
+    this.rotation = Math.floor( Math.random() * 360 );
   },
   
   update: function(evt) { 
@@ -32,10 +34,26 @@ var Fish = Class.create(Sprite, {
     level = this.parentNode.parentNode.level;
    
     if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
-      this.y += this.ySpeed + level;
-      this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
-      if (this.y > game.height) {
-        this.parentNode.removeChild(this);        
+      //Dealing with movement
+      if(this.ascending){
+        this.y -= this.ySpeed + level;
+        if (this.y <= 248) this.ascending = false;
+      }else{
+        this.rotationTime -= evt.elapsed * 0.001;
+        if(this.rotationTime <= 0){
+          this.y += this.ySpeed + level;
+          if (this.y > game.height && this.ascending===false) {
+            this.parentNode.removeChild(this);        
+          }
+        }
+      }
+      
+      //Dealing with animation
+      if(this.rotationTime <= 0){
+        this.rotation = 270;
+      }else{
+        if(this.ascending) this.rotation = 90;
+        else this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
       }
       this.animationDuration += evt.elapsed * 0.001;       
       if (this.animationDuration >= 1) {
