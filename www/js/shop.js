@@ -75,7 +75,7 @@ var Yuki = Class.create(Sprite, {
   },
   
   kiss: function(lane){
-    if(lane===0){
+    if(lane===2){
       this.frame = 3;
       this.iniFrame = 3;
       this.endFrame = 3;

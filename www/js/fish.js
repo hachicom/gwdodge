@@ -20,7 +20,7 @@ var Fish = Class.create(Sprite, {
     game = Game.instance;        
     distance = 70;
    
-    this.rotationSpeed = 200;
+    this.rotationSpeed = 50;
    
     this.x = game.width/2 - this.width/2 + (lane - 1) * distance;
     this.y = game.height;    
@@ -53,7 +53,7 @@ var Fish = Class.create(Sprite, {
         this.rotation = 270;
       }else{
         if(this.ascending) this.rotation = 90;
-        else this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
+        else this.rotation += this.rotationSpeed;           
       }
       this.animationDuration += evt.elapsed * 0.001;       
       if (this.animationDuration >= 1) {

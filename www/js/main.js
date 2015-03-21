@@ -216,7 +216,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 315;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top,arrMap1Sub);
+      map.loadData(arrMap1Top);
       
       //UI
       // Label
@@ -253,7 +253,7 @@ window.onload = function() {
       // Igloo & Yuki
       igloo = new Igloo(272,272,shopPrice);
       this.igloo = igloo;
-      yuki = new Yuki(8,288,shopPrice);
+      yuki = new Yuki(272,288,shopPrice);
       this.yuki = yuki;
       
       // Ice group
@@ -294,7 +294,7 @@ window.onload = function() {
       // 4 - Add child nodes        
       //this.addChild(bg);
       this.addChild(map);
-      this.addChild(igloo);
+      //this.addChild(igloo);
       this.addChild(penguin);
       this.addChild(yuki);
       this.addChild(iceGroup);
@@ -374,7 +374,7 @@ window.onload = function() {
         if (this.generateIceTimer >= this.iceTimer) {
           var ice;
           this.generateIceTimer = 0;
-          this.cubesGenerated += 1;
+          //this.cubesGenerated += 1;
           //this.cubesGenerated = 0;
           ice = new Ice(Math.floor(Math.random()*3),this.level);
           this.iceGroup.addChild(ice);
@@ -386,8 +386,8 @@ window.onload = function() {
           var ice;
           this.generateFishTimer = 0;
           //this.cubesGenerated += 1;
-          //fish = new Fish(Math.floor(Math.random()*3),this.level);
-          //this.fishGroup.addChild(fish);
+          fish = new Fish(Math.floor(Math.random()*3),this.level);
+          this.fishGroup.addChild(fish);
           this.fishTimer = getRandom(3,6)*20;
         }
       
@@ -544,7 +544,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top,arrMap1Sub);
+      map.loadData(arrMap1Top);
       
       // Score label
       scoreLabel = new Label('SCORE<br>' + score);
@@ -598,7 +598,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top,arrMap1Sub);
+      map.loadData(arrMap1Top);
       
       // Title label
       TitleLabel = new Label("ICEFALL");
