@@ -266,7 +266,8 @@ window.onload = function() {
       this.generateIceTimer = 0;
       this.cubesGenerated = 0;
       this.generateFishTimer = 0;
-      this.fishTimer = getRandom(3,6)*20;
+      this.fishTimerExp = 20;
+      this.fishTimer = getRandom(3,6)*this.fishTimerExp;
       this.scoreTimer = 0;
       this.score = 0;
       this.multiplier = 1;
@@ -349,8 +350,11 @@ window.onload = function() {
     
     incLevelUp: function(){
       this.level = this.level+1;
-      this.levelUpAt = this.levelUpAt*2
-      if(this.level<3) this.iceTimer = this.iceTimer/2;
+      this.levelUpAt = nextLevelUp(this.level);
+      if(this.level<3){
+        this.iceTimer = this.iceTimer/2;
+        this.fishTimerExp = this.fishTimerExp/2;
+      }
     },
     
     update: function(evt) {
@@ -379,7 +383,7 @@ window.onload = function() {
           //this.cubesGenerated += 1;
           fish = new Fish(Math.floor(Math.random()*3),this.level);
           this.fishGroup.addChild(fish);
-          this.fishTimer = getRandom(3,6)*20;
+          this.fishTimer = getRandom(3,6)*this.fishTimerExp;
         }
       
         // Check collision
@@ -412,7 +416,7 @@ window.onload = function() {
               game.assets['res/break.wav'].play();
             }
             ice.crashToPieces();
-            this.setScore(1);
+            //this.setScore(1);
           }
         }
         
@@ -420,14 +424,14 @@ window.onload = function() {
         for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
           var fish;
           fish = this.fishGroup.childNodes[i];
-          if (fish.intersect(this.penguin)){
+          if (fish.intersect(this.penguin) && this.coins < this.levelUpAt){
             if( isAndroid ) {
               coin.seekTo(1);
               coin.play();
             }else{
               game.assets['res/fish.wav'].play();
             }
-            this.setScore(5);
+            this.setScore(1);
             this.setCoins(1);
             this.fishGroup.removeChild(fish);
             break;

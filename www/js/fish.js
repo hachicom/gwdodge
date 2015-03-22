@@ -9,7 +9,7 @@ var Fish = Class.create(Sprite, {
     this.rotationSpeed = 0;
     this.animationDuration = 0;
     this.ySpeed = 10;
-    this.rotationTime = 1;
+    this.rotationTime = 2;
     this.ascending = true;
     this.setLane(lane);
     this.addEventListener(Event.ENTER_FRAME, this.update);
@@ -39,7 +39,7 @@ var Fish = Class.create(Sprite, {
         this.y -= this.ySpeed + level;
         if (this.y <= 248) this.ascending = false;
       }else{
-        this.rotationTime -= evt.elapsed * 0.001;
+        this.rotationTime -= evt.elapsed * (level+1) * 0.001;
         if(this.rotationTime <= 0){
           this.y += this.ySpeed + level;
           if (this.y > game.height && this.ascending===false) {
