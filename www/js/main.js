@@ -158,6 +158,9 @@ window.onload = function() {
         e.preventDefault();
         return false;
       }, true);
+      
+      admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
+      admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP);
         
     }, false);
 
