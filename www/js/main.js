@@ -417,22 +417,22 @@ window.onload = function() {
         }
         
         // Fish collision
-        // for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
-          // var fish;
-          // fish = this.fishGroup.childNodes[i];
-          // if (fish.ascending===false && fish.intersect(this.penguin)){
-            // if( isAndroid ) {
-              // coin.seekTo(1);
-              // coin.play();
-            // }else{
-              // game.assets['res/fish.wav'].play();
-            // }
-            //this.setScore(5);
-            // this.setCoins(1);
-            // this.fishGroup.removeChild(fish);
-            // break;
-          // }
-        // }
+        for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
+          var fish;
+          fish = this.fishGroup.childNodes[i];
+          if (fish.intersect(this.penguin)){
+            if( isAndroid ) {
+              coin.seekTo(1);
+              coin.play();
+            }else{
+              game.assets['res/fish.wav'].play();
+            }
+            this.setScore(5);
+            this.setCoins(1);
+            this.fishGroup.removeChild(fish);
+            break;
+          }
+        }
       }
       
       //Atingido: dispara o timer e parte para o game over no término
