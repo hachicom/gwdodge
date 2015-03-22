@@ -64,10 +64,12 @@
       <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     </gap:config-file>
     
+    <!-- 
     <gap:config-file platform="android" parent="/manifest">
       <application android:hardwareAccelerated="false" />
     </gap:config-file>
-        
+    -->
+    
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
     <icon src="www/res/icon/android/icon-36-ldpi.png" gap:platform="android" gap:density="ldpi" />
