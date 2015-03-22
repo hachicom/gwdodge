@@ -48,6 +48,7 @@ var Yuki = Class.create(Sprite, {
     Sprite.apply(this,[32, 32]);
     this.image  = Game.instance.assets['res/yukiSheet.png'];    
     this.frame = 0;  
+    this.scaleX = -1;
     this.iniFrame = 0;
     this.endFrame = 0;
     this.animationDuration = 0;

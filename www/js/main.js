@@ -3,8 +3,7 @@ var jumpSnd;
 var isAndroid = isMobile();
 
 //game global difficulty variables
-var shopPrice = 5;
-var levelUpAt = 5;
+var levelUpAt = 4;
 
 // 1 - Start enchant.js
 enchant();
@@ -216,7 +215,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 315;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top);
+      map.loadData(arrMap1Top,arrMap1Sub);
       
       //UI
       // Label
@@ -251,9 +250,9 @@ window.onload = function() {
       this.penguin = penguin;
       
       // Igloo & Yuki
-      igloo = new Igloo(272,272,shopPrice);
+      igloo = new Igloo(282,208,levelUpAt);
       this.igloo = igloo;
-      yuki = new Yuki(272,288,shopPrice);
+      yuki = new Yuki(272,288,levelUpAt);
       this.yuki = yuki;
       
       // Ice group
@@ -273,7 +272,7 @@ window.onload = function() {
       this.multiplier = 1;
       this.coins = 0;
       this.level = 0;
-      this.levelup = 0;
+      this.levelUpAt = levelUpAt;
       this.iceTimer = 320;
       this.gotHit = false;
       this.hitDuration = 0;
@@ -294,7 +293,7 @@ window.onload = function() {
       // 4 - Add child nodes        
       //this.addChild(bg);
       this.addChild(map);
-      //this.addChild(igloo);
+      this.addChild(igloo);
       this.addChild(penguin);
       this.addChild(yuki);
       this.addChild(iceGroup);
@@ -331,7 +330,7 @@ window.onload = function() {
             game.assets['res/powerup.wav'].play();
           }
           this.buying=true;
-          this.setCoins(shopPrice*(-1));
+          this.setCoins(this.levelUpAt*(-1));
         }
       }
       evt.stopPropagation();
@@ -349,23 +348,15 @@ window.onload = function() {
     },
     
     incLevelUp: function(){
-      this.levelup = this.levelup+1;
-      if(this.levelup>=levelUpAt) {
-        this.levelup=0;
-        this.level = this.level+1;
-        if(this.level<3) this.iceTimer = this.iceTimer/2;
-      }
-    },
-    
-    decLevelDown: function(){
-      this.levelup = 0;
-      //if(this.level>1) this.level = this.level-1;
+      this.level = this.level+1;
+      this.levelUpAt = this.levelUpAt*2
+      if(this.level<3) this.iceTimer = this.iceTimer/2;
     },
     
     update: function(evt) {
       this.scoreLabel.text = 'SCORE X' + this.multiplier + '<BR>' + this.score;
-      this.coinsLabel.text = 'FISH<br>' + this.coins + ' - ' + this.fishTimer+ '<br>' + this.generateFishTimer;
-      this.debugLabel.text = 'LEVEL<br>' + this.level + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
+      this.coinsLabel.text = 'FISH<br>' + this.coins + '/' + this.levelUpAt; //+ '<br>' + this.generateFishTimer;
+      this.debugLabel.text = 'LEVEL<br>' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
       
       if(this.gotHit!=true && this.buying!=true){
         // Check if it's time to create a new set of obstacles
@@ -422,7 +413,6 @@ window.onload = function() {
             }
             ice.crashToPieces();
             this.setScore(1);
-            this.incLevelUp();
           }
         }
         
@@ -449,7 +439,7 @@ window.onload = function() {
       if(this.gotHit==true){
         //game.stop();
         this.hitDuration += evt.elapsed * 0.001; 
-        if(this.hitDuration >= 1){
+        if(this.hitDuration >= 1.5){
           //this.iceGroup.removeChild(ice);
           //game.resume();
           if( isAndroid ) {        
@@ -485,15 +475,12 @@ window.onload = function() {
           this.penguin.shopping(false);
           this.buyDuration = 0;
           if (this.penguin.lane==2) {
-            this.setScore((2*shopPrice));
-            this.multiplier=this.multiplier * 2;
-          }
-          else if (this.penguin.lane==0) {
-            this.setScore((shopPrice));
-            //if(this.multiplier>=2)this.multiplier=this.multiplier / 2;
-            this.decLevelDown();
+            this.setScore((2*this.levelUpAt));
+            this.multiplier=this.multiplier * 2;            
+            this.incLevelUp();
           }
           this.yuki.smile(this.coins);
+          this.yuki.price = this.igloo.price = this.levelUpAt;
           //break;
         }
       }
@@ -544,7 +531,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top);
+      map.loadData(arrMap1Top,arrMap1Sub);
       
       // Score label
       scoreLabel = new Label('SCORE<br>' + score);
@@ -598,7 +585,7 @@ window.onload = function() {
       map = new Map(32, 32);
       //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top);
+      map.loadData(arrMap1Top,arrMap1Sub);
       
       // Title label
       TitleLabel = new Label("ICEFALL");

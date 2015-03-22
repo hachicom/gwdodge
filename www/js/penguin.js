@@ -6,7 +6,7 @@ var Penguin = Class.create(Sprite, {
       Sprite.apply(this,[32, 32]);
       this.image = Game.instance.assets['res/penguinSheet.png'];
       this.lane = 1;
-      this.positions = [65,145,225];
+      this.positions = [70,145,220];
       this.nextpos = x;
       this.movespeed = 30
       this.x = x;
@@ -45,8 +45,9 @@ var Penguin = Class.create(Sprite, {
       this.lane = this.lane + lane;
       if(this.lane<0) {
         this.lane=0; 
-        if(isThere) playsnd = 'powerup';
-        else playsnd = false;
+        //if(isThere) playsnd = 'powerup';
+        //else 
+        playsnd = false;
       }
       if(this.lane>2) {
         this.lane=2; 
@@ -74,13 +75,13 @@ var Penguin = Class.create(Sprite, {
         this.frame = 4;
         this.iniFrame = 4;
         this.endFrame = 4;
-        this.nextpos = 262;
-      }else{
-        this.frame = 5;
-        this.iniFrame = 5;
-        this.endFrame = 5;
-        this.nextpos = 26;
-      }
+        this.nextpos = 252;
+      }//else{
+        // this.frame = 5;
+        // this.iniFrame = 5;
+        // this.endFrame = 5;
+        // this.nextpos = 26;
+      // }
     }else{
       this.frame = 0;
       this.iniFrame = 0;
