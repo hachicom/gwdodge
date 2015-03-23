@@ -1,5 +1,5 @@
 var keeploop = true;
-var jumpSnd;
+var jumpSnd, bgmstatus, bgm, hit, coin, crash, powerup;
 var isAndroid = isMobile();
 
 //game global difficulty variables
