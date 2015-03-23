@@ -59,8 +59,8 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
-      var bgmstatus = 0;
-	    var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
+      bgmstatus = 0;
+	     bgm = new Media("file:///android_asset/www/res/bgm.mp3",
 	      function() {
 	        if(keeploop==true) this.play();
 	      },
@@ -72,7 +72,7 @@ window.onload = function() {
 	      }
 	    );
 	    
-	    var hit = new Media("file:///android_asset/www/res/hit.wav",
+	     hit = new Media("file:///android_asset/www/res/hit.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
@@ -81,7 +81,7 @@ window.onload = function() {
 	      }
 	    );
 	    
-	    var coin = new Media("file:///android_asset/www/res/fish.wav",
+	     coin = new Media("file:///android_asset/www/res/fish.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
@@ -90,7 +90,7 @@ window.onload = function() {
 	      }
 	    );
 	    
-	    var crash = new Media("file:///android_asset/www/res/break.wav",
+	     crash = new Media("file:///android_asset/www/res/break.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
@@ -99,7 +99,7 @@ window.onload = function() {
 	      }
 	    );
 	    
-	    var powerup = new Media("file:///android_asset/www/res/powerup.wav",
+	     powerup = new Media("file:///android_asset/www/res/powerup.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
