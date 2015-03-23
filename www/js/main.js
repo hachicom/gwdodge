@@ -157,37 +157,38 @@ window.onload = function() {
         return false;
       }, true);
       
-      admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
-      admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP);
+      function onBackKeyDown(){
+	      game.stop();
+	      navigator.notification.confirm(
+	        'Deseja sair do jogo?', // message
+	        onConfirm, // callback to invoke with index of button pressed
+	        'Confirmar', // title
+	        ['Cancelar','Sair'] // buttonLabels
+	      );
+	    }
+	
+	    function onConfirm(buttonIndex) {
+	      if(buttonIndex == 2){
+	        if (navigator && navigator.app) {
+	          navigator.app.exitApp();
+	          console.log("exiting app");
+	        } else {
+	          if (navigator && navigator.device) {
+	            navigator.device.exitApp();
+	            console.log("exiting device");
+	          }
+	        }
+	        keeploop=false;
+	        if(bgmstatus==2)bgm.stop();
+	        //bgm.release();
+	        console.log("exited");
+	      }else game.resume();
+	    }
+      
     }, false);
-
-    function onBackKeyDown(){
-      game.stop();
-      navigator.notification.confirm(
-        'Deseja sair do jogo?', // message
-        onConfirm, // callback to invoke with index of button pressed
-        'Confirmar', // title
-        ['Cancelar','Sair'] // buttonLabels
-      );
-    }
-
-    function onConfirm(buttonIndex) {
-      if(buttonIndex == 2){
-        if (navigator && navigator.app) {
-          navigator.app.exitApp();
-          console.log("exiting app");
-        } else {
-          if (navigator && navigator.device) {
-            navigator.device.exitApp();
-            console.log("exiting device");
-          }
-        }
-        keeploop=false;
-        if(bgmstatus==2)bgm.stop();
-        //bgm.release();
-        console.log("exited");
-      }else game.resume();
-    }
+    
+    admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
+    admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP);
   }
   
 	// 7 - Start
