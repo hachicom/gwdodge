@@ -24,7 +24,9 @@ window.onload = function() {
                  'res/iglooSheet.png',
                  'res/mountain.png',
                  'res/groundSheet.png',
-                 'res/title.png');
+                 'res/title.png',
+                 'res/dpad.png',
+                 'res/font0_0.png');
   }else{
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
@@ -35,6 +37,8 @@ window.onload = function() {
                  'res/mountain.png',
                  'res/groundSheet.png',
                  'res/title.png',
+                 'res/dpad.png',
+                 'res/font0_0.png',
                  'res/hit.wav',
                  'res/jump.wav',
                  'res/fish.wav',
@@ -49,6 +53,7 @@ window.onload = function() {
 	// 6 - Once Game finishes loading
   game.onload = function() {
 		// 1 - Variables
+    enchant.bmfont.createFont('score', 'res/font0.fnt', game.assets['res/font0_0.png']);
     var scene;
     // 2 - New scene
     scene = new SceneTitle();
@@ -196,7 +201,7 @@ window.onload = function() {
   }
   
 	// 7 - Start
-	game.start();
+  game.start();
   //window.scrollTo(0, 1);
   
   // SceneGame  
@@ -221,34 +226,30 @@ window.onload = function() {
       //map.y = 315;
       map.image = game.assets['res/groundSheet.png'];
       map.loadData(arrMap1Top,arrMap1Sub);
-      
-      //UI
+            
+      //UI      
       // Label
-      label = new Label('SCORE<br>0');
+      label = new FontSprite('score', 112, 32, 'SCOREx1_0');
       label.x = 8;
       label.y = 0;
-      label.color = 'white';
-      label.font = '16px monospace';
-      label.textAlign = 'left';
-      label.backgroundColor = "rgba(0,0,0,0.6)";label.width = 304;label.height = 32;
       this.scoreLabel = label;
       //console.dir(label);
       
-      label2 = new Label('LEVEL<br>0');
-      label2.x = 220;
-      label2.y = 0;        
-      label2.color = 'white';
-      label2.font = '16px monospace';
-      //label2.textAlign = 'right';
-      this.debugLabel = label2;
+      label2 = new FontSprite('score', 80, 32, 'LEVEL_0');
+      label2.x = 240;
+      label2.y = 0;
+      this.levelLabel = label2;
       
-      label3 = new Label('FISH<br>0');
+      label3 = new FontSprite('score', 80, 32, 'FISH_0');
       label3.x = 120;
-      label3.y = 0;        
-      label3.color = 'white';
-      label3.font = '16px monospace';
-      //label2.textAlign = 'right';
+      label3.y = 0;
       this.coinsLabel = label3;
+      
+      dpad = new Sprite(242,96);
+      dpad.x = 160 - (dpad.width/2);
+      dpad.y = 400;
+      dpad.opacity = 0.5;
+      dpad.image = game.assets['res/dpad.png']; 
       
       // Penguin
       penguin = new Penguin(145,288);
@@ -297,16 +298,16 @@ window.onload = function() {
       }
       
       // 4 - Add child nodes        
-      //this.addChild(bg);
       this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
       this.addChild(yuki);
       this.addChild(iceGroup);
       this.addChild(fishGroup);
-      this.addChild(label);
-      this.addChild(label2);
       this.addChild(label3);
+      this.addChild(label2);
+      this.addChild(label);
+      this.addChild(dpad);
       
       // Touch listener
       this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
@@ -363,9 +364,9 @@ window.onload = function() {
     },
     
     update: function(evt) {
-      this.scoreLabel.text = 'SCORE X' + this.multiplier + '<BR>' + this.score;
-      this.coinsLabel.text = 'FISH<br>' + this.coins + '/' + this.levelUpAt; //+ '<br>' + this.generateFishTimer;
-      this.debugLabel.text = 'LEVEL<br>' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
+      this.scoreLabel.text = 'SCOREx' + this.multiplier + '_' + this.score;
+      this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt; //+ '<br>' + this.generateFishTimer;
+      this.levelLabel.text = 'LEVEL_  ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
       
       if(this.gotHit!=true && this.buying!=true){
         // Check if it's time to create a new set of obstacles
@@ -457,7 +458,7 @@ window.onload = function() {
           }else{
             this.bgm.stop();
           }
-          game.replaceScene(new SceneGameOver(this.score)); 
+          game.replaceScene(new SceneGameOver(this.scoreLabel.text,this.coinsLabel.text,this.levelLabel.text)); 
           //break;
         }
       }
@@ -517,18 +518,10 @@ window.onload = function() {
   
   // SceneGameOver  
   var SceneGameOver = Class.create(Scene, {
-    initialize: function(score) {
+    initialize: function(score,coin,level) {
       var gameOverLabel, scoreLabel;
       Scene.apply(this);    
       this.backgroundColor = '#000000';
-      
-      // Game Over label
-      gameOverLabel = new Label("FIM DE JOGO");
-      gameOverLabel.x = 8;
-      gameOverLabel.y = 98;
-      gameOverLabel.color = 'white';
-      gameOverLabel.font = '32px strong';
-      gameOverLabel.textAlign = 'center';
       
       // Background
       bg = new Sprite(320,128);
@@ -541,27 +534,35 @@ window.onload = function() {
       map.loadData(arrMap1Top,arrMap1Sub);
       
       // Score label
-      scoreLabel = new Label('SCORE<br>' + score);
-      scoreLabel.x = 9;
-      scoreLabel.y = 32;        
-      scoreLabel.color = 'white';
-      scoreLabel.font = '16px strong';
-      scoreLabel.textAlign = 'center';
-      scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
+      scoreLabel = new FontSprite('score', 112, 32, score);
+      scoreLabel.x = 8;
+      scoreLabel.y = 0;
+      
+      coinLabel = new FontSprite('score', 80, 32, coin);
+      coinLabel.x = 120;
+      coinLabel.y = 0;
+      
+      levelLabel = new FontSprite('score', 80, 32, level);
+      levelLabel.x = 240;
+      levelLabel.y = 0;
+            
+      // Game Over label
+      gameOverLabel = new FontSprite('score', 88, 32, "FIM DE JOGO");
+      gameOverLabel.x = 116;
+      gameOverLabel.y = 98;
       
       // Press Start label
-      PressStart = new Label("toque para jogar novamente");
-      PressStart.x = 8;
+      PressStart = new FontSprite('score', 208, 32, "toque para jogar novamente");
+      PressStart.x = 56;
       PressStart.y = 160;
-      PressStart.color = 'white';
-      PressStart.font = '20px strong';
-      PressStart.textAlign = 'center';
       
       // Add labels
       //this.addChild(bg);
       this.addChild(map);
       this.addChild(gameOverLabel);
       this.addChild(scoreLabel);
+      this.addChild(coinLabel);
+      this.addChild(levelLabel);
       this.addChild(PressStart);
       
       // Listen for taps
@@ -595,28 +596,22 @@ window.onload = function() {
       map.loadData(arrMap1Top,arrMap1Sub);
       
       // Title label
-      TitleLabel = new Label("ICEFALL");
-      TitleLabel.x = 8;
+      TitleLabel = new FontSprite('score', 112, 8, "");
+      TitleLabel.x = 132;
       TitleLabel.y = 198;
-      TitleLabel.color = 'white';
-      TitleLabel.font = '32px system';
-      TitleLabel.textAlign = 'center';
+      TitleLabel.text = "ICEFALL";
       
       // Press Start label
-      PressStart = new Label("toque para iniciar");
-      PressStart.x = 8;
+      PressStart = new FontSprite('score', 144, 8, "");
+      PressStart.x = 88;
       PressStart.y = 264;
-      PressStart.color = 'white';
-      PressStart.font = '20px system';
-      PressStart.textAlign = 'center';
+      PressStart.text = "TOQUE PARA INICIAR";
       
       // Copyright label
-      copyright = new Label("© 2015 HACHICOM");
-      copyright.x = 8;
+      copyright = new FontSprite('score', 128, 8, "");
+      copyright.x = 96;
       copyright.y = 390;
-      copyright.color = 'white';
-      copyright.font = '20px system';
-      copyright.textAlign = 'center';
+      copyright.text = "© 2015 HACHICOM";
       
       // Hiscore label
       scoreLabel = new Label('HISCORE: ' + score);
