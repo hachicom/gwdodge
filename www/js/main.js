@@ -42,66 +42,6 @@ window.onload = function() {
                  'res/powerup.wav',
                  'res/bgm.mp3');
   }
-               
-  if( isAndroid ) {
-    var bgmstatus = 0;
-    var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
-      function() {
-        if(keeploop==true) this.play();
-      },
-      function(err) {
-        alert(JSON.stringify(err));
-      },
-      function(status){
-      	 bgmstatus=status; console.log(bgmstatus);
-      }
-    );
-    
-    var hit = new Media("file:///android_asset/www/res/hit.wav",
-      function() {
-        //alert("Audio Success");
-      },
-      function(err) {
-        alert(JSON.stringify(err));
-      }
-    );
-    
-    var coin = new Media("file:///android_asset/www/res/fish.wav",
-      function() {
-        //alert("Audio Success");
-      },
-      function(err) {
-        alert(JSON.stringify(err));
-      }
-    );
-    
-    var crash = new Media("file:///android_asset/www/res/break.wav",
-      function() {
-        //alert("Audio Success");
-      },
-      function(err) {
-        alert(JSON.stringify(err));
-      }
-    );
-    
-    var powerup = new Media("file:///android_asset/www/res/powerup.wav",
-      function() {
-        //alert("Audio Success");
-      },
-      function(err) {
-        alert(JSON.stringify(err));
-      }
-    );
-    
-    jumpSnd = new Media("file:///android_asset/www/res/jump.wav",
-      function() {
-        //alert("Audio Success");
-      },
-      function(err) {
-        alert(JSON.stringify(err));
-      }
-    );
-  }
   
 	// 5 - Game settings
 	game.fps = 30;
@@ -119,6 +59,64 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
+      var bgmstatus = 0;
+	    var bgm = new Media("file:///android_asset/www/res/bgm.mp3",
+	      function() {
+	        if(keeploop==true) this.play();
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      },
+	      function(status){
+	      	 bgmstatus=status;
+	      }
+	    );
+	    
+	    var hit = new Media("file:///android_asset/www/res/hit.wav",
+	      function() {
+	        //alert("Audio Success");
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      }
+	    );
+	    
+	    var coin = new Media("file:///android_asset/www/res/fish.wav",
+	      function() {
+	        //alert("Audio Success");
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      }
+	    );
+	    
+	    var crash = new Media("file:///android_asset/www/res/break.wav",
+	      function() {
+	        //alert("Audio Success");
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      }
+	    );
+	    
+	    var powerup = new Media("file:///android_asset/www/res/powerup.wav",
+	      function() {
+	        //alert("Audio Success");
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      }
+	    );
+	    
+	    jumpSnd = new Media("file:///android_asset/www/res/jump.wav",
+	      function() {
+	        //alert("Audio Success");
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      }
+	    );
+      
       document.addEventListener("pause", function() {
         keeploop=false;
         if(bgmstatus==2)bgm.pause();
@@ -161,7 +159,6 @@ window.onload = function() {
       
       admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
       admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP);
-        
     }, false);
 
     function onBackKeyDown(){
