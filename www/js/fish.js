@@ -27,7 +27,7 @@ var Fish = Class.create(Sprite, {
     this.rotation = Math.floor( Math.random() * 360 );
   },
   
-  update: function(evt) { 
+  update: function(evt) {
     var ySpeed, game;
    
     game = Game.instance;
@@ -43,7 +43,8 @@ var Fish = Class.create(Sprite, {
         if(this.rotationTime <= 0){
           this.y += this.ySpeed + level;
           if (this.y > game.height && this.ascending===false) {
-            this.parentNode.removeChild(this);        
+            this.parentNode.parentNode.multiplier=1;  
+            this.parentNode.removeChild(this);           
           }
         }
       }

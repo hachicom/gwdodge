@@ -229,21 +229,25 @@ window.onload = function() {
             
       //UI      
       // Label
-      label = new FontSprite('score', 112, 32, 'SCOREx1_0');
+      label = new FontSprite('score', 128, 32, 'SCOREx1_0');
       label.x = 8;
       label.y = 0;
       this.scoreLabel = label;
-      //console.dir(label);
-      
-      label2 = new FontSprite('score', 80, 32, 'LEVEL_0');
-      label2.x = 240;
-      label2.y = 0;
-      this.levelLabel = label2;
       
       label3 = new FontSprite('score', 80, 32, 'FISH_0');
-      label3.x = 120;
+      label3.x = 170;
       label3.y = 0;
       this.coinsLabel = label3;
+      
+      label2 = new FontSprite('score', 80, 32, 'LVL_0');
+      label2.x = 270;
+      label2.y = 32;
+      this.levelLabel = label2;
+      
+      label4 = new FontSprite('score', 256, 32, 'COLETE 4 PEIXES!');
+      label4.x = 32;
+      label4.y = 140;
+      this.msgLabel = label4;
       
       dpad = new Sprite(242,96);
       dpad.x = 160 - (dpad.width/2);
@@ -269,6 +273,7 @@ window.onload = function() {
       this.fishGroup = fishGroup;
       
       // Instance variables
+      this.startLevelMsg = 1.5;
       this.generateIceTimer = 0;
       this.cubesGenerated = 0;
       this.generateFishTimer = 0;
@@ -307,6 +312,7 @@ window.onload = function() {
       this.addChild(label3);
       this.addChild(label2);
       this.addChild(label);
+      this.addChild(label4);
       this.addChild(dpad);
       
       // Touch listener
@@ -366,9 +372,17 @@ window.onload = function() {
     update: function(evt) {
       this.scoreLabel.text = 'SCOREx' + this.multiplier + '_' + this.score;
       this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt; //+ '<br>' + this.generateFishTimer;
-      this.levelLabel.text = 'LEVEL_  ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
+      this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
       
       if(this.gotHit!=true && this.buying!=true){
+        // Deal with start message        
+        if(this.startLevelMsg>0) {
+          this.startLevelMsg-=evt.elapsed * 0.001;
+          this.msgLabel.text = 'COLETE ' + this.levelUpAt + ' PEIXES!';
+        }
+        else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_PARA A YUKI!!!';
+        else this.msgLabel.text = '';
+      
         // Check if it's time to create a new set of obstacles
         if(this.level<3) this.generateIceTimer += 2;
         else this.generateIceTimer += 2 + (this.level - 2);
@@ -438,7 +452,8 @@ window.onload = function() {
               game.assets['res/fish.wav'].play();
             }
             this.setScore(1);
-            this.setCoins(1);
+            this.setCoins(1);            
+            if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
             this.fishGroup.removeChild(fish);
             break;
           }
@@ -458,7 +473,7 @@ window.onload = function() {
           }else{
             this.bgm.stop();
           }
-          game.replaceScene(new SceneGameOver(this.scoreLabel.text,this.coinsLabel.text,this.levelLabel.text)); 
+          game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel)); 
           //break;
         }
       }
@@ -479,16 +494,21 @@ window.onload = function() {
         if(this.buyDuration >= 2){
           //this.iceGroup.removeChild(ice);
           //game.resume();
+          for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
+            var fish;
+            fish = this.fishGroup.childNodes[i];
+            this.fishGroup.removeChild(fish);
+          }
           this.buying=false; 
           this.penguin.shopping(false);
           this.buyDuration = 0;
           if (this.penguin.lane==2) {
-            this.setScore((2*this.levelUpAt));
-            this.multiplier=this.multiplier * 2;            
+            this.setScore((3*this.levelUpAt));           
             this.incLevelUp();
           }
           this.yuki.smile(this.coins);
           this.yuki.price = this.igloo.price = this.levelUpAt;
+          this.startLevelMsg = 1.5;
           //break;
         }
       }
@@ -534,27 +554,16 @@ window.onload = function() {
       map.loadData(arrMap1Top,arrMap1Sub);
       
       // Score label
-      scoreLabel = new FontSprite('score', 112, 32, score);
-      scoreLabel.x = 8;
-      scoreLabel.y = 0;
-      
-      coinLabel = new FontSprite('score', 80, 32, coin);
-      coinLabel.x = 120;
-      coinLabel.y = 0;
-      
-      levelLabel = new FontSprite('score', 80, 32, level);
-      levelLabel.x = 240;
-      levelLabel.y = 0;
+      scoreLabel = score;
+      coinLabel = coin;
+      levelLabel = level;
             
       // Game Over label
-      gameOverLabel = new FontSprite('score', 88, 32, "FIM DE JOGO");
-      gameOverLabel.x = 116;
+      gameOverLabel = new FontSprite('score', 176, 16, "FIM DE JOGO");
+      gameOverLabel.x = 72;
       gameOverLabel.y = 98;
       
-      // Press Start label
-      PressStart = new FontSprite('score', 208, 32, "toque para jogar novamente");
-      PressStart.x = 56;
-      PressStart.y = 160;
+      this.timeToRestart = 0;
       
       // Add labels
       //this.addChild(bg);
@@ -563,16 +572,24 @@ window.onload = function() {
       this.addChild(scoreLabel);
       this.addChild(coinLabel);
       this.addChild(levelLabel);
-      this.addChild(PressStart);
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);
+      // Update
+      this.addEventListener(Event.ENTER_FRAME, this.update);
     },
     
     touchToRestart: function(evt) {
-      console.log("restart");
       var game = Game.instance;
-      game.replaceScene(new SceneGame());
+      game.replaceScene(new SceneTitle(0));
+    },
+    
+    update: function(evt){
+      this.timeToRestart += evt.elapsed * 0.001;
+      if(this.timeToRestart>=3){
+        var game = Game.instance;
+        game.replaceScene(new SceneTitle(0));        
+      }
     }
   });
 
@@ -596,22 +613,19 @@ window.onload = function() {
       map.loadData(arrMap1Top,arrMap1Sub);
       
       // Title label
-      TitleLabel = new FontSprite('score', 112, 8, "");
-      TitleLabel.x = 132;
+      TitleLabel = new FontSprite('score', 112, 16, "ICEFALL");
+      TitleLabel.x = 104;
       TitleLabel.y = 198;
-      TitleLabel.text = "ICEFALL";
       
       // Press Start label
-      PressStart = new FontSprite('score', 144, 8, "");
-      PressStart.x = 88;
+      PressStart = new FontSprite('score', 288, 16, "TOQUE PARA INICIAR");
+      PressStart.x = 16;
       PressStart.y = 264;
-      PressStart.text = "TOQUE PARA INICIAR";
       
       // Copyright label
-      copyright = new FontSprite('score', 128, 8, "");
-      copyright.x = 96;
+      copyright = new FontSprite('score', 240, 16, "© 2015 HACHICOM");
+      copyright.x = 40;
       copyright.y = 390;
-      copyright.text = "© 2015 HACHICOM";
       
       // Hiscore label
       scoreLabel = new Label('HISCORE: ' + score);
@@ -624,17 +638,16 @@ window.onload = function() {
       
       // Add labels  
       this.addChild(title);
-      this.addChild(map);
+      //this.addChild(map);
       this.addChild(copyright);
       this.addChild(TitleLabel); 
       this.addChild(PressStart);
       
       // Listen for taps
-      this.addEventListener(Event.TOUCH_START, this.touchToRestart);
+      this.addEventListener(Event.TOUCH_START, this.touchToStart);
     },
     
-    touchToRestart: function(evt) {
-      console.log("restart");
+    touchToStart: function(evt) {
       var game = Game.instance;
       game.replaceScene(new SceneGame());
     }
