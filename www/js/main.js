@@ -229,14 +229,14 @@ window.onload = function() {
             
       //UI      
       // Label
-      label = new FontSprite('score', 128, 32, 'SCOREx1_0');
+      label = new FontSprite('score', 128, 32, 'SCx1 0');
       label.x = 8;
       label.y = 0;
       this.scoreLabel = label;
       
-      label3 = new FontSprite('score', 80, 32, 'FISH_0');
+      label3 = new FontSprite('score', 96, 32, 'FISH_0');
       label3.x = 170;
-      label3.y = 0;
+      label3.y = 32;
       this.coinsLabel = label3;
       
       label2 = new FontSprite('score', 80, 32, 'LVL_0');
@@ -284,12 +284,16 @@ window.onload = function() {
       this.multiplier = 1;
       this.coins = 0;
       this.level = 0;
+      this.levelcalc = this.level;
       this.levelUpAt = levelUpAt;
       this.iceTimer = 320;
       this.gotHit = false;
       this.hitDuration = 0;
       this.buying = false;
       this.buyDuration = 0; 
+      this.sabbath = 0;
+      this.bonusMode = false;
+      this.bonusDuration = 0; 
       
       // Background music
       if( isAndroid ) {
@@ -362,48 +366,56 @@ window.onload = function() {
     
     incLevelUp: function(){
       this.level = this.level+1;
-      this.levelUpAt = nextLevelUp(this.level);
-      if(this.level<3){
-        this.iceTimer = this.iceTimer/2;
+      if(this.level%2==0){
         this.fishTimerExp = this.fishTimerExp/2;
+        if (this.fishTimerExp <=5) this.fishTimerExp=5;
       }
+      if(this.level%7==0){
+        this.sabbath++;
+        this.iceTimer = this.iceTimer/2;
+        this.levelUpAt = 1;
+        this.fishTimerExp = 20 - (2*this.sabbath);
+        this.bonusMode = true;
+      }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
     },
     
     update: function(evt) {
-      this.scoreLabel.text = 'SCOREx' + this.multiplier + '_' + this.score;
+      this.scoreLabel.text = 'SCx' + this.multiplier + ' ' + this.score;
       this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt; //+ '<br>' + this.generateFishTimer;
       this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
       
-      if(this.gotHit!=true && this.buying!=true){
+      if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
         // Deal with start message        
         if(this.startLevelMsg>0) {
           this.startLevelMsg-=evt.elapsed * 0.001;
-          this.msgLabel.text = 'COLETE ' + this.levelUpAt + ' PEIXES!';
+          this.msgLabel.text = '    ROUND '+ this.level +'_COLETE ' + this.levelUpAt + ' PEIXES!';
         }
-        else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_PARA A YUKI!!!';
+        else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
         else this.msgLabel.text = '';
       
         // Check if it's time to create a new set of obstacles
-        if(this.level<3) this.generateIceTimer += 2;
-        else this.generateIceTimer += 2 + (this.level - 2);
-        if (this.generateIceTimer >= this.iceTimer) {
-          var ice;
-          this.generateIceTimer = 0;
-          //this.cubesGenerated += 1;
-          //this.cubesGenerated = 0;
-          ice = new Ice(Math.floor(Math.random()*3),this.level);
-          this.iceGroup.addChild(ice);
-        }
-        
-        // Check if it's time to make fish jump
-        this.generateFishTimer += 1;
-        if (this.generateFishTimer >= this.fishTimer) {
-          var ice;
-          this.generateFishTimer = 0;
-          //this.cubesGenerated += 1;
-          fish = new Fish(Math.floor(Math.random()*3),this.level);
-          this.fishGroup.addChild(fish);
-          this.fishTimer = getRandom(3,6)*this.fishTimerExp;
+        if(this.startLevelMsg<=0) {
+          this.levelcalc = this.level - (this.sabbath * 5);
+          
+          if(this.levelcalc<3) this.generateIceTimer += 2;
+          else this.generateIceTimer += 2 + (this.levelcalc - 2);
+          if (this.generateIceTimer >= this.iceTimer) {
+            var ice;
+            this.generateIceTimer = 0;
+            //this.cubesGenerated += 1;
+            ice = new Ice(Math.floor(Math.random()*3),this.levelcalc);
+            this.iceGroup.addChild(ice);
+          }
+          
+          // Check if it's time to make fish jump
+          this.generateFishTimer += 1;
+          if (this.generateFishTimer >= this.fishTimer) {
+            var ice;
+            this.generateFishTimer = 0;
+            fish = new Fish(Math.floor(Math.random()*3),this.levelcalc);
+            this.fishGroup.addChild(fish);
+            this.fishTimer = getRandom(3,6)*this.fishTimerExp;
+          }
         }
       
         // Check collision
@@ -452,7 +464,7 @@ window.onload = function() {
               game.assets['res/fish.wav'].play();
             }
             this.setScore(1);
-            this.setCoins(1);            
+            this.setCoins(1);
             if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
             this.fishGroup.removeChild(fish);
             break;
@@ -513,6 +525,25 @@ window.onload = function() {
         }
       }
       
+      // Bonus Stage Mode
+      if(this.bonusMode == true){
+        // Deal with start message        
+        if(this.startLevelMsg>0) {
+          this.startLevelMsg-=evt.elapsed * 0.001;
+          this.msgLabel.text = '  BONUS ROUND_RELAXA É SÁBADO';
+        }else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
+        else this.msgLabel.text = '';
+        this.bonusDuration += evt.elapsed * 0.001; 
+        if(this.bonusDuration >=5) {
+          this.bonusMode = false;
+          this.incLevelUp();
+          this.yuki.smile(this.coins);
+          this.yuki.price = this.igloo.price = this.levelUpAt;
+          this.startLevelMsg = 1.5;
+          this.bonusDuration = 0; 
+        }
+      }
+      
       // Loop BGM
       if( isAndroid ) {
         //if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
@@ -561,7 +592,7 @@ window.onload = function() {
       // Game Over label
       gameOverLabel = new FontSprite('score', 176, 16, "FIM DE JOGO");
       gameOverLabel.x = 72;
-      gameOverLabel.y = 98;
+      gameOverLabel.y = 140;
       
       this.timeToRestart = 0;
       

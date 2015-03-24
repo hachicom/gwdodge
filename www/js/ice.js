@@ -40,7 +40,7 @@ var Ice = Class.create(Sprite, {
     var game,level;
    
     game = Game.instance;
-    level = this.parentNode.parentNode.level;
+    level = this.parentNode.parentNode.levelcalc;
     if(level<3) level=0;
     else level-=2;
    

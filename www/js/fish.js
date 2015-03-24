@@ -31,7 +31,7 @@ var Fish = Class.create(Sprite, {
     var ySpeed, game;
    
     game = Game.instance;
-    level = this.parentNode.parentNode.level;
+    level = this.parentNode.parentNode.levelcalc;
    
     if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
       //Dealing with movement

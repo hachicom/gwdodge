@@ -2,8 +2,11 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function nextLevelUp(level){
-  return Math.round( 0.04 * (Math.pow(level , 3)) + 0.8 * (Math.pow(level,2)) + 2 * level) + 2;
+function nextLevelUp(level,sabbath){
+  levelcalc = level - (sabbath * 7);
+  nextvalret = Math.round((( 0.04 * (Math.pow(levelcalc , 3)) + 0.8 * (Math.pow(levelcalc,2)) + 2 * levelcalc))/2)+ 4 + sabbath;
+  if(nextvalret>99) nextvalret=99;
+  return nextvalret;
 }
 
 function isMobile(){
