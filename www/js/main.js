@@ -1,4 +1,5 @@
 var keeploop = true;
+var hiscore = 500;
 var jumpSnd, bgmstatus, bgm, hit, coin, crash, powerup;
 var isAndroid = isMobile();
 
@@ -231,24 +232,29 @@ window.onload = function() {
             
       //UI      
       // Label
-      label = new FontSprite('score', 128, 32, 'SCx1 0');
+      label = new FontSprite('score', 128, 32, 'SC 0');
       label.x = 8;
       label.y = 0;
       this.scoreLabel = label;
       
+      label6 = new FontSprite('score', 128, 16, 'TOP 0');
+      label6.x = 160;
+      label6.y = 0;
+      this.hiscoreLabel = label6;
+      
       label5 = new FontSprite('score', 96, 32, 'SNOW_ 3');
       label5.x = 110;
-      label5.y = 32;
+      label5.y = 24;
       this.livesLabel = label5;
       
       label3 = new FontSprite('score', 96, 32, 'FISH_0');
       label3.x = 190;
-      label3.y = 32;
+      label3.y = 24;
       this.coinsLabel = label3;
       
       label2 = new FontSprite('score', 80, 32, 'LVL_0');
       label2.x = 270;
-      label2.y = 32;
+      label2.y = 24;
       this.levelLabel = label2;
       
       label4 = new FontSprite('score', 256, 32, 'COLETE 4 PEIXES!');
@@ -258,7 +264,7 @@ window.onload = function() {
       
       dpad = new Sprite(242,96);
       dpad.x = 160 - (dpad.width/2);
-      dpad.y = 400;
+      dpad.y = game.height - dpad.height - 60;
       dpad.opacity = 0.5;
       dpad.image = game.assets['res/dpad.png']; 
       
@@ -283,13 +289,14 @@ window.onload = function() {
       this.heartGroup = heartGroup;
       
       // Instance variables
+      this.paused = false;
       this.startLevelMsg = 1.5;
       this.generateIceTimer = 0;
       this.generateFishTimer = 0;
       this.fishTimerExp = 20;
       this.heartTimer = 30;
       this.fishTimer = getRandom(3,6)*this.fishTimerExp;
-      this.scoreTimer = 0;
+      this.lives = 3;
       this.score = 0;
       this.multiplier = 1;
       this.coins = 0;
@@ -331,6 +338,7 @@ window.onload = function() {
       this.addChild(label);
       this.addChild(label4);
       this.addChild(label5);
+      this.addChild(label6);
       this.addChild(dpad);
       
       // Touch listener
@@ -341,35 +349,47 @@ window.onload = function() {
     
     handleTouchControl: function (evt) {
       var playSnd, lane;
-      if(this.gotHit!=true && this.buying!=true && this.startLevelMsg<=0){
-        if(evt.x > game.width/2) lane=1;
-        else lane=-1;
-        
-        //Verifica a posição do pinguim e dependendo do caso dispara um som
-        playSnd = this.penguin.switchToLaneNumber(lane,this.igloo.isLit,this.yuki.isThere);
-        if (playSnd=='jump') { //apenas moveu o pinguim
-          if( isAndroid ){
-            jumpSnd.seekTo(1);
-            jumpSnd.play();
-          }else{
-            this.jumpSnd.play();
+      if(evt.y>=game.height/2){
+        if(this.gotHit!=true && this.buying!=true && this.startLevelMsg<=0){
+          if(evt.x > game.width/2) lane=1;
+          else lane=-1;
+          
+          //Verifica a posição do pinguim e dependendo do caso dispara um som
+          playSnd = this.penguin.switchToLaneNumber(lane,this.igloo.isLit,this.yuki.isThere);
+          if (playSnd=='jump') { //apenas moveu o pinguim
+            if( isAndroid ){
+              jumpSnd.seekTo(1);
+              jumpSnd.play();
+            }else{
+              this.jumpSnd.play();
+            }
+          }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
+            if( isAndroid ) {
+              powerup.play();
+            }else{
+              game.assets['res/powerup.wav'].play();
+            }
+            this.buying=true;
+            this.setCoins(this.levelUpAt*(-1));
           }
-        }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
-          if( isAndroid ) {
-            powerup.play();
-          }else{
-            game.assets['res/powerup.wav'].play();
-          }
-          this.buying=true;
-          this.setCoins(this.levelUpAt*(-1));
+        }
+      }else {
+        if(this.paused == false) {
+          this.paused = true;
+          //game.stop();
+        }else {
+          this.paused = false;
+          //game.resume();
         }
       }
       evt.stopPropagation();
       evt.preventDefault();
     },
     
-    setScore: function (value) {
-      this.score = this.score + (value * this.multiplier);
+    setScore: function (value,multi) {
+      if (multi) this.score = this.score + (value * this.multiplier);
+      else this.score = this.score + value;
+      if (this.score >= hiscore) hiscore = this.score;
     },
     
     setCoins: function (value) {
@@ -400,9 +420,11 @@ window.onload = function() {
     },
     
     update: function(evt) {
-      this.scoreLabel.text = 'SCx' + this.multiplier + ' ' + this.score;
+      this.scoreLabel.text = 'SC ' + this.score + '_x' + this.multiplier;
       this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
       this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
+      this.livesLabel.text = 'SNOW_ ' + this.lives;
+      this.hiscoreLabel.text = 'TOP '+hiscore;
       if(this.bonusMode == true) this.coinsLabel.text = '';
       
       if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
@@ -486,7 +508,7 @@ window.onload = function() {
             }else{
               game.assets['res/fish.wav'].play();
             }
-            this.setScore(1);
+            this.setScore(1,true);
             this.setCoins(1);
             if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
             this.fishGroup.removeChild(fish);
@@ -502,14 +524,31 @@ window.onload = function() {
         if(this.hitDuration >= 1.5){
           //this.iceGroup.removeChild(ice);
           //game.resume();
-          if( isAndroid ) {        
-            keeploop = false; 
-            bgm.stop();
+          if(this.lives==0){
+            if( isAndroid ) {
+              keeploop = false; 
+              bgm.stop();
+            }else{
+              this.bgm.stop();
+            }
+            game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel)); 
           }else{
-            this.bgm.stop();
+            this.gotHit=false;
+            this.hitDuration=0;
+            this.lives-=1;
+            this.multiplier=1;
+            for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
+              var ice;
+              ice = this.iceGroup.childNodes[i];
+              this.iceGroup.removeChild(ice);
+            }
+            for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
+              var fish;
+              fish = this.fishGroup.childNodes[i];
+              this.fishGroup.removeChild(fish);
+            }
+            this.penguin.resetPosition();
           }
-          game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel)); 
-          //break;
         }
       }
       
@@ -538,7 +577,7 @@ window.onload = function() {
           this.penguin.shopping(false);
           this.buyDuration = 0;
           if (this.penguin.lane==2) {
-            this.setScore((3*this.levelUpAt));           
+            this.setScore((10*this.levelUpAt),true);           
             this.incLevelUp();
           }
           this.yuki.smile(this.coins);
@@ -554,8 +593,8 @@ window.onload = function() {
         // Deal with start message        
         if(this.startLevelMsg>0) {
           this.startLevelMsg-=evt.elapsed * 0.001;
-          this.msgLabel.text = '  BONUS ROUND_RELAXA É SÁBADO!';
-        }else this.msgLabel.text = 'CORAçÕES: '+this.hearts;
+          this.msgLabel.text = '    ROUND '+ this.level +'_  BONUS ROUND';
+        }else this.msgLabel.text = ' CORAçÕES: '+this.hearts;
         
         // Check if it's time to make hearts
         if(this.startLevelMsg<=0) {
@@ -583,7 +622,7 @@ window.onload = function() {
             }else{
               game.assets['res/fish.wav'].play();
             }
-            this.score+=2;
+            //this.setScore(2,false);
             this.setHearts(1);
             this.heartGroup.removeChild(heart);
             break;
@@ -593,7 +632,7 @@ window.onload = function() {
         if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
           this.bonusDuration += evt.elapsed * 0.001; 
           if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 500pts';
-          else this.msgLabel.text += '_BONUS '+10*this.hearts + 'pts';
+          else this.msgLabel.text += 'x10_BONUS '+10*this.hearts + 'pts';
           this.penguin.movable = false;
           this.penguin.lane = 2;
           this.penguin.shopping(true);
@@ -601,7 +640,7 @@ window.onload = function() {
           
         if(this.bonusDuration >=5) {
           if(this.hearts==this.levelUpAt)this.score+=500;
-          else this.score+=(10*this.hearts);
+          else this.setScore(10*this.hearts,false);
           
           this.bonusMode = false;
           this.incLevelUp();
@@ -642,7 +681,7 @@ window.onload = function() {
   
   // SceneGameOver  
   var SceneGameOver = Class.create(Scene, {
-    initialize: function(score,coin,level) {
+    initialize: function(score,coin,level,life,hiscore) {
       var gameOverLabel, scoreLabel;
       Scene.apply(this);    
       this.backgroundColor = '#000000';
@@ -661,6 +700,8 @@ window.onload = function() {
       scoreLabel = score;
       coinLabel = coin;
       levelLabel = level;
+      livesLabel = life;
+      hiscoreLabel = hiscore;
             
       // Game Over label
       gameOverLabel = new FontSprite('score', 176, 16, "FIM DE JOGO");
@@ -676,6 +717,8 @@ window.onload = function() {
       this.addChild(scoreLabel);
       this.addChild(coinLabel);
       this.addChild(levelLabel);
+      this.addChild(livesLabel);
+      this.addChild(hiscoreLabel);
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);
@@ -716,6 +759,16 @@ window.onload = function() {
       map.image = game.assets['res/groundSheet.png'];
       map.loadData(arrMap1Top,arrMap1Sub);
       
+      label = new FontSprite('score', 128, 16, 'SC 0');
+      label.x = 8;
+      label.y = 0;
+      this.scoreLabel = label;
+      
+      label6 = new FontSprite('score', 128, 16, 'TOP '+hiscore);
+      label6.x = 160;
+      label6.y = 0;
+      this.hiscoreLabel = label6;
+      
       // Title label
       TitleLabel = new FontSprite('score', 112, 16, "ICEFALL");
       TitleLabel.x = 104;
@@ -729,7 +782,7 @@ window.onload = function() {
       // Copyright label
       copyright = new FontSprite('score', 240, 16, "© 2015 HACHICOM");
       copyright.x = 40;
-      copyright.y = 390;
+      copyright.y = game.height - 16 - 60;
       
       // Hiscore label
       scoreLabel = new Label('HISCORE: ' + score);
@@ -746,6 +799,8 @@ window.onload = function() {
       this.addChild(copyright);
       this.addChild(TitleLabel); 
       this.addChild(PressStart);
+      this.addChild(label);
+      this.addChild(label6);
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToStart);

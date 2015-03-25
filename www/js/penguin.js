@@ -66,6 +66,11 @@ var Penguin = Class.create(Sprite, {
     this.lane=1;
     this.x = this.positions[1];
     this.nextpos = this.positions[1];
+    this.frame = 0;
+    this.iniFrame = 0;
+    this.endFrame = 1;
+    this.animationDuration = 0;
+    this.animationSpeed = 0.25;
   },
   
   gotHit: function(lane){     
