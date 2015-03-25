@@ -11,6 +11,7 @@ var Penguin = Class.create(Sprite, {
       this.movespeed = 30
       this.x = x;
       this.y = y;
+      this.movable = true;
     
       // 2 - Animate
       this.frame = 0;
@@ -40,6 +41,7 @@ var Penguin = Class.create(Sprite, {
   },
   
   switchToLaneNumber: function(lane,isLit,isThere){
+    if (!this.movable) return false;
     if(this.x==this.nextpos){
       playsnd = 'jump';
       this.lane = this.lane + lane;
@@ -58,6 +60,12 @@ var Penguin = Class.create(Sprite, {
       this.nextpos = this.positions[this.lane];
       return playsnd;
     }
+  },
+  
+  resetPosition: function(){
+    this.lane=1;
+    this.x = this.positions[1];
+    this.nextpos = this.positions[1];
   },
   
   gotHit: function(lane){     

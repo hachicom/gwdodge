@@ -86,6 +86,11 @@ var Yuki = Class.create(Sprite, {
       this.endFrame = 0;
     }
   },
+  
+  giveHeart: function(vx){
+    var heart = new Heart(this.x,this.y,vx);
+    return heart;
+  },
     
   update: function(evt) { 
     this.animationDuration += evt.elapsed * 0.001;       
@@ -94,5 +99,37 @@ var Yuki = Class.create(Sprite, {
       else this.frame = this.iniFrame;
       this.animationDuration = 0;
     }
+  }
+});
+
+// Heart Collectible
+var Heart = Class.create(Sprite, {
+  // The obstacle that the penguin must avoid
+  initialize: function(x,y,vx) {
+    // Call superclass constructor
+    Sprite.apply(this,[32, 32]);
+    this.image  = Game.instance.assets['res/heart.png'];      
+    this.rotationSpeed = Math.random() * 100 - 50;
+    this.ySpeed = -10;
+    this.yAccel = 0.3;
+    this.x = x;
+    this.y = y;
+    this.xSpeed = vx;
+    this.addEventListener(Event.ENTER_FRAME, this.update);
+  },
+  
+  update: function(evt) { 
+    var game;
+   
+    game = Game.instance;
+    
+    this.ySpeed += this.yAccel;
+    this.y += this.ySpeed;
+    this.x += this.xSpeed;
+    //this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
+    if (this.y > game.height) {
+      this.parentNode.removeChild(this);        
+    }
+
   }
 });

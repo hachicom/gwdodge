@@ -43,7 +43,8 @@ var Fish = Class.create(Sprite, {
         if(this.rotationTime <= 0){
           this.y += this.ySpeed + level;
           if (this.y > game.height && this.ascending===false) {
-            this.parentNode.parentNode.multiplier=1;  
+            if(this.parentNode.parentNode.coins != this.parentNode.parentNode.levelUpAt) 
+              this.parentNode.parentNode.multiplier=1;  
             this.parentNode.removeChild(this);           
           }
         }

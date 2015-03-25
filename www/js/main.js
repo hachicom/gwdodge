@@ -19,6 +19,7 @@ window.onload = function() {
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
                  'res/IceFrag.png',
+                 'res/heart.png',
                  'res/fishSheet.png',
                  'res/yukiSheet.png',
                  'res/iglooSheet.png',
@@ -31,6 +32,7 @@ window.onload = function() {
     game.preload('res/penguinSheet.png',
                  'res/Ice.png',
                  'res/IceFrag.png',
+                 'res/heart.png',
                  'res/fishSheet.png',
                  'res/yukiSheet.png',
                  'res/iglooSheet.png',
@@ -234,8 +236,13 @@ window.onload = function() {
       label.y = 0;
       this.scoreLabel = label;
       
+      label5 = new FontSprite('score', 96, 32, 'SNOW_ 3');
+      label5.x = 110;
+      label5.y = 32;
+      this.livesLabel = label5;
+      
       label3 = new FontSprite('score', 96, 32, 'FISH_0');
-      label3.x = 170;
+      label3.x = 190;
       label3.y = 32;
       this.coinsLabel = label3;
       
@@ -271,19 +278,23 @@ window.onload = function() {
       // Fish group
       fishGroup = new Group();
       this.fishGroup = fishGroup;
+      // Heart group
+      heartGroup = new Group();
+      this.heartGroup = heartGroup;
       
       // Instance variables
       this.startLevelMsg = 1.5;
       this.generateIceTimer = 0;
-      this.cubesGenerated = 0;
       this.generateFishTimer = 0;
       this.fishTimerExp = 20;
+      this.heartTimer = 30;
       this.fishTimer = getRandom(3,6)*this.fishTimerExp;
       this.scoreTimer = 0;
       this.score = 0;
       this.multiplier = 1;
       this.coins = 0;
-      this.level = 0;
+      this.hearts = 0;
+      this.level = 1; //LEVEL SELECT
       this.levelcalc = this.level;
       this.levelUpAt = levelUpAt;
       this.iceTimer = 320;
@@ -294,6 +305,7 @@ window.onload = function() {
       this.sabbath = 0;
       this.bonusMode = false;
       this.bonusDuration = 0; 
+      this.heartsGenerated = 0;
       
       // Background music
       if( isAndroid ) {
@@ -313,10 +325,12 @@ window.onload = function() {
       this.addChild(yuki);
       this.addChild(iceGroup);
       this.addChild(fishGroup);
+      this.addChild(heartGroup);
       this.addChild(label3);
       this.addChild(label2);
       this.addChild(label);
       this.addChild(label4);
+      this.addChild(label5);
       this.addChild(dpad);
       
       // Touch listener
@@ -327,7 +341,7 @@ window.onload = function() {
     
     handleTouchControl: function (evt) {
       var playSnd, lane;
-      if(this.gotHit!=true && this.buying!=true){
+      if(this.gotHit!=true && this.buying!=true && this.startLevelMsg<=0){
         if(evt.x > game.width/2) lane=1;
         else lane=-1;
         
@@ -364,6 +378,10 @@ window.onload = function() {
       this.yuki.smile(this.coins);
     },
     
+    setHearts: function (value) {
+      this.hearts = this.hearts + value;
+    },
+    
     incLevelUp: function(){
       this.level = this.level+1;
       if(this.level%2==0){
@@ -373,16 +391,19 @@ window.onload = function() {
       if(this.level%7==0){
         this.sabbath++;
         this.iceTimer = this.iceTimer/2;
-        this.levelUpAt = 1;
+        if (this.iceTimer <=80) this.iceTimer = 80;
+        this.levelUpAt = 30;
         this.fishTimerExp = 20 - (2*this.sabbath);
+        this.heartTimer = 30 - (this.sabbath * 5);
         this.bonusMode = true;
       }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
     },
     
     update: function(evt) {
       this.scoreLabel.text = 'SCx' + this.multiplier + ' ' + this.score;
-      this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt; //+ '<br>' + this.generateFishTimer;
+      this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
       this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
+      if(this.bonusMode == true) this.coinsLabel.text = '';
       
       if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
         // Deal with start message        
@@ -408,13 +429,15 @@ window.onload = function() {
           }
           
           // Check if it's time to make fish jump
-          this.generateFishTimer += 1;
-          if (this.generateFishTimer >= this.fishTimer) {
-            var ice;
-            this.generateFishTimer = 0;
-            fish = new Fish(Math.floor(Math.random()*3),this.levelcalc);
-            this.fishGroup.addChild(fish);
-            this.fishTimer = getRandom(3,6)*this.fishTimerExp;
+          if(this.coins != this.levelUpAt){
+            this.generateFishTimer += 1;
+            if (this.generateFishTimer >= this.fishTimer) {
+              var ice;
+              this.generateFishTimer = 0;
+              fish = new Fish(Math.floor(Math.random()*3),this.levelcalc);
+              this.fishGroup.addChild(fish);
+              this.fishTimer = getRandom(3,6)*this.fishTimerExp;
+            }
           }
         }
       
@@ -521,6 +544,7 @@ window.onload = function() {
           this.yuki.smile(this.coins);
           this.yuki.price = this.igloo.price = this.levelUpAt;
           this.startLevelMsg = 1.5;
+          this.penguin.resetPosition();
           //break;
         }
       }
@@ -530,17 +554,66 @@ window.onload = function() {
         // Deal with start message        
         if(this.startLevelMsg>0) {
           this.startLevelMsg-=evt.elapsed * 0.001;
-          this.msgLabel.text = '  BONUS ROUND_RELAXA É SÁBADO';
-        }else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
-        else this.msgLabel.text = '';
-        this.bonusDuration += evt.elapsed * 0.001; 
+          this.msgLabel.text = '  BONUS ROUND_RELAXA É SÁBADO!';
+        }else this.msgLabel.text = 'CORAçÕES: '+this.hearts;
+        
+        // Check if it's time to make hearts
+        if(this.startLevelMsg<=0) {
+          if(this.heartsGenerated < this.levelUpAt){
+            this.yuki.kiss(2);
+            this.generateFishTimer += 1;
+            if (this.generateFishTimer >= this.heartTimer) {
+              var ice;
+              this.generateFishTimer = 0;
+              heart = this.yuki.giveHeart(getRandom(1,3)*(-1));
+              this.heartGroup.addChild(heart);
+              this.heartsGenerated++;
+            }
+          }
+        }
+        
+        // Heart collision
+        for (var i = this.heartGroup.childNodes.length - 1; i >= 0; i--) {
+          var heart;
+          heart = this.heartGroup.childNodes[i];
+          if (heart.intersect(this.penguin)){
+            if( isAndroid ) {
+              coin.seekTo(1);
+              coin.play();
+            }else{
+              game.assets['res/fish.wav'].play();
+            }
+            this.score+=2;
+            this.setHearts(1);
+            this.heartGroup.removeChild(heart);
+            break;
+          }
+        }
+        
+        if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
+          this.bonusDuration += evt.elapsed * 0.001; 
+          if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 500pts';
+          else this.msgLabel.text += '_BONUS '+10*this.hearts + 'pts';
+          this.penguin.movable = false;
+          this.penguin.lane = 2;
+          this.penguin.shopping(true);
+        }
+          
         if(this.bonusDuration >=5) {
+          if(this.hearts==this.levelUpAt)this.score+=500;
+          else this.score+=(10*this.hearts);
+          
           this.bonusMode = false;
           this.incLevelUp();
           this.yuki.smile(this.coins);
           this.yuki.price = this.igloo.price = this.levelUpAt;
           this.startLevelMsg = 1.5;
-          this.bonusDuration = 0; 
+          this.bonusDuration = 0;
+          this.heartsGenerated = 0;
+          this.hearts = 0;
+          this.penguin.movable = true;
+          this.penguin.shopping(false);
+          this.penguin.resetPosition();
         }
       }
       
