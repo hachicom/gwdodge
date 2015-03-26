@@ -237,7 +237,7 @@ window.onload = function() {
       label.y = 0;
       this.scoreLabel = label;
       
-      label6 = new FontSprite('score', 128, 16, 'TOP 0');
+      label6 = new FontSprite('score', 144, 16, 'TOP 0');
       label6.x = 160;
       label6.y = 0;
       this.hiscoreLabel = label6;
@@ -266,7 +266,14 @@ window.onload = function() {
       dpad.x = 160 - (dpad.width/2);
       dpad.y = game.height - dpad.height - 60;
       dpad.opacity = 0.5;
-      dpad.image = game.assets['res/dpad.png']; 
+      dpad.image = game.assets['res/dpad.png'];       
+      dpad.addEventListener(Event.TOUCH_START,this.handleTouchControl);
+      this.dpad = dpad;
+      
+      labelPause = new FontSprite('score', 64, 16, '[P]');
+      labelPause.x = 256;
+      labelPause.y = dpad.y - 32;
+      labelPause.addEventListener(Event.TOUCH_START,this.pauseGame);
       
       // Penguin
       penguin = new Penguin(145,288);
@@ -294,14 +301,14 @@ window.onload = function() {
       this.generateIceTimer = 0;
       this.generateFishTimer = 0;
       this.fishTimerExp = 20;
-      this.heartTimer = 30;
+      this.heartTimer = 20;
       this.fishTimer = getRandom(3,6)*this.fishTimerExp;
       this.lives = 3;
       this.score = 0;
       this.multiplier = 1;
-      this.coins = 0;
+      this.coins = 3;
       this.hearts = 0;
-      this.level = 1; //LEVEL SELECT
+      this.level = 6; //LEVEL SELECT
       this.levelcalc = this.level;
       this.levelUpAt = levelUpAt;
       this.iceTimer = 320;
@@ -340,28 +347,47 @@ window.onload = function() {
       this.addChild(label5);
       this.addChild(label6);
       this.addChild(dpad);
+      this.addChild(labelPause);
       
-      // Touch listener
-      this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       // Update
       this.addEventListener(Event.ENTER_FRAME, this.update);
     },
     
+    pauseGame: function (evt) {
+      if(this.parentNode.paused == false) {
+        this.parentNode.paused = true;
+        if( isAndroid ) {
+          keeploop = false; 
+          bgm.pause();
+        }else{
+          this.parentNode.bgm.pause();
+        }
+      }else {
+        this.parentNode.paused = false;
+        if( isAndroid ) {
+          keeploop = true; 
+          bgm.play();
+        }else{
+          this.parentNode.bgm.play();
+        }
+      }
+    },
+    
     handleTouchControl: function (evt) {
       var playSnd, lane;
-      if(evt.y>=game.height/2){
-        if(this.gotHit!=true && this.buying!=true && this.startLevelMsg<=0){
+      if(!this.parentNode.paused){
+        if(this.parentNode.gotHit!=true && this.parentNode.buying!=true && this.parentNode.startLevelMsg<=0){
           if(evt.x > game.width/2) lane=1;
           else lane=-1;
           
           //Verifica a posição do pinguim e dependendo do caso dispara um som
-          playSnd = this.penguin.switchToLaneNumber(lane,this.igloo.isLit,this.yuki.isThere);
+          playSnd = this.parentNode.penguin.switchToLaneNumber(lane,this.parentNode.igloo.isLit,this.parentNode.yuki.isThere);
           if (playSnd=='jump') { //apenas moveu o pinguim
             if( isAndroid ){
               jumpSnd.seekTo(1);
               jumpSnd.play();
             }else{
-              this.jumpSnd.play();
+              this.parentNode.jumpSnd.play();
             }
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
@@ -369,17 +395,9 @@ window.onload = function() {
             }else{
               game.assets['res/powerup.wav'].play();
             }
-            this.buying=true;
-            this.setCoins(this.levelUpAt*(-1));
+            this.parentNode.buying=true;
+            this.parentNode.setCoins(this.parentNode.levelUpAt*(-1));
           }
-        }
-      }else {
-        if(this.paused == false) {
-          this.paused = true;
-          //game.stop();
-        }else {
-          this.paused = false;
-          //game.resume();
         }
       }
       evt.stopPropagation();
@@ -389,6 +407,7 @@ window.onload = function() {
     setScore: function (value,multi) {
       if (multi) this.score = this.score + (value * this.multiplier);
       else this.score = this.score + value;
+      if (this.score >= 99999) this.score = 99999;
       if (this.score >= hiscore) hiscore = this.score;
     },
     
@@ -414,268 +433,284 @@ window.onload = function() {
         if (this.iceTimer <=80) this.iceTimer = 80;
         this.levelUpAt = 30;
         this.fishTimerExp = 20 - (2*this.sabbath);
-        this.heartTimer = 30 - (this.sabbath * 5);
+        this.heartTimer = 20 - (this.sabbath * 5);
+        if(this.heartTimer <= 5) this.heartTimer = 5;
         this.bonusMode = true;
       }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
     },
     
     update: function(evt) {
-      this.scoreLabel.text = 'SC ' + this.score + '_x' + this.multiplier;
-      this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
-      this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
-      this.livesLabel.text = 'SNOW_ ' + this.lives;
-      this.hiscoreLabel.text = 'TOP '+hiscore;
-      if(this.bonusMode == true) this.coinsLabel.text = '';
-      
-      if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
-        // Deal with start message        
-        if(this.startLevelMsg>0) {
-          this.startLevelMsg-=evt.elapsed * 0.001;
-          this.msgLabel.text = '    ROUND '+ this.level +'_COLETE ' + this.levelUpAt + ' PEIXES!';
-        }
-        else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
-        else this.msgLabel.text = '';
-      
-        // Check if it's time to create a new set of obstacles
-        if(this.startLevelMsg<=0) {
-          this.levelcalc = this.level - (this.sabbath * 5);
-          
-          if(this.levelcalc<3) this.generateIceTimer += 2;
-          else this.generateIceTimer += 2 + (this.levelcalc - 2);
-          if (this.generateIceTimer >= this.iceTimer) {
-            var ice;
-            this.generateIceTimer = 0;
-            //this.cubesGenerated += 1;
-            ice = new Ice(Math.floor(Math.random()*3),this.levelcalc);
-            this.iceGroup.addChild(ice);
+      if(!this.paused){
+        this.scoreLabel.text = 'SC ' + this.score + '_x' + this.multiplier;
+        this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
+        this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
+        this.livesLabel.text = 'SNOW_ ' + this.lives;
+        this.hiscoreLabel.text = 'TOP '+hiscore;
+        if(this.bonusMode == true) this.coinsLabel.text = '';
+        
+        if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
+          // Deal with start message        
+          if(this.startLevelMsg>0) {
+            this.startLevelMsg-=evt.elapsed * 0.001;
+            this.msgLabel.text = '    ROUND '+ this.level +'_COLETE ' + this.levelUpAt + ' PEIXES!';
           }
-          
-          // Check if it's time to make fish jump
-          if(this.coins != this.levelUpAt){
-            this.generateFishTimer += 1;
-            if (this.generateFishTimer >= this.fishTimer) {
+          else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
+          else this.msgLabel.text = '';
+        
+          // Check if it's time to create a new set of obstacles
+          if(this.startLevelMsg<=0) {
+            this.levelcalc = this.level - (this.sabbath * 5);
+            
+            if(this.levelcalc<3) this.generateIceTimer += 2;
+            else this.generateIceTimer += 2 + (this.levelcalc - 2);
+            if (this.generateIceTimer >= this.iceTimer) {
               var ice;
-              this.generateFishTimer = 0;
-              fish = new Fish(Math.floor(Math.random()*3),this.levelcalc);
-              this.fishGroup.addChild(fish);
-              this.fishTimer = getRandom(3,6)*this.fishTimerExp;
+              this.generateIceTimer = 0;
+              //this.cubesGenerated += 1;
+              ice = new Ice(Math.floor(Math.random()*3),this.levelcalc);
+              this.iceGroup.addChild(ice);
+            }
+            
+            // Check if it's time to make fish jump
+            if(this.coins != this.levelUpAt){
+              this.generateFishTimer += 1;
+              if (this.generateFishTimer >= this.fishTimer) {
+                var ice;
+                this.generateFishTimer = 0;
+                fish = new Fish(Math.floor(Math.random()*3),this.levelcalc);
+                this.fishGroup.addChild(fish);
+                this.fishTimer = getRandom(3,6)*this.fishTimerExp;
+              }
             }
           }
-        }
-      
-        // Check collision
-        // Ice collision
-        for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
-          var ice;
-          ice = this.iceGroup.childNodes[i];
-          if(ice.y<=260){
-            if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
-              if( isAndroid ) {
-                hit.play();
-              }else{
-                game.assets['res/hit.wav'].play();
+        
+          // Check collision
+          // Ice collision
+          for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
+            var ice;
+            ice = this.iceGroup.childNodes[i];
+            if(ice.y<=260){
+              if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
+                if( isAndroid ) {
+                  hit.play();
+                }else{
+                  game.assets['res/hit.wav'].play();
+                }
+                //alert(ice.y);
+                ice.crashToPieces();
+                this.gotHit = true; 
+                this.penguin.gotHit();
+                if( isAndroid ) {
+                  keeploop = false; 
+                  bgm.stop();
+                }else{
+                  this.bgm.stop();
+                }
+                break;
               }
-              //alert(ice.y);
+            }else{
+              //this.iceGroup.removeChild(ice);
+              if( isAndroid ) {
+                crash.seekTo(1);
+                crash.play();
+              }else{
+                game.assets['res/break.wav'].play();
+              }
               ice.crashToPieces();
-              this.gotHit = true; 
-              this.penguin.gotHit();
-              // this.iceGroup.removeChild(ice);
-              // this.bgm.stop();
-              // game.replaceScene(new SceneGameOver(this.score)); 
+              //this.setScore(1);
+            }
+          }
+          
+          // Fish collision
+          for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
+            var fish;
+            fish = this.fishGroup.childNodes[i];
+            if (fish.intersect(this.penguin) && this.coins < this.levelUpAt){
+              if( isAndroid ) {
+                coin.seekTo(1);
+                coin.play();
+              }else{
+                game.assets['res/fish.wav'].play();
+              }
+              this.setScore(1,true);
+              this.setCoins(1);
+              if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
+              this.fishGroup.removeChild(fish);
               break;
             }
-          }else{
-            //this.iceGroup.removeChild(ice);
-            if( isAndroid ) {
-              crash.seekTo(1);
-              crash.play();
-            }else{
-              game.assets['res/break.wav'].play();
-            }
-            ice.crashToPieces();
-            //this.setScore(1);
           }
         }
         
-        // Fish collision
-        for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
-          var fish;
-          fish = this.fishGroup.childNodes[i];
-          if (fish.intersect(this.penguin) && this.coins < this.levelUpAt){
-            if( isAndroid ) {
-              coin.seekTo(1);
-              coin.play();
+        //Atingido: dispara o timer e parte para o game over no término
+        if(this.gotHit==true){
+          //game.stop();
+          this.hitDuration += evt.elapsed * 0.001; 
+          if(this.hitDuration >= 1.5){
+            //this.iceGroup.removeChild(ice);
+            //game.resume();
+            if(this.lives==0){
+              if( isAndroid ) {
+                keeploop = false; 
+                bgm.stop();
+              }else{
+                this.bgm.stop();
+              }
+              game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel)); 
             }else{
-              game.assets['res/fish.wav'].play();
+              this.gotHit=false;
+              this.hitDuration=0;
+              this.lives-=1;
+              this.multiplier=1;
+              for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
+                var ice;
+                ice = this.iceGroup.childNodes[i];
+                this.iceGroup.removeChild(ice);
+              }
+              for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
+                var fish;
+                fish = this.fishGroup.childNodes[i];
+                this.fishGroup.removeChild(fish);
+              }
+              this.penguin.resetPosition();
+              if( isAndroid ) {
+                keeploop = true; 
+                bgm.play();
+              }else{
+                this.bgm.play();
+              }
             }
-            this.setScore(1,true);
-            this.setCoins(1);
-            if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
-            this.fishGroup.removeChild(fish);
-            break;
           }
         }
-      }
-      
-      //Atingido: dispara o timer e parte para o game over no término
-      if(this.gotHit==true){
-        //game.stop();
-        this.hitDuration += evt.elapsed * 0.001; 
-        if(this.hitDuration >= 1.5){
-          //this.iceGroup.removeChild(ice);
-          //game.resume();
-          if(this.lives==0){
-            if( isAndroid ) {
-              keeploop = false; 
-              bgm.stop();
-            }else{
-              this.bgm.stop();
-            }
-            game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel)); 
-          }else{
-            this.gotHit=false;
-            this.hitDuration=0;
-            this.lives-=1;
-            this.multiplier=1;
-            for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
-              var ice;
-              ice = this.iceGroup.childNodes[i];
-              this.iceGroup.removeChild(ice);
-            }
+        
+        //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
+        if(this.buying==true){
+          this.msgLabel.text = 'ROUND CONCLUÍDO!'
+          for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
+            var ice;
+            ice = this.iceGroup.childNodes[i];
+            ice.crashToPieces();
+          }
+          //game.stop();
+          this.buyDuration += evt.elapsed * 0.001; 
+          this.penguin.shopping(true);
+          this.yuki.kiss(this.penguin.lane);
+          // if(this.hitDuration <= 1 && this.duration){
+          // }
+          if(this.buyDuration >= 2){
+            //this.iceGroup.removeChild(ice);
+            //game.resume();
             for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
               var fish;
               fish = this.fishGroup.childNodes[i];
               this.fishGroup.removeChild(fish);
             }
+            this.buying=false; 
+            this.penguin.shopping(false);
+            this.buyDuration = 0;
+            if (this.penguin.lane==2) {
+              this.setScore((10*this.levelUpAt),true);           
+              this.incLevelUp();
+            }
+            this.yuki.smile(this.coins);
+            this.yuki.price = this.igloo.price = this.levelUpAt;
+            this.startLevelMsg = 1.5;
+            this.penguin.resetPosition();
+            //break;
+          }
+        }
+        
+        // Bonus Stage Mode
+        if(this.bonusMode == true){
+          // Deal with start message        
+          if(this.startLevelMsg>0) {
+            this.startLevelMsg-=evt.elapsed * 0.001;
+            this.msgLabel.text = '    ROUND '+ this.level +'_  BONUS ROUND';
+          }else this.msgLabel.text = ' CORAçÕES: '+this.hearts;
+          
+          // Check if it's time to make hearts
+          if(this.startLevelMsg<=0) {
+            if(this.heartsGenerated < this.levelUpAt){
+              this.yuki.kiss(2);
+              this.generateFishTimer += 1;
+              if (this.generateFishTimer >= this.heartTimer) {
+                var ice;
+                this.generateFishTimer = 0;
+                heart = this.yuki.giveHeart(getRandom(1,3)*(-1));
+                this.heartGroup.addChild(heart);
+                this.heartsGenerated++;
+              }
+            }
+          }
+          
+          // Heart collision
+          for (var i = this.heartGroup.childNodes.length - 1; i >= 0; i--) {
+            var heart;
+            heart = this.heartGroup.childNodes[i];
+            if (heart.intersect(this.penguin)){
+              if( isAndroid ) {
+                coin.seekTo(1);
+                coin.play();
+              }else{
+                game.assets['res/fish.wav'].play();
+              }
+              //this.setScore(2,false);
+              this.setHearts(1);
+              this.heartGroup.removeChild(heart);
+              break;
+            }
+          }
+          
+          if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
+            this.bonusDuration += evt.elapsed * 0.001; 
+            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 500pts';
+            else this.msgLabel.text += 'x10_BONUS '+10*this.hearts + 'pts';
+            this.penguin.movable = false;
+            this.penguin.lane = 2;
+            this.penguin.shopping(true);
+          }
+            
+          if(this.bonusDuration >=2) {
+            if(this.hearts==this.levelUpAt)this.score+=500;
+            else this.setScore(10*this.hearts,false);
+            
+            this.bonusMode = false;
+            this.incLevelUp();
+            this.yuki.smile(this.coins);
+            this.yuki.price = this.igloo.price = this.levelUpAt;
+            this.startLevelMsg = 1.5;
+            this.bonusDuration = 0;
+            this.heartsGenerated = 0;
+            this.hearts = 0;
+            this.penguin.movable = true;
+            this.penguin.shopping(false);
             this.penguin.resetPosition();
           }
         }
-      }
-      
-      //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
-      if(this.buying==true){
-        for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
-          var ice;
-          ice = this.iceGroup.childNodes[i];
-          ice.crashToPieces();
-        }
-        //game.stop();
-        this.buyDuration += evt.elapsed * 0.001; 
-        this.penguin.shopping(true);
-        this.yuki.kiss(this.penguin.lane);
-        // if(this.hitDuration <= 1 && this.duration){
-        // }
-        if(this.buyDuration >= 2){
-          //this.iceGroup.removeChild(ice);
-          //game.resume();
-          for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
-            var fish;
-            fish = this.fishGroup.childNodes[i];
-            this.fishGroup.removeChild(fish);
-          }
-          this.buying=false; 
-          this.penguin.shopping(false);
-          this.buyDuration = 0;
-          if (this.penguin.lane==2) {
-            this.setScore((10*this.levelUpAt),true);           
-            this.incLevelUp();
-          }
-          this.yuki.smile(this.coins);
-          this.yuki.price = this.igloo.price = this.levelUpAt;
-          this.startLevelMsg = 1.5;
-          this.penguin.resetPosition();
-          //break;
-        }
-      }
-      
-      // Bonus Stage Mode
-      if(this.bonusMode == true){
-        // Deal with start message        
-        if(this.startLevelMsg>0) {
-          this.startLevelMsg-=evt.elapsed * 0.001;
-          this.msgLabel.text = '    ROUND '+ this.level +'_  BONUS ROUND';
-        }else this.msgLabel.text = ' CORAçÕES: '+this.hearts;
         
-        // Check if it's time to make hearts
-        if(this.startLevelMsg<=0) {
-          if(this.heartsGenerated < this.levelUpAt){
-            this.yuki.kiss(2);
-            this.generateFishTimer += 1;
-            if (this.generateFishTimer >= this.heartTimer) {
-              var ice;
-              this.generateFishTimer = 0;
-              heart = this.yuki.giveHeart(getRandom(1,3)*(-1));
-              this.heartGroup.addChild(heart);
-              this.heartsGenerated++;
-            }
-          }
+        // Loop BGM
+        if( isAndroid ) {
+          //if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
+        }
+        else
+        if (this.bgm.currentTime >= this.bgm.duration ){
+          this.bgm.play();
         }
         
-        // Heart collision
-        for (var i = this.heartGroup.childNodes.length - 1; i >= 0; i--) {
-          var heart;
-          heart = this.heartGroup.childNodes[i];
-          if (heart.intersect(this.penguin)){
-            if( isAndroid ) {
-              coin.seekTo(1);
-              coin.play();
-            }else{
-              game.assets['res/fish.wav'].play();
-            }
-            //this.setScore(2,false);
-            this.setHearts(1);
-            this.heartGroup.removeChild(heart);
-            break;
-          }
-        }
-        
-        if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
-          this.bonusDuration += evt.elapsed * 0.001; 
-          if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 500pts';
-          else this.msgLabel.text += 'x10_BONUS '+10*this.hearts + 'pts';
-          this.penguin.movable = false;
-          this.penguin.lane = 2;
-          this.penguin.shopping(true);
-        }
-          
-        if(this.bonusDuration >=5) {
-          if(this.hearts==this.levelUpAt)this.score+=500;
-          else this.setScore(10*this.hearts,false);
-          
-          this.bonusMode = false;
-          this.incLevelUp();
-          this.yuki.smile(this.coins);
-          this.yuki.price = this.igloo.price = this.levelUpAt;
-          this.startLevelMsg = 1.5;
-          this.bonusDuration = 0;
-          this.heartsGenerated = 0;
-          this.hearts = 0;
-          this.penguin.movable = true;
-          this.penguin.shopping(false);
-          this.penguin.resetPosition();
-        }
-      }
-      
-      // Loop BGM
-      if( isAndroid ) {
-        //if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
-      }
-      else
-      if (this.bgm.currentTime >= this.bgm.duration ){
-        this.bgm.play();
-      }
-      
-      // If Samsung android browser is detected
-      if (window.navigator && window.navigator.userAgent.indexOf('534.30') > 0) {
+        // If Samsung android browser is detected
+        if (window.navigator && window.navigator.userAgent.indexOf('534.30') > 0) {
 
-        // Tweak the canvas opacity, causing it to redraw
-        $('canvas').css('opacity', '0.99');
+          // Tweak the canvas opacity, causing it to redraw
+          $('canvas').css('opacity', '0.99');
 
-        // Set the canvas opacity back to normal after 5ms
-        setTimeout(function() {
-            $('canvas').css('opacity', '1');
-        }, 5);
+          // Set the canvas opacity back to normal after 5ms
+          setTimeout(function() {
+              $('canvas').css('opacity', '1');
+          }, 5);
+        }
+      }else{
+        this.msgLabel.text = '      PAUSE';
       }
+      
     }
   });
   
@@ -740,6 +775,52 @@ window.onload = function() {
     }
   });
 
+  // SceneCredits
+  var SceneCredits = Class.create(Scene, {
+    initialize: function(score) {
+      var TitleLabel, scoreLabel;
+      Scene.apply(this);
+      //this.backgroundColor = '#0026FF';
+      
+      // Background
+      // title = new Sprite(256,160);
+      // title.x = 32;
+      // title.y = 32;
+      // title.image = game.assets['res/title.png'];      
+      this.backgroundColor = '#000000';
+      map = new Map(32, 32);
+      map.image = game.assets['res/groundSheet.png'];
+      map.loadData(arrMap2Top,arrMap2Sub);
+      
+      label = new FontSprite('score', 320, 400, '');
+      label.x = 0;
+      label.y = 8;
+      
+      label.text = '  ==SNOW & YUKI==__CODE, ART & DESIGN_'
+                  +'ADINAN BATISTA ALVES___'
+                  +'BGM: 8BIT ADVENTURE_'
+                  +'RevampedPRO_(OpenGameArt.Org)___'
+                  +'BMFONT PLUGIN_'
+                  +'COFFEE DOG GAMES___'
+                  +'SOUND EFFECTS_'
+                  +'CREATED IN BFXR.NET_____'
+                  +'THANKS FOR PLAYING!';
+            
+      // Add labels  
+      //this.addChild(title);
+      this.addChild(map);
+      this.addChild(label);
+      
+      // Listen for taps
+      this.addEventListener(Event.TOUCH_START, this.touchToStart);
+    },
+    
+    touchToStart: function(evt) {
+      var game = Game.instance;
+      game.replaceScene(new SceneTitle());
+    }
+  });
+  
   // SceneTitle
   var SceneTitle = Class.create(Scene, {
     initialize: function(score) {
@@ -763,8 +844,8 @@ window.onload = function() {
       label.x = 8;
       label.y = 0;
       this.scoreLabel = label;
-      
-      label6 = new FontSprite('score', 128, 16, 'TOP '+hiscore);
+            
+      label6 = new FontSprite('score', 144, 16, 'TOP '+hiscore);
       label6.x = 160;
       label6.y = 0;
       this.hiscoreLabel = label6;
@@ -775,9 +856,19 @@ window.onload = function() {
       TitleLabel.y = 198;
       
       // Press Start label
-      PressStart = new FontSprite('score', 288, 16, "TOQUE PARA INICIAR");
-      PressStart.x = 16;
+      PressStart = new FontSprite('score', 192, 16, "[START GAME]");
+      PressStart.x = 64;
       PressStart.y = 264;
+      PressStart.addEventListener(Event.TOUCH_START, function(e){
+        game.replaceScene(new SceneGame());
+      });
+      
+      creditLabel = new FontSprite('score', 144, 16, '[CREDITS]');
+      creditLabel.x = 64;
+      creditLabel.y = 320;
+      creditLabel.addEventListener(Event.TOUCH_START, function(e){
+        game.replaceScene(new SceneCredits());
+      });
       
       // Copyright label
       copyright = new FontSprite('score', 240, 16, "© 2015 HACHICOM");
@@ -799,16 +890,9 @@ window.onload = function() {
       this.addChild(copyright);
       this.addChild(TitleLabel); 
       this.addChild(PressStart);
+      this.addChild(creditLabel);
       this.addChild(label);
       this.addChild(label6);
-      
-      // Listen for taps
-      this.addEventListener(Event.TOUCH_START, this.touchToStart);
-    },
-    
-    touchToStart: function(evt) {
-      var game = Game.instance;
-      game.replaceScene(new SceneGame());
     }
   });  
 };

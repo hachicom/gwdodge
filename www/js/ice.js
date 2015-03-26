@@ -6,7 +6,7 @@ var Ice = Class.create(Sprite, {
     Sprite.apply(this,[48, 48]);
     this.image  = Game.instance.assets['res/Ice.png'];      
     this.rotationSpeed = 0;
-    this.ySpeed = 2;
+    this.ySpeed = 4;
     this.setLane(lane);
     this.addEventListener(Event.ENTER_FRAME, this.update);
   },
@@ -37,18 +37,21 @@ var Ice = Class.create(Sprite, {
   },
   
   update: function(evt) { 
-    var game,level;
-   
-    game = Game.instance;
-    level = this.parentNode.parentNode.levelcalc;
-    if(level<3) level=0;
-    else level-=2;
-   
-    if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
-      this.y += this.ySpeed + level;
-      this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
-      if (this.y > game.height) {
-        this.parentNode.removeChild(this);        
+    //IMKORTANTE: É preciso que este objeto seja parte de um grupo filho da scene! Do contrário causará erro!
+    if (!this.parentNode.parentNode.paused){
+      var game,level;
+     
+      game = Game.instance;
+      level = this.parentNode.parentNode.levelcalc;
+      if(level<3) level=0;
+      else level-=2;
+     
+      if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
+        this.y += this.ySpeed + level;
+        this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
+        if (this.y > game.height) {
+          this.parentNode.removeChild(this);        
+        }
       }
     }
   }
@@ -71,17 +74,18 @@ var IceFrag = Class.create(Sprite, {
   },
   
   update: function(evt) { 
-    var game;
-   
-    game = Game.instance;
-    
-    this.ySpeed += this.yAccel;
-    this.y += this.ySpeed;
-    this.x += this.xSpeed;
-    this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
-    if (this.y > game.height) {
-      this.parentNode.removeChild(this);        
+    if (!this.parentNode.paused){
+      var game;
+     
+      game = Game.instance;
+      
+      this.ySpeed += this.yAccel;
+      this.y += this.ySpeed;
+      this.x += this.xSpeed;
+      this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
+      if (this.y > game.height) {
+        this.parentNode.removeChild(this);        
+      }
     }
-
   }
 });

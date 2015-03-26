@@ -8,7 +8,7 @@ var Fish = Class.create(Sprite, {
     this.frame = 0;  
     this.rotationSpeed = 0;
     this.animationDuration = 0;
-    this.ySpeed = 10;
+    this.ySpeed = 5;
     this.rotationTime = 2;
     this.ascending = true;
     this.setLane(lane);
@@ -28,39 +28,42 @@ var Fish = Class.create(Sprite, {
   },
   
   update: function(evt) {
-    var ySpeed, game;
-   
-    game = Game.instance;
-    level = this.parentNode.parentNode.levelcalc;
-   
-    if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
-      //Dealing with movement
-      if(this.ascending){
-        this.y -= this.ySpeed + level;
-        if (this.y <= 248) this.ascending = false;
-      }else{
-        this.rotationTime -= evt.elapsed * (level+1) * 0.001;
-        if(this.rotationTime <= 0){
-          this.y += this.ySpeed + level;
-          if (this.y > game.height && this.ascending===false) {
-            if(this.parentNode.parentNode.coins != this.parentNode.parentNode.levelUpAt) 
-              this.parentNode.parentNode.multiplier=1;  
-            this.parentNode.removeChild(this);           
+    //IMKORTANTE: É preciso que este objeto seja parte de um grupo filho da scene
+    if (!this.parentNode.parentNode.paused){
+      var ySpeed, game;
+     
+      game = Game.instance;
+      level = this.parentNode.parentNode.levelcalc;
+     
+      if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
+        //Dealing with movement
+        if(this.ascending){
+          this.y -= this.ySpeed + level;
+          if (this.y <= 248) this.ascending = false;
+        }else{
+          this.rotationTime -= evt.elapsed * (level+1) * 0.001;
+          if(this.rotationTime <= 0){
+            this.y += this.ySpeed + level;
+            if (this.y > game.height && this.ascending===false) {
+              if(this.parentNode.parentNode.coins != this.parentNode.parentNode.levelUpAt) 
+                this.parentNode.parentNode.multiplier=1;  
+              this.parentNode.removeChild(this);           
+            }
           }
         }
-      }
-      
-      //Dealing with animation
-      if(this.rotationTime <= 0){
-        this.rotation = 270;
-      }else{
-        if(this.ascending) this.rotation = 90;
-        else this.rotation += this.rotationSpeed;           
-      }
-      this.animationDuration += evt.elapsed * 0.001;       
-      if (this.animationDuration >= 1) {
-        this.frame = (this.frame + 1) % 2;
-        this.animationDuration = 0;
+        
+        //Dealing with animation
+        if(this.rotationTime <= 0){
+          this.rotation = 270;
+        }else{
+          if(this.ascending) this.rotation = 90;
+          else this.rotation += this.rotationSpeed;           
+        }
+        this.animationDuration += evt.elapsed * 0.001;       
+        if (this.animationDuration >= 1) {
+          this.frame = (this.frame + 1) % 2;
+          this.animationDuration = 0;
+        }
       }
     }
   }

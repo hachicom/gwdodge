@@ -23,19 +23,21 @@ var Penguin = Class.create(Sprite, {
   },
   
   updateAnimation: function (evt) {        
-    this.animationDuration += evt.elapsed * 0.001;       
-    if (this.animationDuration >= this.animationSpeed) {
-      if(this.frame<this.endFrame) this.frame ++;
-      else this.frame = this.iniFrame;
-      this.animationDuration = 0;
-    }
-    if(this.parentNode.gotHit!=true){
-      if(this.x<this.nextpos) {
-        this.x+=this.movespeed;
-        if(this.x>=this.nextpos) this.x=this.nextpos;
-      }else if(this.x>this.nextpos){
-        this.x-=this.movespeed;
-        if(this.x<=this.nextpos) this.x=this.nextpos;
+    if (!this.parentNode.paused){
+      this.animationDuration += evt.elapsed * 0.001;       
+      if (this.animationDuration >= this.animationSpeed) {
+        if(this.frame<this.endFrame) this.frame ++;
+        else this.frame = this.iniFrame;
+        this.animationDuration = 0;
+      }
+      if(this.parentNode.gotHit!=true){
+        if(this.x<this.nextpos) {
+          this.x+=this.movespeed;
+          if(this.x>=this.nextpos) this.x=this.nextpos;
+        }else if(this.x>this.nextpos){
+          this.x-=this.movespeed;
+          if(this.x<=this.nextpos) this.x=this.nextpos;
+        }
       }
     }
   },
