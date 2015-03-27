@@ -856,6 +856,10 @@ window.onload = function() {
       this.addChild(levelLabel);
       this.addChild(livesLabel);
       this.addChild(hiscoreLabel);
+      this.addChild(bracket1);
+      this.addChild(bracket2);
+      this.addChild(bracket3);
+      this.addChild(bracket4);
       
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);
@@ -893,24 +897,53 @@ window.onload = function() {
       map = new Map(32, 32);
       map.image = game.assets['res/groundSheet.png'];
       map.loadData(arrMap2Top,arrMap2Sub);
+      map.y = 16;
       
-      label = new FontSprite('score', 320, 400, '');
+      igloo = new Sprite(48,48);
+      igloo.x = 98;
+      igloo.y = 416;
+      igloo.image = game.assets['res/iglooSheet.png']; 
+      
+      igloo2 = new Sprite(48,48);
+      igloo2.x = 146;
+      igloo2.y = 416;
+      igloo2.scaleX = -1;
+      igloo2.image = game.assets['res/iglooSheet.png']; 
+      
+      snow = new Sprite(32,32);
+      snow.x = 224;
+      snow.y = 464;
+      snow.frame = [4,4,4,4,4,4,4,4,4,4,4,1,1,1,1,1,1];
+      snow.image = game.assets['res/penguinSheet.png']; 
+      
+      yuki = new Sprite(32,32);
+      yuki.x = 192;
+      yuki.y = 432;
+      yuki.frame = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2];
+      yuki.image = game.assets['res/yukiSheet.png']; 
+      
+      label = new FontSprite('score', 320, 440, '');
       label.x = 0;
       label.y = 8;
       
       label.text = '  ==SNOW & YUKI==__CODE, ART & DESIGN_'
-                  +'ADINAN BATISTA ALVES___'
-                  +'8BIT TRACKS_'
+                  +'Adinan Batista Alves___'
+                  +'ENCHANT.JS TUTORIAL_Thongrop Rodsavas_(raywenderlich.com)___'
+                  +'8BIT TRACKS BY_'
                   +'Manuel Bolaños Gómez_(OpenGameArt.Org)___'
                   +'BMFONT PLUGIN_'
                   +'COFFEE DOG GAMES___'
                   +'SOUND EFFECTS_'
-                  +'CREATED IN BFXR.NET_____'
+                  +'CREATED IN BFXR.NET___'
                   +'THANKS FOR PLAYING!';
             
       // Add labels  
       //this.addChild(title);
       this.addChild(map);
+      this.addChild(igloo);
+      this.addChild(igloo2);
+      this.addChild(snow);
+      this.addChild(yuki);
       this.addChild(label);
       
       // Listen for taps
