@@ -79,7 +79,7 @@ window.onload = function() {
 	        if(keeploop==true) this.play();
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      },
 	      function(status){
 	      	bgmstatus=status;
@@ -91,7 +91,7 @@ window.onload = function() {
 	        //if(keeploop==true) this.play();
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      },
 	      function(status){
 	      	bonusstatus=status;
@@ -103,7 +103,7 @@ window.onload = function() {
 	        //if(keeploop==true) this.play();
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      },
 	      function(status){
 	      	introstatus=status;
@@ -112,46 +112,46 @@ window.onload = function() {
 	    
 	    hit = new Media("file:///android_asset/www/res/hit.wav",
 	      function() {
-	        //alert("Audio Success");
+	        //console.log("Audio Success");
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      }
 	    );
 	    
 	    coin = new Media("file:///android_asset/www/res/fish.wav",
 	      function() {
-	        //alert("Audio Success");
+	        //console.log("Audio Success");
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      }
 	    );
 	    
 	    crash = new Media("file:///android_asset/www/res/break.wav",
 	      function() {
-	        //alert("Audio Success");
+	        //console.log("Audio Success");
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      }
 	    );
 	    
 	     powerup = new Media("file:///android_asset/www/res/powerup.wav",
 	      function() {
-	        //alert("Audio Success");
+	        //console.log("Audio Success");
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      }
 	    );
 	    
 	    jumpSnd = new Media("file:///android_asset/www/res/jump.wav",
 	      function() {
-	        //alert("Audio Success");
+	        //console.log("Audio Success");
 	      },
 	      function(err) {
-	        alert(JSON.stringify(err));
+	        console.log(JSON.stringify(err));
 	      }
 	    );
       
@@ -159,6 +159,7 @@ window.onload = function() {
         keeploop=false;
         if(bgmstatus==2)bgm.pause();
         if(introstatus==2)intro.stop();
+        if(bonusstatus==2)bonus.stop();
         game.stop();
         console.log("paused");
         //cr_setSuspended(true);
@@ -220,6 +221,7 @@ window.onload = function() {
 	        keeploop=false;
 	        if(bgmstatus==2)bgm.stop();
           if(introstatus==2)intro.stop();
+          if(bonusstatus==2)bonus.stop();
 	        //bgm.release();
 	        console.log("exited");
 	      }else game.resume();
@@ -571,7 +573,7 @@ window.onload = function() {
                 }else{
                   game.assets['res/hit.wav'].play();
                 }
-                //alert(ice.y);
+                //console.log(ice.y);
                 ice.crashToPieces();
                 this.gotHit = true; 
                 this.penguin.gotHit();
@@ -961,7 +963,7 @@ window.onload = function() {
       PressStart.y = 264;
       PressStart.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
-          intro.stop();
+          if(introstatus==2)intro.stop();
         }else{
           game.assets['res/intro.mp3'].stop();
         }
