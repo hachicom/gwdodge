@@ -501,7 +501,6 @@ window.onload = function() {
           keeploop = false;
           this.bgm.stop();
           this.bgm = bonus;
-          keeploop = true;
           this.bgm.play();
         }else{
           console.log('ok');
@@ -759,7 +758,6 @@ window.onload = function() {
             this.penguin.resetPosition();
             
             if( isAndroid ) {
-              keeploop = false;
               this.bgm.stop();
               this.bgm = bgm;
               keeploop = true;
