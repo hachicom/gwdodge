@@ -8,7 +8,8 @@ var Fish = Class.create(Sprite, {
     this.frame = 0;  
     this.rotationSpeed = 0;
     this.animationDuration = 0;
-    this.ySpeed = 5;
+    this.ySpeed = 21;
+    this.yAccel = 0.7;
     this.rotationTime = 2;
     this.ascending = true;
     this.setLane(lane);
@@ -38,12 +39,14 @@ var Fish = Class.create(Sprite, {
       if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
         //Dealing with movement
         if(this.ascending){
-          this.y -= this.ySpeed + level;
-          if (this.y <= 248) this.ascending = false;
+          this.ySpeed -= this.yAccel;
+          this.y -= this.ySpeed;
+          if (this.ySpeed <= 0) this.ascending = false;
         }else{
           this.rotationTime -= evt.elapsed * (level+1) * 0.001;
           if(this.rotationTime <= 0){
-            this.y += this.ySpeed + level;
+            this.ySpeed += this.yAccel;
+            this.y += this.ySpeed;
             if (this.y > game.height && this.ascending===false) {
               if(this.parentNode.parentNode.coins != this.parentNode.parentNode.levelUpAt) 
                 this.parentNode.parentNode.multiplier=1;  

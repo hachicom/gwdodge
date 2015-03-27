@@ -1,6 +1,7 @@
 var keeploop = true;
-var hiscore = 500;
-var jumpSnd, bgmstatus, bgm, hit, coin, crash, powerup;
+var hiscore = 1000;
+var paused = false;
+var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus;
 var isAndroid = isMobile();
 
 //game global difficulty variables
@@ -28,6 +29,8 @@ window.onload = function() {
                  'res/groundSheet.png',
                  'res/title.png',
                  'res/dpad.png',
+                 'res/brackets.png',
+                 'res/pause.png',
                  'res/font0_0.png');
   }else{
     game.preload('res/penguinSheet.png',
@@ -41,12 +44,15 @@ window.onload = function() {
                  'res/groundSheet.png',
                  'res/title.png',
                  'res/dpad.png',
+                 'res/brackets.png',
+                 'res/pause.png',
                  'res/font0_0.png',
                  'res/hit.wav',
                  'res/jump.wav',
                  'res/fish.wav',
                  'res/break.wav',
                  'res/powerup.wav',
+                 'res/intro.mp3',
                  'res/bgm.mp3');
   }
   
@@ -67,8 +73,8 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
-      bgmstatus = 0;
-	     bgm = new Media("file:///android_asset/www/res/bgm.mp3",
+      bgmstatus = introstatus = 0;
+	    bgm = new Media("file:///android_asset/www/res/bgm.mp3",
 	      function() {
 	        if(keeploop==true) this.play();
 	      },
@@ -76,11 +82,35 @@ window.onload = function() {
 	        alert(JSON.stringify(err));
 	      },
 	      function(status){
-	      	 bgmstatus=status;
+	      	bgmstatus=status;
+	      }
+	    );      
+      
+	    bonus = new Media("file:///android_asset/www/res/bonus.mp3",
+	      function() {
+	        //if(keeploop==true) this.play();
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      },
+	      function(status){
+	      	bonusstatus=status;
+	      }
+	    );
+      
+      intro = new Media("file:///android_asset/www/res/intro.mp3",
+	      function() {
+	        //if(keeploop==true) this.play();
+	      },
+	      function(err) {
+	        alert(JSON.stringify(err));
+	      },
+	      function(status){
+	      	introstatus=status;
 	      }
 	    );
 	    
-	     hit = new Media("file:///android_asset/www/res/hit.wav",
+	    hit = new Media("file:///android_asset/www/res/hit.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
@@ -89,7 +119,7 @@ window.onload = function() {
 	      }
 	    );
 	    
-	     coin = new Media("file:///android_asset/www/res/fish.wav",
+	    coin = new Media("file:///android_asset/www/res/fish.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
@@ -98,7 +128,7 @@ window.onload = function() {
 	      }
 	    );
 	    
-	     crash = new Media("file:///android_asset/www/res/break.wav",
+	    crash = new Media("file:///android_asset/www/res/break.wav",
 	      function() {
 	        //alert("Audio Success");
 	      },
@@ -128,6 +158,7 @@ window.onload = function() {
       document.addEventListener("pause", function() {
         keeploop=false;
         if(bgmstatus==2)bgm.pause();
+        if(introstatus==2)intro.stop();
         game.stop();
         console.log("paused");
         //cr_setSuspended(true);
@@ -135,7 +166,7 @@ window.onload = function() {
 
       document.addEventListener("resume", function() {
         keeploop=true;
-        if(bgmstatus==3)bgm.play();
+        if(bgmstatus==3 && !paused) bgm.play();
         game.resume();
         console.log("resumed");
         //cr_setSuspended(false);
@@ -188,6 +219,7 @@ window.onload = function() {
 	        }
 	        keeploop=false;
 	        if(bgmstatus==2)bgm.stop();
+          if(introstatus==2)intro.stop();
 	        //bgm.release();
 	        console.log("exited");
 	      }else game.resume();
@@ -243,17 +275,17 @@ window.onload = function() {
       this.hiscoreLabel = label6;
       
       label5 = new FontSprite('score', 96, 32, 'SNOW_ 3');
-      label5.x = 110;
+      label5.x = 100;
       label5.y = 24;
       this.livesLabel = label5;
       
       label3 = new FontSprite('score', 96, 32, 'FISH_0');
-      label3.x = 190;
+      label3.x = 177;
       label3.y = 24;
       this.coinsLabel = label3;
       
       label2 = new FontSprite('score', 80, 32, 'LVL_0');
-      label2.x = 270;
+      label2.x = 268;
       label2.y = 24;
       this.levelLabel = label2;
       
@@ -262,17 +294,40 @@ window.onload = function() {
       label4.y = 140;
       this.msgLabel = label4;
       
-      dpad = new Sprite(242,96);
-      dpad.x = 160 - (dpad.width/2);
-      dpad.y = game.height - dpad.height - 60;
+      bracket1 = new Sprite(5, 32);
+      bracket1.image = game.assets['res/brackets.png'];
+      bracket1.frame = 1;
+      bracket1.x = 93;
+      bracket1.y = 24;
+      
+      bracket2 = new Sprite(11, 32);
+      bracket2.image = game.assets['res/brackets.png'];
+      bracket2.x = 164;
+      bracket2.y = 24;
+      
+      bracket3 = new Sprite(11, 32);
+      bracket3.image = game.assets['res/brackets.png'];
+      bracket3.x = 257;
+      bracket3.y = 24;
+      
+      bracket4 = new Sprite(4, 32);
+      bracket4.image = game.assets['res/brackets.png'];
+      bracket4.x = 314;
+      bracket4.y = 24;
+      
+      dpad = new Sprite(320,156);
+      dpad.x = 0;
+      dpad.y = game.height - 156;
       dpad.opacity = 0.5;
       dpad.image = game.assets['res/dpad.png'];       
       dpad.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       this.dpad = dpad;
       
-      labelPause = new FontSprite('score', 64, 16, '[P]');
-      labelPause.x = 256;
-      labelPause.y = dpad.y - 32;
+      labelPause = new Sprite(64, 64);
+      labelPause.image = game.assets['res/pause.png'];
+      labelPause.x = 246;
+      labelPause.y = 70;
+      labelPause.opacity = 0.6;
       labelPause.addEventListener(Event.TOUCH_START,this.pauseGame);
       
       // Penguin
@@ -301,7 +356,7 @@ window.onload = function() {
       this.generateIceTimer = 0;
       this.generateFishTimer = 0;
       this.fishTimerExp = 20;
-      this.heartTimer = 20;
+      this.heartTimer = 25;
       this.fishTimer = getRandom(3,6)*this.fishTimerExp;
       this.lives = 3;
       this.score = 0;
@@ -323,7 +378,8 @@ window.onload = function() {
       
       // Background music
       if( isAndroid ) {
-        bgm.play();
+        this.bgm = bgm;
+        this.bgm.play();
         //this.jumpSnd = jumpSnd;
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
@@ -346,6 +402,10 @@ window.onload = function() {
       this.addChild(label4);
       this.addChild(label5);
       this.addChild(label6);
+      this.addChild(bracket1);
+      this.addChild(bracket2);
+      this.addChild(bracket3);
+      this.addChild(bracket4);
       this.addChild(dpad);
       this.addChild(labelPause);
       
@@ -358,19 +418,18 @@ window.onload = function() {
         this.parentNode.paused = true;
         if( isAndroid ) {
           keeploop = false; 
-          bgm.pause();
-        }else{
-          this.parentNode.bgm.pause();
+          //bgm.pause();
         }
+        this.parentNode.bgm.pause();        
       }else {
         this.parentNode.paused = false;
         if( isAndroid ) {
           keeploop = true; 
-          bgm.play();
-        }else{
-          this.parentNode.bgm.play();
+          //bgm.play();
         }
+        this.parentNode.bgm.play();
       }
+      paused = this.parentNode.paused;
     },
     
     handleTouchControl: function (evt) {
@@ -433,20 +492,37 @@ window.onload = function() {
         if (this.iceTimer <=80) this.iceTimer = 80;
         this.levelUpAt = 30;
         this.fishTimerExp = 20 - (2*this.sabbath);
-        this.heartTimer = 20 - (this.sabbath * 5);
-        if(this.heartTimer <= 5) this.heartTimer = 5;
+        this.heartTimer = 25 - (this.sabbath * 5);
+        if(this.heartTimer <= 10) this.heartTimer = 10;
         this.bonusMode = true;
+        
+        //deal with music change
+        if( isAndroid ) {
+          keeploop = false;
+          this.bgm.stop();
+          this.bgm = bonus;
+          keeploop = true;
+          this.bgm.play();
+        }else{
+          console.log('ok');
+          //game.assets['res/powerup.wav'].play();
+        }
+        
       }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
     },
     
     update: function(evt) {
       if(!this.paused){
+        coinstr = levelupstr = '';
+        if(this.coins < 10) coinstr = '0';
+        if(this.levelUpAt < 10) levelupstr = '0';
+        
         this.scoreLabel.text = 'SC ' + this.score + '_x' + this.multiplier;
-        this.coinsLabel.text = 'FISH_' + this.coins + '/' + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
+        this.coinsLabel.text = 'PEIXE_' + coinstr + this.coins + '/' + levelupstr + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
         this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
         this.livesLabel.text = 'SNOW_ ' + this.lives;
         this.hiscoreLabel.text = 'TOP '+hiscore;
-        if(this.bonusMode == true) this.coinsLabel.text = '';
+        if(this.bonusMode == true) this.coinsLabel.text = 'BONUS_STAGE';
         
         if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
           // Deal with start message        
@@ -502,10 +578,9 @@ window.onload = function() {
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false; 
-                  bgm.stop();
-                }else{
-                  this.bgm.stop();
+                  //bgm.stop();
                 }
+                this.bgm.stop();
                 break;
               }
             }else{
@@ -551,10 +626,9 @@ window.onload = function() {
             if(this.lives==0){
               if( isAndroid ) {
                 keeploop = false; 
-                bgm.stop();
-              }else{
-                this.bgm.stop();
+                //bgm.stop();
               }
+              //this.bgm.stop();
               game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel)); 
             }else{
               this.gotHit=false;
@@ -574,10 +648,9 @@ window.onload = function() {
               this.penguin.resetPosition();
               if( isAndroid ) {
                 keeploop = true; 
-                bgm.play();
-              }else{
-                this.bgm.play();
+                //bgm.play();
               }
+              this.bgm.play();
             }
           }
         }
@@ -684,6 +757,14 @@ window.onload = function() {
             this.penguin.movable = true;
             this.penguin.shopping(false);
             this.penguin.resetPosition();
+            
+            if( isAndroid ) {
+              keeploop = false;
+              this.bgm.stop();
+              this.bgm = bgm;
+              keeploop = true;
+              this.bgm.play();
+            }
           }
         }
         
@@ -731,12 +812,33 @@ window.onload = function() {
       map.image = game.assets['res/groundSheet.png'];
       map.loadData(arrMap1Top,arrMap1Sub);
       
-      // Score label
+      // UI labels
       scoreLabel = score;
       coinLabel = coin;
       levelLabel = level;
       livesLabel = life;
       hiscoreLabel = hiscore;
+      
+      bracket1 = new Sprite(5, 32);
+      bracket1.image = game.assets['res/brackets.png'];
+      bracket1.frame = 1;
+      bracket1.x = 93;
+      bracket1.y = 24;
+      
+      bracket2 = new Sprite(11, 32);
+      bracket2.image = game.assets['res/brackets.png'];
+      bracket2.x = 164;
+      bracket2.y = 24;
+      
+      bracket3 = new Sprite(11, 32);
+      bracket3.image = game.assets['res/brackets.png'];
+      bracket3.x = 257;
+      bracket3.y = 24;
+      
+      bracket4 = new Sprite(4, 32);
+      bracket4.image = game.assets['res/brackets.png'];
+      bracket4.x = 314;
+      bracket4.y = 24;
             
       // Game Over label
       gameOverLabel = new FontSprite('score', 176, 16, "FIM DE JOGO");
@@ -798,8 +900,8 @@ window.onload = function() {
       
       label.text = '  ==SNOW & YUKI==__CODE, ART & DESIGN_'
                   +'ADINAN BATISTA ALVES___'
-                  +'BGM: 8BIT ADVENTURE_'
-                  +'RevampedPRO_(OpenGameArt.Org)___'
+                  +'8BIT TRACKS_'
+                  +'Manuel Bolaños Gómez_(OpenGameArt.Org)___'
                   +'BMFONT PLUGIN_'
                   +'COFFEE DOG GAMES___'
                   +'SOUND EFFECTS_'
@@ -860,6 +962,11 @@ window.onload = function() {
       PressStart.x = 64;
       PressStart.y = 264;
       PressStart.addEventListener(Event.TOUCH_START, function(e){
+        if( isAndroid ) {
+          intro.stop();
+        }else{
+          game.assets['res/intro.mp3'].stop();
+        }
         game.replaceScene(new SceneGame());
       });
       
@@ -893,6 +1000,13 @@ window.onload = function() {
       this.addChild(creditLabel);
       this.addChild(label);
       this.addChild(label6);
+      
+      if( isAndroid ) {
+        intro.seekTo(1);
+        intro.play();
+      }else{
+        game.assets['res/intro.mp3'].play();
+      }
     }
   });  
 };
