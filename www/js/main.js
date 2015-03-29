@@ -3,6 +3,7 @@ var hiscore = 1000;
 var paused = false;
 var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus;
 var isAndroid = isMobile();
+var scoreRewards = [10000,30000,70000];
 
 //game global difficulty variables
 var levelUpAt = 4;
@@ -377,6 +378,8 @@ window.onload = function() {
       this.bonusMode = false;
       this.bonusDuration = 0; 
       this.heartsGenerated = 0;
+      this.scoreTarget = 0; //posição de scoreRewards que aumenta ao ser atingida
+      this.winGame = 0; //ao passar do level 21, considera o jogo ganho e apresenta uma mensagem de parabéns no SceneGameOver
       
       // Background music
       if( isAndroid ) {
@@ -468,7 +471,16 @@ window.onload = function() {
     setScore: function (value,multi) {
       if (multi) this.score = this.score + (value * this.multiplier);
       else this.score = this.score + value;
-      if (this.score >= 99999) this.score = 99999;
+      if (this.score >= scoreRewards[this.scoreTarget]){
+        if(this.scoreTarget<=2){
+          this.lives+=1;
+          this.scoreTarget+=1;
+        }
+      }
+      if (this.score >= 99999) {
+        this.score = 99999;
+        this.winGame = 2;
+      }
       if (this.score >= hiscore) hiscore = this.score;
     },
     
@@ -510,6 +522,14 @@ window.onload = function() {
         }
         
       }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
+      if (this.level == 22) this.winGame = 1;
+      if (this.winGame == 2) {
+        if( isAndroid ) {
+          keeploop = false;
+        }
+        this.bgm.stop();
+        game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
+      }
     },
     
     update: function(evt) {
@@ -630,7 +650,7 @@ window.onload = function() {
                 //bgm.stop();
               }
               //this.bgm.stop();
-              game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel)); 
+              game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
             }else{
               this.gotHit=false;
               this.hitDuration=0;
@@ -666,7 +686,7 @@ window.onload = function() {
           }
           //game.stop();
           this.buyDuration += evt.elapsed * 0.001; 
-          this.penguin.shopping(true);
+          this.penguin.shopping();
           this.yuki.kiss(this.penguin.lane);
           // if(this.hitDuration <= 1 && this.duration){
           // }
@@ -679,7 +699,7 @@ window.onload = function() {
               this.fishGroup.removeChild(fish);
             }
             this.buying=false; 
-            this.penguin.shopping(false);
+            //this.penguin.shopping(false);
             this.buyDuration = 0;
             if (this.penguin.lane==2) {
               this.setScore((10*this.levelUpAt),true);           
@@ -740,7 +760,7 @@ window.onload = function() {
             else this.msgLabel.text += 'x10_BONUS '+10*this.hearts + 'pts';
             this.penguin.movable = false;
             this.penguin.lane = 2;
-            this.penguin.shopping(true);
+            this.penguin.shopping();
           }
             
           if(this.bonusDuration >=2) {
@@ -756,7 +776,7 @@ window.onload = function() {
             this.heartsGenerated = 0;
             this.hearts = 0;
             this.penguin.movable = true;
-            this.penguin.shopping(false);
+            //this.penguin.shopping(false);
             this.penguin.resetPosition();
             
             if( isAndroid ) {
@@ -797,7 +817,7 @@ window.onload = function() {
   
   // SceneGameOver  
   var SceneGameOver = Class.create(Scene, {
-    initialize: function(score,coin,level,life,hiscore) {
+    initialize: function(score,coin,level,life,hiscore,winGame) {
       var gameOverLabel, scoreLabel;
       Scene.apply(this);    
       this.backgroundColor = '#000000';
@@ -808,9 +828,12 @@ window.onload = function() {
       //bg.scale(2,2);
       bg.image = game.assets['res/mountain.png'];
       map = new Map(32, 32);
-      //map.y = 320;
       map.image = game.assets['res/groundSheet.png'];
-      map.loadData(arrMap1Top,arrMap1Sub);
+      
+      if(winGame>=1){
+        map.loadData(arrMap2Top,arrMap2Sub);
+        map.y = 16;
+      }else map.loadData(arrMap1Top,arrMap1Sub);
       
       // UI labels
       scoreLabel = score;
@@ -841,8 +864,12 @@ window.onload = function() {
       bracket4.y = 24;
             
       // Game Over label
-      gameOverLabel = new FontSprite('score', 176, 16, "FIM DE JOGO");
+      if(winGame==1) gameovertxt = "PARABÉNS!_Snow e Yuki terão_peixe por muito_tempo!";
+      else if(winGame==2) gameovertxt = "PARABÉNS!_Você zerou_Snow & Yuki!__Em breve teremos_novos jogos e_desafios, AGUARDE!!!";
+      else gameovertxt = "FIM DE JOGO!";
+      gameOverLabel = new FontSprite('score', 320, 120, gameovertxt);
       gameOverLabel.x = 72;
+      if(winGame>=1)gameOverLabel.x = 40;
       gameOverLabel.y = 140;
       
       this.timeToRestart = 0;
@@ -861,10 +888,40 @@ window.onload = function() {
       this.addChild(bracket3);
       this.addChild(bracket4);
       
+      if(winGame>=1){
+        igloo = new Sprite(48,48);
+        igloo.x = 98;
+        igloo.y = 416;
+        igloo.image = game.assets['res/iglooSheet.png']; 
+        
+        igloo2 = new Sprite(48,48);
+        igloo2.x = 146;
+        igloo2.y = 416;
+        igloo2.scaleX = -1;
+        igloo2.image = game.assets['res/iglooSheet.png']; 
+      
+        snow = new Sprite(32,32);
+        snow.x = 224;
+        snow.y = 464;
+        snow.frame = [4,4,4,4,4,4,4,4,4,4,4,1,1,1,1,1,1];
+        snow.image = game.assets['res/penguinSheet.png']; 
+        
+        yuki = new Sprite(32,32);
+        yuki.x = 192;
+        yuki.y = 432;
+        yuki.frame = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2];
+        yuki.image = game.assets['res/yukiSheet.png']; 
+        
+        this.addChild(igloo);
+        this.addChild(igloo2);
+        this.addChild(snow);
+        this.addChild(yuki);
+      }
+      
       // Listen for taps
       this.addEventListener(Event.TOUCH_START, this.touchToRestart);
-      // Update
-      this.addEventListener(Event.ENTER_FRAME, this.update);
+      if(winGame<1) // Update
+        this.addEventListener(Event.ENTER_FRAME, this.update);
     },
     
     touchToRestart: function(evt) {

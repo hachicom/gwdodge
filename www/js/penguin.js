@@ -45,7 +45,7 @@ var Penguin = Class.create(Sprite, {
   
   switchToLaneNumber: function(lane,isLit,isThere){
     if (!this.movable) return false;
-    //if(this.x==this.nextpos){
+    if(this.x==this.nextpos){
       this.tl.clear();
       playsnd = 'jump';
       this.lane = this.lane + lane;
@@ -61,18 +61,18 @@ var Penguin = Class.create(Sprite, {
         else playsnd = false;
       }else{
         //var targetX = 160 - this.width/2 + (this.lane-1)*90;
-        //this.nextpos = this.positions[this.lane];
-        this.tl.moveTo(this.positions[this.lane], this.y, 50, enchant.Easing.QUAD_EASEINOUT);
+        this.nextpos = this.positions[this.lane];
+        this.tl.moveTo(this.positions[this.lane], this.y, 75, enchant.Easing.QUAD_EASEINOUT).then(function(){this.x=this.positions[this.lane];});
       }
       return playsnd;
-    //}
+    }
   },
   
   resetPosition: function(){
     this.tl.clear();
     this.lane=1;
     this.x = this.positions[1];
-    //this.nextpos = this.positions[1];
+    this.nextpos = this.positions[1];
     this.frame = 0;
     this.iniFrame = 0;
     this.endFrame = 1;
@@ -89,31 +89,19 @@ var Penguin = Class.create(Sprite, {
     //console.log(this.x+' - '+this.lane+' '+lane);
   },
   
-  shopping: function(buying){     
-    if(buying){
-      if(this.lane==2){
+  shopping: function(){     
+    if(this.lane==2){
+      this.tl.moveTo(252, this.y, 200, enchant.Easing.QUAD_EASEINOUT).then(function(){
         this.frame = 4;
         this.iniFrame = 4;
         this.endFrame = 4;
-        this.tl.moveTo(252, this.y, 100, enchant.Easing.QUAD_EASEINOUT);
-        //this.nextpos = 252;
-      }//else{
-        // this.frame = 5;
-        // this.iniFrame = 5;
-        // this.endFrame = 5;
-        // this.nextpos = 26;
-      // }
-    }else{
-      this.frame = 0;
-      this.iniFrame = 0;
-      this.endFrame = 1;
-      this.tl.moveTo(this.positions[this.lane], this.y, 100, enchant.Easing.QUAD_EASEINOUT);
-      //this.nextpos = this.positions[this.lane];
+      });
+      //this.nextpos = 252;
     }
   },
   
   isVulnerable: function(){
-    //return (this.x==this.nextpos);
-    return true;
+    return (this.x==this.nextpos);
+    //return true;
   }
 });
