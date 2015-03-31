@@ -17,3 +17,14 @@ function isMobile(){
   
   return vMobile;
 }
+
+//http://www.gameplaypassion.com/blog/how-to-save-game-data-in-browser-html5-localstorage/
+function isLocalStorageSupported() 
+{
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } 
+  catch (e) {
+    return false;
+  }
+}

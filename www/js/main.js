@@ -4,6 +4,16 @@ var paused = false;
 var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus;
 var isAndroid = isMobile();
 var scoreRewards = [10000,30000,70000];
+var soundOn = true;
+var playerData = {
+  scoretable: {
+		hiscore: 1000
+	},
+  settings: {
+		sound: true
+	},
+	// ...
+}; 
 
 //game global difficulty variables
 var levelUpAt = 4;
@@ -65,6 +75,22 @@ window.onload = function() {
 		// 1 - Variables
     enchant.bmfont.createFont('score', 'res/font0.fnt', game.assets['res/font0_0.png']);
     var scene;
+    
+    if (isLocalStorageSupported())
+    {
+	    console.log("Supports Save!");
+      playerDataTmp = JSON.decode(localStorage["playerData"]);
+      if (playerDataTmp!=null) playerData = playerDataTmp;
+      console.dir(playerData);
+    }
+    else
+    {
+      console.log("Doesn't support Save!");
+      localStorage = [];
+    }
+    hiscore = playerData.scoretable.hiscore;
+    soundOn = playerData.settings.sound;
+    
     // 2 - New scene
     scene = new SceneTitle();
     game.pushScene(scene);
@@ -384,13 +410,13 @@ window.onload = function() {
       // Background music
       if( isAndroid ) {
         this.bgm = bgm;
-        this.bgm.play();
+        if(soundOn) this.bgm.play();
         //this.jumpSnd = jumpSnd;
       }else{
         this.bgm = game.assets['res/bgm.mp3']; // Add this line
         this.jumpSnd = game.assets['res/jump.wav'];
         // Start BGM
-        this.bgm.play();
+        if(soundOn) this.bgm.play();
       }
       
       // 4 - Add child nodes        
@@ -425,14 +451,14 @@ window.onload = function() {
           keeploop = false; 
           //bgm.pause();
         }
-        this.parentNode.bgm.pause();        
+        if(soundOn) this.parentNode.bgm.pause();        
       }else {
         this.parentNode.paused = false;
         if( isAndroid ) {
           keeploop = true; 
           //bgm.play();
         }
-        this.parentNode.bgm.play();
+        if(soundOn) this.parentNode.bgm.play();
       }
       paused = this.parentNode.paused;
     },
@@ -448,16 +474,18 @@ window.onload = function() {
           playSnd = this.parentNode.penguin.switchToLaneNumber(lane,this.parentNode.igloo.isLit,this.parentNode.yuki.isThere);
           if (playSnd=='jump') { //apenas moveu o pinguim
             if( isAndroid ){
-              jumpSnd.seekTo(1);
-              jumpSnd.play();
+              if(soundOn) {
+                jumpSnd.seekTo(1);
+                jumpSnd.play();
+              }
             }else{
-              this.parentNode.jumpSnd.play();
+              if(soundOn) this.parentNode.jumpSnd.play();
             }
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
-              powerup.play();
+              if(soundOn) powerup.play();
             }else{
-              game.assets['res/powerup.wav'].play();
+              if(soundOn) game.assets['res/powerup.wav'].play();
             }
             this.parentNode.buying=true;
             this.parentNode.setCoins(this.parentNode.levelUpAt*(-1));
@@ -503,7 +531,7 @@ window.onload = function() {
       if(this.level%7==0){
         this.sabbath++;
         this.iceTimer = this.iceTimer/2;
-        if (this.iceTimer <=80) this.iceTimer = 80;
+        if (this.iceTimer <=160) this.iceTimer = 160;
         this.levelUpAt = 30;
         this.fishTimerExp = 20 - (2*this.sabbath);
         this.heartTimer = 25 - (this.sabbath * 5);
@@ -512,10 +540,12 @@ window.onload = function() {
         
         //deal with music change
         if( isAndroid ) {
-          keeploop = false;
-          this.bgm.stop();
-          this.bgm = bonus;
-          this.bgm.play();
+          if(soundOn) {
+            keeploop = false;
+            this.bgm.stop();
+            this.bgm = bonus;
+            this.bgm.play();
+          }
         }else{
           console.log('ok');
           //game.assets['res/powerup.wav'].play();
@@ -527,7 +557,7 @@ window.onload = function() {
         if( isAndroid ) {
           keeploop = false;
         }
-        this.bgm.stop();
+        if(soundOn) this.bgm.stop();
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
       }
     },
@@ -589,9 +619,9 @@ window.onload = function() {
             if(ice.y<=260){
               if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
                 if( isAndroid ) {
-                  hit.play();
+                  if(soundOn) hit.play();
                 }else{
-                  game.assets['res/hit.wav'].play();
+                  if(soundOn) game.assets['res/hit.wav'].play();
                 }
                 //console.log(ice.y);
                 ice.crashToPieces();
@@ -601,16 +631,18 @@ window.onload = function() {
                   keeploop = false; 
                   //bgm.stop();
                 }
-                this.bgm.stop();
+                if(soundOn) this.bgm.stop();
                 break;
               }
             }else{
               //this.iceGroup.removeChild(ice);
               if( isAndroid ) {
-                crash.seekTo(1);
-                crash.play();
+                if(soundOn) {
+                  crash.seekTo(1);
+                  crash.play();
+                }
               }else{
-                game.assets['res/break.wav'].play();
+                if(soundOn) game.assets['res/break.wav'].play();
               }
               ice.crashToPieces();
               //this.setScore(1);
@@ -623,10 +655,12 @@ window.onload = function() {
             fish = this.fishGroup.childNodes[i];
             if (fish.intersect(this.penguin) && this.coins < this.levelUpAt){
               if( isAndroid ) {
-                coin.seekTo(1);
-                coin.play();
+                if(soundOn) {
+                  coin.seekTo(1);
+                  coin.play();
+                }
               }else{
-                game.assets['res/fish.wav'].play();
+                if(soundOn) game.assets['res/fish.wav'].play();
               }
               this.setScore(1,true);
               this.setCoins(1);
@@ -671,14 +705,14 @@ window.onload = function() {
                 keeploop = true; 
                 //bgm.play();
               }
-              this.bgm.play();
+              if(soundOn) this.bgm.play();
             }
           }
         }
         
         //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
         if(this.buying==true){
-          this.msgLabel.text = 'ROUND CONCLUÍDO!'
+          this.msgLabel.text = 'BONUS '+(10*this.levelUpAt)*this.multiplier + 'pts';
           for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
             var ice;
             ice = this.iceGroup.childNodes[i];
@@ -742,8 +776,10 @@ window.onload = function() {
             heart = this.heartGroup.childNodes[i];
             if (heart.intersect(this.penguin)){
               if( isAndroid ) {
-                coin.seekTo(1);
-                coin.play();
+                if(soundOn) {
+                  coin.seekTo(1);
+                  coin.play();
+                }
               }else{
                 game.assets['res/fish.wav'].play();
               }
@@ -756,7 +792,7 @@ window.onload = function() {
           
           if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
             this.bonusDuration += evt.elapsed * 0.001; 
-            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 500pts';
+            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 2000pts';
             else this.msgLabel.text += 'x10_BONUS '+10*this.hearts + 'pts';
             this.penguin.movable = false;
             this.penguin.lane = 2;
@@ -764,7 +800,7 @@ window.onload = function() {
           }
             
           if(this.bonusDuration >=2) {
-            if(this.hearts==this.levelUpAt)this.score+=500;
+            if(this.hearts==this.levelUpAt)this.score+=2000;
             else this.setScore(10*this.hearts,false);
             
             this.bonusMode = false;
@@ -780,10 +816,12 @@ window.onload = function() {
             this.penguin.resetPosition();
             
             if( isAndroid ) {
-              this.bgm.stop();
-              this.bgm = bgm;
-              keeploop = true;
-              this.bgm.play();
+              if(soundOn) {
+                this.bgm.stop();
+                this.bgm = bgm;
+                keeploop = true;
+                this.bgm.play();
+              }
             }
           }
         }
@@ -794,7 +832,7 @@ window.onload = function() {
         }
         else
         if (this.bgm.currentTime >= this.bgm.duration ){
-          this.bgm.play();
+          if(soundOn) this.bgm.play();
         }
         
         // If Samsung android browser is detected
@@ -817,7 +855,7 @@ window.onload = function() {
   
   // SceneGameOver  
   var SceneGameOver = Class.create(Scene, {
-    initialize: function(score,coin,level,life,hiscore,winGame) {
+    initialize: function(score,coin,level,life,hiscorelb,winGame) {
       var gameOverLabel, scoreLabel;
       Scene.apply(this);    
       this.backgroundColor = '#000000';
@@ -835,13 +873,16 @@ window.onload = function() {
         map.y = 16;
       }else map.loadData(arrMap1Top,arrMap1Sub);
       
+      playerData.scoretable.hiscore = hiscore;
+      localStorage["playerData"] = JSON.encode(playerData);
+      
       // UI labels
       scoreLabel = score;
       coinLabel = coin;
       levelLabel = level;
       livesLabel = life;
-      hiscoreLabel = hiscore;
-      
+      hiscoreLabel = hiscorelb;
+            
       bracket1 = new Sprite(5, 32);
       bracket1.image = game.assets['res/brackets.png'];
       bracket1.frame = 1;
@@ -1013,6 +1054,110 @@ window.onload = function() {
     }
   });
   
+  // SceneSettings
+  var SceneSettings = Class.create(Scene, {
+    initialize: function(score) {
+      var TitleLabel, scoreLabel;
+      var resetHiscore = false;
+      Scene.apply(this);
+      //this.backgroundColor = '#0026FF';
+      
+      // Background
+      // title = new Sprite(256,160);
+      // title.x = 32;
+      // title.y = 32;
+      // title.image = game.assets['res/title.png'];      
+      this.backgroundColor = '#000000';
+      map = new Map(32, 32);
+      map.image = game.assets['res/groundSheet.png'];
+      map.loadData(arrMap1Top,arrMap1Sub);
+            
+      snow = new Sprite(32,32);
+      snow.x = 224;
+      snow.y = 288;
+      snow.frame = 4;
+      snow.image = game.assets['res/penguinSheet.png']; 
+      
+      yuki = new Sprite(32,32);
+      yuki.x = 192;
+      yuki.y = 288;
+      yuki.frame = 2;
+      yuki.image = game.assets['res/yukiSheet.png']; 
+      
+      label = new FontSprite('score', 320, 200, '  ==CONFIGURAÇÔES==__SOM & BGM_____RESETAR HISCORE');
+      label.x = 0;
+      label.y = 8;
+      
+      // SOUND SETTINGS
+      SoundOnLabel = new FontSprite('score', 80, 16, " [ON]");
+      SoundOnLabel.x = 16;
+      SoundOnLabel.y = 60;
+      SoundOnLabel.addEventListener(Event.TOUCH_START, function(e){
+        soundOn = true;
+        this.text = '>[ON]';
+        SoundOffLabel.text = ' [OFF]';
+      });
+      if (soundOn) SoundOnLabel.text = '>[ON]';
+      
+      SoundOffLabel = new FontSprite('score', 96, 16, ' [OFF]');
+      SoundOffLabel.x = 140;
+      SoundOffLabel.y = 60;
+      SoundOffLabel.addEventListener(Event.TOUCH_START, function(e){
+        soundOn = false;
+        this.text = '>[OFF]';
+        SoundOnLabel.text = ' [ON]';
+      });
+      if (!soundOn) SoundOffLabel.text = '>[OFF]';
+      
+      // HISCORE SETTINGS
+      ResetYesLabel = new FontSprite('score', 96, 16, " [SIM]");
+      ResetYesLabel.x = 16;
+      ResetYesLabel.y = 142;
+      ResetYesLabel.addEventListener(Event.TOUCH_START, function(e){
+        resetHiscore = true;
+        this.text = '>[SIM]';
+        ResetNoLabel.text = ' [NAO]';
+      });
+      if (resetHiscore) ResetYesLabel.text = '>[SIM]';
+      
+      ResetNoLabel = new FontSprite('score', 96, 16, ' [NAO]');
+      ResetNoLabel.x = 140;
+      ResetNoLabel.y = 142;
+      ResetNoLabel.addEventListener(Event.TOUCH_START, function(e){
+        resetHiscore = false;
+        this.text = '>[NAO]';
+        ResetYesLabel.text = ' [SIM]';
+      });
+      if (!resetHiscore) ResetNoLabel.text = '>[NAO]';
+      
+      exitLabel = new FontSprite('score', 144, 16, '[VOLTAR]');
+      exitLabel.x = 16;
+      exitLabel.y = 240;
+      exitLabel.addEventListener(Event.TOUCH_START, function(e){
+        if(resetHiscore) hiscore = 0;
+        playerData.scoretable.hiscore = hiscore;
+        playerData.settings.sound = soundOn;
+        localStorage["playerData"] = JSON.encode(playerData);
+        game.replaceScene(new SceneTitle());
+      });
+            
+      // Add labels  
+      //this.addChild(title);
+      this.addChild(map);
+      this.addChild(snow);
+      this.addChild(yuki);
+      this.addChild(label);
+      this.addChild(SoundOnLabel);
+      this.addChild(SoundOffLabel);
+      this.addChild(ResetYesLabel);
+      this.addChild(ResetNoLabel);
+      this.addChild(exitLabel);
+      
+      // Listen for taps
+      this.addEventListener(Event.TOUCH_START, this.touchToStart);
+    }
+  });
+  
   // SceneTitle
   var SceneTitle = Class.create(Scene, {
     initialize: function(score) {
@@ -1053,16 +1198,28 @@ window.onload = function() {
       PressStart.y = 264;
       PressStart.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
-          if(introstatus==2)intro.stop();
+          if(soundOn && introstatus==2)intro.stop();
         }else{
-          game.assets['res/intro.mp3'].stop();
+          if(soundOn) game.assets['res/intro.mp3'].stop();
         }
         game.replaceScene(new SceneGame());
       });
       
+      optionLabel = new FontSprite('score', 160, 16, '[SETTINGS]');
+      optionLabel.x = 64;
+      optionLabel.y = 320;
+      optionLabel.addEventListener(Event.TOUCH_START, function(e){
+        if( isAndroid ) {
+          if(soundOn && introstatus==2)intro.stop();
+        }else{
+          if(soundOn) game.assets['res/intro.mp3'].stop();
+        }
+        game.replaceScene(new SceneSettings());
+      });
+      
       creditLabel = new FontSprite('score', 144, 16, '[CREDITS]');
       creditLabel.x = 64;
-      creditLabel.y = 320;
+      creditLabel.y = 376;
       creditLabel.addEventListener(Event.TOUCH_START, function(e){
         game.replaceScene(new SceneCredits());
       });
@@ -1087,15 +1244,18 @@ window.onload = function() {
       this.addChild(copyright);
       this.addChild(TitleLabel); 
       this.addChild(PressStart);
+      this.addChild(optionLabel);
       this.addChild(creditLabel);
       this.addChild(label);
       this.addChild(label6);
       
       if( isAndroid ) {
-        intro.seekTo(1);
-        intro.play();
+        if(soundOn) {
+          intro.seekTo(1);
+          intro.play();
+        }
       }else{
-        game.assets['res/intro.mp3'].play();
+        if(soundOn) game.assets['res/intro.mp3'].play();
       }
     }
   });  

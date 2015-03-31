@@ -32,7 +32,7 @@
     -->
     <preference name="permissions" value="none"/>
     <!-- Customize your app and platform with the preference element. -->
-    <preference name="phonegap-version" value="3.6.3" /> <!-- all: current version of PhoneGap -->
+    <preference name="phonegap-version" value="3.7.0" /> <!-- all: current version of PhoneGap -->
     <preference name="orientation" value="portrait" /> <!-- all: default means both landscape and portrait are enabled -->
     <preference name="target-device" value="universal" /> <!-- all: possible values handset, tablet, or universal -->
     <preference name="fullscreen" value="true" /> <!-- all: hides the status bar at the top of the screen -->
@@ -97,7 +97,7 @@
     
     <!-- Define app splash screen for each platform. -->
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="6000" />
+    <preference name="SplashScreenDelay" value="3000" />
     <gap:splash src="screen-ldpi-portrait.png" gap:platform="android" gap:density="ldpi" />
     <gap:splash src="screen-mdpi-portrait.png" gap:platform="android" gap:density="mdpi" />
     <gap:splash src="screen-hdpi-portrait.png" gap:platform="android" gap:density="hdpi" />
