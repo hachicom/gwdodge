@@ -65,6 +65,10 @@
       <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     </gap:config-file>
     
+    <gap:config-file platform="android" parent="/manifest"> 
+      <application android:hardwareAccelerated="true"/> 
+    </gap:config-file> 
+    
     <!-- 
     <gap:config-file platform="android" parent="/manifest">
       <application android:hardwareAccelerated="false" />
