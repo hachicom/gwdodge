@@ -18,6 +18,7 @@ function isMobile(){
   return vMobile;
 }
 
+//check localstorage support - by ZOUHAIR SERRAR
 //http://www.gameplaypassion.com/blog/how-to-save-game-data-in-browser-html5-localstorage/
 function isLocalStorageSupported() 
 {
