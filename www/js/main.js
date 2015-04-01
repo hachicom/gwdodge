@@ -101,7 +101,7 @@ window.onload = function() {
     document.addEventListener("deviceready", function ()
     {
       bgmstatus = introstatus = 0;
-	    bgm = new Media("file:///android_asset/www/res/bgm.mp3",
+	    bgm = new Media("file:///android_asset/www/res/bgm.ogg",
 	      function() {
 	        if(keeploop==true) this.play();
 	      },
@@ -113,7 +113,7 @@ window.onload = function() {
 	      }
 	    );      
       
-	    bonus = new Media("file:///android_asset/www/res/bonus.mp3",
+	    bonus = new Media("file:///android_asset/www/res/bonus.ogg",
 	      function() {
 	        //if(keeploop==true) this.play();
 	      },
@@ -125,7 +125,7 @@ window.onload = function() {
 	      }
 	    );
       
-      intro = new Media("file:///android_asset/www/res/intro.mp3",
+      intro = new Media("file:///android_asset/www/res/intro.ogg",
 	      function() {
 	        //if(keeploop==true) this.play();
 	      },
@@ -1028,8 +1028,8 @@ window.onload = function() {
                   +'Adinan Batista Alves___'
                   +'ENCHANT.JS TUTORIAL_Thongrop Rodsavas_(raywenderlich.com)___'
                   +'8BIT TRACKS BY_'
-                  +'Manuel Bolaños Gómez_(OpenGameArt.Org)___'
-                  +'BMFONT PLUGIN_'
+                  +'Bart Kelsey_(OpenGameArt.Org)___'
+                  +'BMFONT PLUGIN BY_'
                   +'COFFEE DOG GAMES___'
                   +'SOUND EFFECTS_'
                   +'CREATED IN BFXR.NET___'
