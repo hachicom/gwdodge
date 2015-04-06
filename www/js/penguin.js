@@ -81,6 +81,7 @@ var Penguin = Class.create(Sprite, {
   },
   
   gotHit: function(lane){     
+    this.tl.clear();
     this.frame = 2;
     this.iniFrame = 2;
     this.endFrame = 3;

@@ -1,16 +1,24 @@
-// Ice Boulder
+// Fish
 var Fish = Class.create(Sprite, {
   // The obstacle that the penguin must avoid
-  initialize: function(lane,level) {
+  initialize: function(lane,level,piranha) {
     // Call superclass constructor
     Sprite.apply(this,[24, 24]);
-    this.image  = Game.instance.assets['res/fishSheet.png'];    
+    this.piranha = piranha;
+    if(this.piranha){
+      this.image  = Game.instance.assets['res/piranhaSheet.png'];
+      this.ySpeed = 20;
+      this.rotationTime = 0;
+      this.yAccel = 0.5;
+    }else{
+      this.image  = Game.instance.assets['res/fishSheet.png'];
+      this.ySpeed = 21;
+      this.rotationTime = 2;
+      this.yAccel = 0.7;
+    }
     this.frame = 0;  
     this.rotationSpeed = 0;
     this.animationDuration = 0;
-    this.ySpeed = 21;
-    this.yAccel = 0.7;
-    this.rotationTime = 2;
     this.ascending = true;
     this.setLane(lane);
     this.addEventListener(Event.ENTER_FRAME, this.update);
@@ -56,11 +64,14 @@ var Fish = Class.create(Sprite, {
         }
         
         //Dealing with animation
-        if(this.rotationTime <= 0){
+        if(this.rotationTime <= 0 && !this.ascending){
           this.rotation = 270;
         }else{
-          if(this.ascending) this.rotation = 90;
-          else this.rotation += this.rotationSpeed;           
+          if(this.ascending) {
+            if(this.piranha) this.rotation += this.rotationSpeed;
+            else this.rotation = 90;
+          }
+          else this.rotation += this.rotationSpeed;
         }
         this.animationDuration += evt.elapsed * 0.001;       
         if (this.animationDuration >= 1) {

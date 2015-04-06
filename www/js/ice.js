@@ -39,15 +39,20 @@ var Ice = Class.create(Sprite, {
   update: function(evt) { 
     //IMKORTANTE: É preciso que este objeto seja parte de um grupo filho da scene! Do contrário causará erro!
     if (!this.parentNode.parentNode.paused){
-      var game,level;
+      var game,level,sabbath;
      
       game = Game.instance;
       level = this.parentNode.parentNode.levelcalc;
-      if(level<3) level=0;
-      else level-=2;
+      sabbath = this.parentNode.parentNode.sabbath;
+      
+      //Fog effect
+      if(level>4){
+        if(this.y>=20 && this.y<=120) this.visible = false;
+        else this.visible = true;
+      }
      
       if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
-        this.y += this.ySpeed + level;
+        this.y += this.ySpeed + sabbath;
         this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
         if (this.y > game.height) {
           this.parentNode.removeChild(this);        
