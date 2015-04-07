@@ -46,8 +46,8 @@ var Ice = Class.create(Sprite, {
       sabbath = this.parentNode.parentNode.sabbath;
       
       //Fog effect
-      if(level>4){
-        if(this.y>=20 && this.y<=120) this.visible = false;
+      if(level>5){
+        if(this.y<=120) this.visible = false;
         else this.visible = true;
       }
      

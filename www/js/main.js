@@ -3,7 +3,7 @@ var hiscore = 1000;
 var paused = false;
 var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus;
 var isAndroid = isMobile();
-var scoreRewards = [10000,30000,70000];
+var scoreRewards = [1000,5000,10000,50000];
 var soundOn = true;
 var playerData = {
   scoretable: {
@@ -14,6 +14,36 @@ var playerData = {
 	},
 	// ...
 }; 
+
+//Desligando os eventos de mouse (Android hack)
+document.addEventListener('mousedown', function (e) {
+  //console.log("cliquei");
+  e.stopImmediatePropagation();
+  e.preventDefault();
+  return false;
+}, true);
+document.addEventListener('mouseup', function (e) {
+  //console.log("cliquei");
+  e.stopImmediatePropagation();
+  e.preventDefault();
+  return false;
+}, true);
+document.addEventListener('mousemove', function (e) {
+  //console.log("cliquei");
+  e.stopImmediatePropagation();
+  e.preventDefault();
+  return false;
+}, true);
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, false);
+document.addEventListener('click', function(e) {
+    e.preventDefault();
+}, false);
+document.addEventListener('touchend', function(e) {
+    e.preventDefault();
+}, false);
+
 
 //game global difficulty variables
 var levelUpAt = 4;
@@ -178,29 +208,7 @@ window.onload = function() {
       }, false);
 
       document.addEventListener("backbutton", onBackKeyDown, false);
-      
-      //Desligando os eventos de mouse (Android hack)
-      document.addEventListener('mousedown', function (e) {
-        //console.log("cliquei");
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return false;
-      }, true);
-      
-      document.addEventListener('mouseup', function (e) {
-        //console.log("cliquei");
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return false;
-      }, true);
-      
-      document.addEventListener('mousemove', function (e) {
-        //console.log("cliquei");
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return false;
-      }, true);
-      
+            
       function onBackKeyDown(){
 	      game.stop();
 	      navigator.notification.confirm(
@@ -260,7 +268,7 @@ window.onload = function() {
       // Background
       bg = new Sprite(320,128);
       bg.y = 200;
-      bg.scale(1.2,2);
+      bg.scale(1,2);
       bg.image = game.assets['res/mountain.png'];
       this.backgroundArray = ['#51e4ff','#0064fa','#000000'];
       this.backgroundColor = this.backgroundArray[0];
@@ -269,7 +277,9 @@ window.onload = function() {
       map.image = game.assets['res/groundSheet.png'];
       map.loadData(arrMap1Top,arrMap1Sub);
             
-      //UI      
+      //UI
+      gui = new Sprite(320,56);
+      gui.backgroundColor = '#000000';
       // Label
       label = new FontSprite('score', 128, 32, 'SC 0');
       label.x = 8;
@@ -399,8 +409,9 @@ window.onload = function() {
         //if(soundOn) this.bgm.play();
       }
       
-      // 4 - Add child nodes        
-      this.addChild(bg);      
+      // 4 - Add child nodes
+      this.addChild(gui);
+      //this.addChild(bg);
       this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
@@ -480,7 +491,7 @@ window.onload = function() {
       if (multi) this.score = this.score + (value * this.multiplier);
       else this.score = this.score + value;
       if (this.score >= scoreRewards[this.scoreTarget]){
-        if(this.scoreTarget<=2){
+        if(this.scoreTarget<=scoreRewards.length){
           this.lives+=1;
           this.scoreTarget+=1;
         }
@@ -532,7 +543,7 @@ window.onload = function() {
         }
         
       }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
-      if (this.level == 22) this.winGame = 1;
+      if (this.level == 28) this.winGame = 1;
       if (this.winGame == 2) {
         if( isAndroid ) {
           keeploop = false;
@@ -548,7 +559,7 @@ window.onload = function() {
         if(this.coins < 10) coinstr = '0';
         if(this.levelUpAt < 10) levelupstr = '0';
         
-        this.scoreLabel.text = 'SC ' + this.score + '_x' + this.multiplier;
+        this.scoreLabel.text = 'SC ' + this.score;// + '_x' + this.multiplier;
         this.coinsLabel.text = 'PEIXE_' + coinstr + this.coins + '/' + levelupstr + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
         this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
         this.livesLabel.text = 'SNOW_ ' + this.lives;
@@ -663,9 +674,9 @@ window.onload = function() {
                 }/* else{
                   if(soundOn) game.assets['res/fish.wav'].play();
                 } */
-                this.setScore(1,true);
+                this.setScore(10,false);
                 this.setCoins(1);
-                if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
+                //if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
                 this.fishGroup.removeChild(fish);
                 break;
               }
@@ -714,7 +725,7 @@ window.onload = function() {
         
         //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
         if(this.buying==true){
-          this.msgLabel.text = 'BONUS '+(10*this.levelUpAt)*this.multiplier + 'pts';
+          this.msgLabel.text = 'BONUS '+(10*this.levelUpAt)*(this.sabbath+1) + 'pts';
           for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
             var ice;
             ice = this.iceGroup.childNodes[i];
@@ -738,7 +749,7 @@ window.onload = function() {
             //this.penguin.shopping(false);
             this.buyDuration = 0;
             if (this.penguin.lane==2) {
-              this.setScore((10*this.levelUpAt),true);           
+              this.setScore((10*this.levelUpAt)*(this.sabbath+1),false);           
               this.incLevelUp();
             }
             this.yuki.smile(this.coins);
@@ -805,7 +816,7 @@ window.onload = function() {
           }
             
           if(this.bonusDuration >=2) {
-            if(this.hearts==this.levelUpAt)this.score+=2000;
+            if(this.hearts==this.levelUpAt)this.setScore(2000,false);
             else this.setScore(10*this.hearts,false);
             
             this.bonusMode = false;
