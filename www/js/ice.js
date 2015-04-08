@@ -6,7 +6,7 @@ var Ice = Class.create(Sprite, {
     Sprite.apply(this,[48, 48]);
     this.image  = Game.instance.assets['res/Ice.png'];      
     this.rotationSpeed = 0;
-    this.ySpeed = 4;
+    this.ySpeed = 2;
     this.setLane(lane);
     this.addEventListener(Event.ENTER_FRAME, this.update);
   },
@@ -39,20 +39,22 @@ var Ice = Class.create(Sprite, {
   update: function(evt) { 
     //IMKORTANTE: É preciso que este objeto seja parte de um grupo filho da scene! Do contrário causará erro!
     if (!this.parentNode.parentNode.paused){
-      var game,level,sabbath;
+      var game,level,sabbath,foglimit;
      
       game = Game.instance;
       level = this.parentNode.parentNode.levelcalc;
       sabbath = this.parentNode.parentNode.sabbath;
+      foglimit = 80 - (sabbath*10);
+      if(foglimit>=120) foglimit=120;
       
       //Fog effect
-      if(level>5){
-        if(this.y<=120) this.visible = false;
+      if(level>4){
+        if(this.y<=foglimit) this.visible = false;
         else this.visible = true;
       }
      
       if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
-        this.y += this.ySpeed + sabbath;
+        this.y += this.ySpeed + level + sabbath;
         this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
         if (this.y > game.height) {
           this.parentNode.removeChild(this);        

@@ -3,7 +3,7 @@ var hiscore = 1000;
 var paused = false;
 var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus;
 var isAndroid = isMobile();
-var scoreRewards = [1000,5000,10000,50000];
+var scoreRewards = [5000,10000,20000,40000,80000];
 var soundOn = true;
 var playerData = {
   scoretable: {
@@ -580,8 +580,7 @@ window.onload = function() {
           if(this.startLevelMsg<=0) {
             this.levelcalc = this.level - (this.sabbath * 7);
             
-            if(this.levelcalc<3) this.generateIceTimer += 2;
-            else this.generateIceTimer += 2 + (this.levelcalc - 2);
+            this.generateIceTimer += 2 + this.levelcalc + this.sabbath;
             if (this.generateIceTimer >= this.iceTimer) {
               var ice;
               this.generateIceTimer = 0;
@@ -655,7 +654,7 @@ window.onload = function() {
             var fish;
             fish = this.fishGroup.childNodes[i];
             if (fish.intersect(this.penguin) && this.coins < this.levelUpAt){
-              if(fish.piranha && !fish.ascending && fish.y<284){
+              if(fish.piranha && !fish.ascending && fish.y<288){
                 if( isAndroid ) {
                   if(soundOn) hit.play();
                 }
@@ -665,6 +664,20 @@ window.onload = function() {
                   keeploop = false;
                   this.bgm.stop();
                 }
+                break;
+              }else if(fish.piranha && !fish.ascending && fish.y>=288){
+                if( isAndroid ) {
+                  if(soundOn) {
+                    coin.seekTo(1);
+                    coin.play();
+                  }
+                }/* else{
+                  if(soundOn) game.assets['res/fish.wav'].play();
+                } */
+                this.setScore(100,false);
+                this.setCoins(1);
+                //if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
+                this.fishGroup.removeChild(fish);
                 break;
               }else if(!fish.piranha){
                 if( isAndroid ) {
@@ -824,16 +837,16 @@ window.onload = function() {
           
           if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
             this.bonusDuration += evt.elapsed * 0.001; 
-            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! '+(2000*(this.sabbath+1))+'pts';
-            else this.msgLabel.text += 'x'+(this.sabbath+1)+'0_BONUS '+10*this.hearts*(this.sabbath+1) + 'pts';
+            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! '+(2000*(this.sabbath))+'pts';
+            else this.msgLabel.text += 'x'+(this.sabbath)+'0_BONUS '+10*this.hearts*(this.sabbath) + 'pts';
             this.penguin.movable = false;
             this.penguin.lane = 2;
             this.penguin.shopping();
           }
             
           if(this.bonusDuration >=2) {
-            if(this.hearts==this.levelUpAt)this.setScore(2000*(this.sabbath+1),false);
-            else this.setScore(10*this.hearts,false);
+            if(this.hearts==this.levelUpAt)this.setScore(2000*(this.sabbath),false);
+            else this.setScore(10*this.hearts*(this.sabbath),false);
             
             this.bonusMode = false;
             this.incLevelUp();
@@ -935,13 +948,21 @@ window.onload = function() {
       bracket4.image = game.assets['res/brackets.png'];
       bracket4.x = 314;
       bracket4.y = 24;
+      
+      this.textbook = [
+        'DICA: Tente pegar as_piranhas pela cauda,_vale 100 pontos!',
+        'DICA: A cambalhota_de uma piranha pode_quebrar os cubos_de gelo!',
+        'DICA: Snow não pode_carregar mais peixes_que o necessário!',
+        'DICA: Pontuações_altas garantem mais_vidas!',
+        'DICA: A Cada 7 fases_a dificuldade fica_maior, assim como_o bônus ao fim de_cada fase!',
+      ];
             
       // Game Over label
-      if(winGame==1) gameovertxt = "PARABÉNS!_Você é um_super jogador!";
-      else if(winGame==2) gameovertxt = "PARABÉNS!_Você zerou_Snow & Yuki!!!";
-      else gameovertxt = "FIM DE JOGO!";
+      if(winGame==1) gameovertxt = "    PARABÉNS!__Foi uma boa partida!";
+      else if(winGame==2) gameovertxt = "    PARABÉNS!__Você zerou o placar_de Snow & Yuki!!!";
+      else gameovertxt = "    FIM DE JOGO!____"+this.textbook[getRandom(0,this.textbook.length-1)];
       gameOverLabel = new FontSprite('score', 320, 120, gameovertxt);
-      gameOverLabel.x = 72;
+      gameOverLabel.x = 0;
       if(winGame>=1)gameOverLabel.x = 40;
       gameOverLabel.y = 140;
       
@@ -1073,7 +1094,7 @@ window.onload = function() {
             
       // Add labels  
       //this.addChild(title);
-      //this.addChild(map);
+      this.addChild(map);
       this.addChild(igloo);
       this.addChild(igloo2);
       this.addChild(snow);
@@ -1087,6 +1108,171 @@ window.onload = function() {
     touchToStart: function(evt) {
       var game = Game.instance;
       game.replaceScene(new SceneTitle());
+    }
+  });
+  
+  // SceneTutorial
+  var SceneTutorial = Class.create(Scene, {
+    initialize: function(score) {
+      var TitleLabel, scoreLabel;
+      Scene.apply(this);
+      //this.backgroundColor = '#0026FF';
+      
+      // Background
+      // title = new Sprite(256,160);
+      // title.x = 32;
+      // title.y = 32;
+      // title.image = game.assets['res/title.png'];      
+      this.backgroundColor = '#0064fa';
+      this.page = 0;
+      this.textbook = ['  ==COMO JOGAR==__'
+                    +'Snow & Yuki é_um jogo estilo_Game & Watch_(minigame)!__'
+                    +'Use os direcionais_para mover Snow_pelo estágio__'
+                  ,
+                    '  ==COMO JOGAR==__Desvie do gelo____'
+                    +'Colete peixes____'
+                    +'Evite piranhas____'
+                    +'Cada fase tem uma_quantidade de peixes_a ser coletada.__Ao coletar os peixes'
+                    +'leve-os para a Yuki_para passar de fase!_'
+                  ,
+                    '  ==COMO JOGAR==__Todo sétimo round_é um round bônus!_Colete corações_para ganhar pontos_______'
+                    +'Ganhe vida atingindo_a pontuação abaixo:__'
+                    +'->5000_->10000_->20000_->40000_->80000___Tente marcar 99999_pra zerar o jogo!'
+                  ];
+      this.spritesArr = [];
+      dpad = new Sprite(320,156);
+      dpad.x = 0;
+      dpad.y = 300;
+      dpad.image = game.assets['res/dpad.png'];       
+      this.spritesArr[0] = dpad; 
+      
+      snow = new Sprite(32,32);
+      snow.x = 144;
+      snow.y = 220;
+      snow.frame = [0,0,0,0,0,0,0,1,1,1,1,1,1,1];
+      snow.image = game.assets['res/penguinSheet.png'];
+      this.spritesArr[1] = snow;
+      
+      ice = new Sprite(48,48);
+      ice.x = 260;
+      ice.y = 40;
+      ice.image = game.assets['res/Ice.png']; 
+      this.spritesArr[2] = ice;
+            
+      fish = new Sprite(24,24);
+      fish.x = 270;
+      fish.y = 110;
+      fish.frame = [0,0,0,0,0,0,0,1,1,1,1,1,1,1];
+      fish.image = game.assets['res/fishSheet.png']; 
+      this.spritesArr[3] = fish;
+      
+      piranha = new Sprite(24,24);
+      piranha.x = 270;
+      piranha.y = 170;
+      piranha.frame = [0,0,0,0,0,0,0,1,1,1,1,1,1,1];
+      piranha.image = game.assets['res/piranhaSheet.png'];
+      this.spritesArr[4] = piranha;
+      
+      yuki = new Sprite(32,32);
+      yuki.x = 192;
+      yuki.y = 400;
+      yuki.scaleX = -1;
+      yuki.frame = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2];
+      yuki.image = game.assets['res/yukiSheet.png']; 
+      this.spritesArr[5] = yuki;
+      
+      heart = new Sprite(32,32);
+      heart.x = 140;
+      heart.y = 140;
+      heart.image = game.assets['res/heart.png']; 
+      this.spritesArr[6] = heart;
+      
+      label = new FontSprite('score', 320, 440, '');
+      label.x = 0;
+      label.y = 8;
+      
+      label.text = this.textbook[0];
+      this.labeltext = label;
+      
+      previousLabel = new FontSprite('score', 144, 16, '[VOLTAR]');
+      previousLabel.x = 20;
+      previousLabel.y = game.height - 16 - 60;
+      previousLabel.visible = false;
+      previousLabel.addEventListener(Event.TOUCH_START, function(e){
+        this.parentNode.page-=1;
+        this.parentNode.nextlabel.text = '[PROXIMO]';
+        if (this.parentNode.page<0) this.parentNode.page=0;
+        else if (this.parentNode.page==0) this.visible = false;
+        else this.visible = true;
+        //this.parentNode.labeltext.text = this.parentNode.textbook[this.parentNode.page];
+      });
+      this.prevlabel = previousLabel;
+      
+      nextLabel = new FontSprite('score', 144, 16, '[PROXIMO]');
+      nextLabel.x = 160;
+      nextLabel.y = game.height - 16 - 60;
+      nextLabel.visible = true;
+      nextLabel.addEventListener(Event.TOUCH_START, function(e){
+        this.parentNode.page+=1;
+        this.parentNode.prevlabel.visible = true;
+        if (this.parentNode.page>this.parentNode.textbook.length-1) game.replaceScene(new SceneTitle());
+        else if (this.parentNode.page==this.parentNode.textbook.length-1) this.text = '[  FIM  ]';
+        else this.text = '[PROXIMO]';
+        //this.parentNode.labeltext.text = this.parentNode.textbook[this.parentNode.page];
+      });
+      this.nextlabel = nextLabel;
+            
+      // Add labels  
+      //this.addChild(title);
+      //this.addChild(igloo);
+      //this.addChild(igloo2);
+      this.addChild(snow);
+      this.addChild(dpad);
+      this.addChild(ice);
+      this.addChild(fish);
+      this.addChild(piranha);
+      this.addChild(yuki);
+      this.addChild(heart);
+      this.addChild(label);
+      this.addChild(nextLabel);
+      this.addChild(previousLabel);
+      
+      // Update
+      this.addEventListener(Event.ENTER_FRAME, this.update);
+    },
+    
+    update: function(evt) {
+      for (var i = 0; i < this.spritesArr.length; i++){
+        this.spritesArr[i].visible = false;
+      }
+      this.labeltext.text = this.textbook[this.page];
+      if(this.page==0){
+        this.spritesArr[0].visible = true; //dpad
+        this.spritesArr[1].visible = true; //snow
+        this.spritesArr[1].x = 144;
+        this.spritesArr[1].y = 220;
+        this.spritesArr[1].frame = [0,0,0,0,0,0,0,1,1,1,1,1,1,1];
+      }
+      if(this.page==1){
+        this.spritesArr[2].visible = true; //ice
+        this.spritesArr[3].visible = true; //fish
+        this.spritesArr[4].visible = true; //piranha
+        this.spritesArr[5].visible = true; //yuki
+        this.spritesArr[1].visible = true; //snow
+        this.spritesArr[1].x = 144;
+        this.spritesArr[1].y = this.spritesArr[5].y = 400;
+        this.spritesArr[1].frame = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1];
+        this.spritesArr[5].frame = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2];
+      }
+      if(this.page==2){
+        this.spritesArr[5].visible = true; //yuki
+        this.spritesArr[6].visible = true; //heart
+        this.spritesArr[1].visible = true; //snow
+        this.spritesArr[1].x = 90;
+        this.spritesArr[1].y = this.spritesArr[5].y = 140;
+        this.spritesArr[1].frame = [4];
+        this.spritesArr[5].frame = [3];
+      }
     }
   });
   
@@ -1241,9 +1427,16 @@ window.onload = function() {
         game.replaceScene(new SceneGame());
       });
       
+      tutorialLabel = new FontSprite('score', 160, 16, '[TUTORIAL]');
+      tutorialLabel.x = 64;
+      tutorialLabel.y = 304;
+      tutorialLabel.addEventListener(Event.TOUCH_START, function(e){
+        game.replaceScene(new SceneTutorial());
+      });
+      
       optionLabel = new FontSprite('score', 160, 16, '[SETTINGS]');
       optionLabel.x = 64;
-      optionLabel.y = 320;
+      optionLabel.y = 344;
       optionLabel.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
           if(soundOn && introstatus==2)intro.stop();
@@ -1255,7 +1448,7 @@ window.onload = function() {
       
       creditLabel = new FontSprite('score', 144, 16, '[CREDITS]');
       creditLabel.x = 64;
-      creditLabel.y = 376;
+      creditLabel.y = 384;
       creditLabel.addEventListener(Event.TOUCH_START, function(e){
         game.replaceScene(new SceneCredits());
       });
@@ -1280,6 +1473,7 @@ window.onload = function() {
       this.addChild(copyright);
       this.addChild(TitleLabel); 
       this.addChild(PressStart);
+      this.addChild(tutorialLabel);
       this.addChild(optionLabel);
       this.addChild(creditLabel);
       this.addChild(label);
