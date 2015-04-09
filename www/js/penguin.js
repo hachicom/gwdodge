@@ -8,11 +8,11 @@ var Penguin = Class.create(Sprite, {
       this.lane = 1;
       this.positions = [70,145,220];
       this.nextpos = x;
-      this.movespeed = 30
+      this.movespeed = 30;
       this.x = x;
       this.y = y;
       this.movable = true;
-      this.tl.setTimeBased();
+      //this.tl.setTimeBased();
     
       // 2 - Animate
       this.frame = 0;
@@ -31,7 +31,7 @@ var Penguin = Class.create(Sprite, {
         else this.frame = this.iniFrame;
         this.animationDuration = 0;
       }
-      /* if(this.parentNode.gotHit!=true){
+      if(this.parentNode.gotHit!=true){
         if(this.x<this.nextpos) {
           this.x+=this.movespeed;
           if(this.x>=this.nextpos) this.x=this.nextpos;
@@ -39,14 +39,19 @@ var Penguin = Class.create(Sprite, {
           this.x-=this.movespeed;
           if(this.x<=this.nextpos) this.x=this.nextpos;
         }
-      } */
+      }
+      if(this.x == 252){
+        this.frame = 4;
+        this.iniFrame = 4;
+        this.endFrame = 4;
+      }
     }
   },
   
   switchToLaneNumber: function(lane,isLit,isThere){
     if (!this.movable) return false;
     if(this.x==this.nextpos){
-      this.tl.clear();
+      //this.tl.clear();
       playsnd = 'jump';
       this.lane = this.lane + lane;
       if(this.lane<0) {
@@ -60,16 +65,15 @@ var Penguin = Class.create(Sprite, {
         if(isLit) playsnd = 'powerup';
         else playsnd = false;
       }else{
-        //var targetX = 160 - this.width/2 + (this.lane-1)*90;
         this.nextpos = this.positions[this.lane];
-        this.tl.moveTo(this.positions[this.lane], this.y, 75, enchant.Easing.QUAD_EASEINOUT).then(function(){this.x=this.positions[this.lane];});
+        //this.tl.moveTo(this.positions[this.lane], this.y, 75, enchant.Easing.QUAD_EASEINOUT).then(function(){this.x=this.positions[this.lane];});
       }
       return playsnd;
     }
   },
   
   resetPosition: function(){
-    this.tl.clear();
+    //this.tl.clear();
     this.lane=1;
     this.x = this.positions[1];
     this.nextpos = this.positions[1];
@@ -78,10 +82,11 @@ var Penguin = Class.create(Sprite, {
     this.endFrame = 1;
     this.animationDuration = 0;
     this.animationSpeed = 0.25;
+    this.movespeed = 30;
   },
   
   gotHit: function(lane){     
-    this.tl.clear();
+    //this.tl.clear();
     this.frame = 2;
     this.iniFrame = 2;
     this.endFrame = 3;
@@ -92,12 +97,13 @@ var Penguin = Class.create(Sprite, {
   
   shopping: function(){     
     if(this.lane==2){
-      this.tl.moveTo(252, this.y, 200, enchant.Easing.QUAD_EASEINOUT).then(function(){
-        this.frame = 4;
-        this.iniFrame = 4;
-        this.endFrame = 4;
-      });
-      //this.nextpos = 252;
+      //this.tl.moveTo(252, this.y, 200, enchant.Easing.QUAD_EASEINOUT).then(function(){
+        // this.frame = 4;
+        // this.iniFrame = 4;
+        // this.endFrame = 4;
+      //});
+      this.nextpos = 252;
+      this.movespeed = 5;
     }
   },
   

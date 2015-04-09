@@ -270,7 +270,7 @@ window.onload = function() {
       bg.y = 200;
       bg.scale(1,2);
       bg.image = game.assets['res/mountain.png'];
-      this.backgroundArray = ['#51e4ff','#0064fa','#000000'];
+      this.backgroundArray = ['#00e8d8','#6888fc','#0058f8','#0000bc','#004058','#000000','#6844fc'];
       this.backgroundColor = this.backgroundArray[0];
       map = new Map(32, 32);
       //map.y = 315;
@@ -370,8 +370,8 @@ window.onload = function() {
       // Instance variables
       this.paused = false;
       this.startLevelMsg = 1.5;
-      this.generateIceTimer = 0;
-      this.generateFishTimer = 0;
+      this.generateIceTimer = 300;
+      this.generateFishTimer = 10;
       this.createPiranha = getRandom(4,6);
       this.fishCount = 0;
       this.fishTimerExp = 20;
@@ -548,8 +548,8 @@ window.onload = function() {
       if (this.winGame == 2) {
         if( isAndroid ) {
           keeploop = false;
+          if(soundOn) this.bgm.stop();
         }
-        if(soundOn) this.bgm.stop();
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
       }
     },
@@ -784,9 +784,10 @@ window.onload = function() {
             this.yuki.smile(this.coins);
             this.yuki.price = this.igloo.price = this.levelUpAt;
             this.startLevelMsg = 1.5;
-            if(this.levelcalc<=1) this.backgroundColor = this.backgroundArray[0];
-            else if(this.levelcalc<=3) this.backgroundColor = this.backgroundArray[1];
-            else this.backgroundColor = this.backgroundArray[2];
+            // if(this.levelcalc<=1) this.backgroundColor = this.backgroundArray[0];
+            // else if(this.levelcalc<=3) this.backgroundColor = this.backgroundArray[1];
+            // else 
+            this.backgroundColor = this.backgroundArray[this.levelcalc];
             this.penguin.resetPosition();
             //break;
           }
@@ -922,6 +923,9 @@ window.onload = function() {
       localStorage["playerData"] = JSON.encode(playerData);
       
       // UI labels
+      gui = new Sprite(320,56);
+      gui.backgroundColor = '#000000';
+      
       scoreLabel = score;
       coinLabel = coin;
       levelLabel = level;
@@ -958,19 +962,19 @@ window.onload = function() {
       ];
             
       // Game Over label
-      if(winGame==1) gameovertxt = "    PARABÉNS!__Foi uma boa partida!";
-      else if(winGame==2) gameovertxt = "    PARABÉNS!__Você zerou o placar_de Snow & Yuki!!!";
+      if(winGame==1) gameovertxt = "      PARABÉNS!__Foi uma boa partida!____________Até o próximo jogo!";
+      else if(winGame==2) gameovertxt = "      PARABÉNS!__Você zerou o placar_de Snow & Yuki!!!______________Até o próximo jogo!";
       else gameovertxt = "    FIM DE JOGO!____"+this.textbook[getRandom(0,this.textbook.length-1)];
-      gameOverLabel = new FontSprite('score', 320, 120, gameovertxt);
+      gameOverLabel = new FontSprite('score', 320, 320, gameovertxt);
       gameOverLabel.x = 0;
-      if(winGame>=1)gameOverLabel.x = 40;
       gameOverLabel.y = 140;
       
       this.timeToRestart = 0;
       
       // Add labels
       //this.addChild(bg);
-      if(winGame>=1)this.addChild(map);
+      //if(winGame>=1)this.addChild(map);
+      this.addChild(gui);
       this.addChild(gameOverLabel);
       this.addChild(scoreLabel);
       this.addChild(coinLabel);
@@ -983,33 +987,42 @@ window.onload = function() {
       this.addChild(bracket4);
       
       if(winGame>=1){
-        igloo = new Sprite(48,48);
-        igloo.x = 98;
-        igloo.y = 416;
-        igloo.image = game.assets['res/iglooSheet.png']; 
-        
-        igloo2 = new Sprite(48,48);
-        igloo2.x = 146;
-        igloo2.y = 416;
-        igloo2.scaleX = -1;
-        igloo2.image = game.assets['res/iglooSheet.png']; 
+        this.backgroundColor = '#6844fc';
+        heart = new Sprite(32,32);
+        heart.x = 144;
+        heart.y = 240;
+        heart.image = game.assets['res/heart.png']; 
       
         snow = new Sprite(32,32);
-        snow.x = 224;
-        snow.y = 464;
-        snow.frame = [4,4,4,4,4,4,4,4,4,4,4,1,1,1,1,1,1];
-        snow.image = game.assets['res/penguinSheet.png']; 
+        snow.x = 134;
+        snow.y = 280;
+        snow.frame = [4];
+        snow.image = game.assets['res/penguinSheet.png'];
+        snow.scaleX = -1;
         
         yuki = new Sprite(32,32);
-        yuki.x = 192;
-        yuki.y = 432;
-        yuki.frame = [1,1,1,1,1,1,1,2,2,2,2,2,2,2,2];
+        yuki.x = 156;
+        yuki.y = 280;
+        yuki.frame = [3];
         yuki.image = game.assets['res/yukiSheet.png']; 
+        yuki.scaleX = -1;
         
-        this.addChild(igloo);
-        this.addChild(igloo2);
+        this.addChild(heart);
         this.addChild(snow);
         this.addChild(yuki);
+      }
+      
+      if(winGame==2){
+        var heartsArr = [[112,224],[176,224],[80,240],[208,240],[64,272],[224,272],
+                         [80,304],[208,304],[112,336],[176,336],[144,368]];
+        this.backgroundColor = '#6844fc';
+        for(var i=0;i<=10;i++){
+          var hearttmp = new Sprite(32,32);
+          hearttmp.x = heartsArr[i][0];
+          hearttmp.y = heartsArr[i][1];
+          hearttmp.image = game.assets['res/heart.png'];
+          this.addChild(hearttmp);
+        }
       }
       
       if( isAndroid ) {
@@ -1115,15 +1128,8 @@ window.onload = function() {
   var SceneTutorial = Class.create(Scene, {
     initialize: function(score) {
       var TitleLabel, scoreLabel;
-      Scene.apply(this);
-      //this.backgroundColor = '#0026FF';
-      
-      // Background
-      // title = new Sprite(256,160);
-      // title.x = 32;
-      // title.y = 32;
-      // title.image = game.assets['res/title.png'];      
-      this.backgroundColor = '#0064fa';
+      Scene.apply(this);      
+      this.backgroundColor = '#0000bc';
       this.page = 0;
       this.textbook = ['  ==COMO JOGAR==__'
                     +'Snow & Yuki é_um jogo estilo_Game & Watch_(minigame)!__'
@@ -1132,7 +1138,7 @@ window.onload = function() {
                     '  ==COMO JOGAR==__Desvie do gelo____'
                     +'Colete peixes____'
                     +'Evite piranhas____'
-                    +'Cada fase tem uma_quantidade de peixes_a ser coletada.__Ao coletar os peixes'
+                    +'Cada fase tem uma_quantidade de peixes_a ser coletada.__Ao coletar os peixes_'
                     +'leve-os para a Yuki_para passar de fase!_'
                   ,
                     '  ==COMO JOGAR==__Todo sétimo round_é um round bônus!_Colete corações_para ganhar pontos_______'
