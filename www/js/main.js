@@ -401,6 +401,7 @@ window.onload = function() {
       if( isAndroid ) {
         this.bgm = bgm;
         if(soundOn) this.bgm.play();
+        admob.hideBanner();
         //this.jumpSnd = jumpSnd;
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
@@ -410,13 +411,13 @@ window.onload = function() {
       }
       
       // 4 - Add child nodes
+      this.addChild(iceGroup);
       this.addChild(gui);
       //this.addChild(bg);
       this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
       this.addChild(yuki);
-      this.addChild(iceGroup);
       this.addChild(fishGroup);
       this.addChild(heartGroup);
       this.addChild(label3);
@@ -431,7 +432,7 @@ window.onload = function() {
       this.addChild(bracket4);
       this.addChild(dpad);
       this.addChild(labelPause);
-      
+            
       // Update
       this.addEventListener(Event.ENTER_FRAME, this.update);
     },
@@ -681,6 +682,21 @@ window.onload = function() {
                 break;
               }
             }
+            for (var j = this.iceGroup.childNodes.length - 1; j >= 0; j--) {
+              var ice;
+              ice = this.iceGroup.childNodes[j];
+              
+              if (ice.intersect(fish) && fish.ascending && fish.piranha){
+                if( isAndroid ) {
+                  if(soundOn) {
+                    crash.seekTo(1);
+                    crash.play();
+                  }
+                }
+                ice.crashToPieces();
+                //break;
+              }
+            } 
           }
         }
         
@@ -808,15 +824,15 @@ window.onload = function() {
           
           if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
             this.bonusDuration += evt.elapsed * 0.001; 
-            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 2000pts';
-            else this.msgLabel.text += 'x10_BONUS '+10*this.hearts + 'pts';
+            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! '+(2000*(this.sabbath+1))+'pts';
+            else this.msgLabel.text += 'x'+(this.sabbath+1)+'0_BONUS '+10*this.hearts*(this.sabbath+1) + 'pts';
             this.penguin.movable = false;
             this.penguin.lane = 2;
             this.penguin.shopping();
           }
             
           if(this.bonusDuration >=2) {
-            if(this.hearts==this.levelUpAt)this.setScore(2000,false);
+            if(this.hearts==this.levelUpAt)this.setScore(2000*(this.sabbath+1),false);
             else this.setScore(10*this.hearts,false);
             
             this.bonusMode = false;
@@ -887,7 +903,7 @@ window.onload = function() {
       if(winGame>=1){
         map.loadData(arrMap2Top,arrMap2Sub);
         map.y = 16;
-      }else map.loadData(arrMap1Top,arrMap1Sub);
+      }//else map.loadData(arrMap1Top,arrMap1Sub);
       
       playerData.scoretable.hiscore = hiscore;
       localStorage["playerData"] = JSON.encode(playerData);
@@ -921,8 +937,8 @@ window.onload = function() {
       bracket4.y = 24;
             
       // Game Over label
-      if(winGame==1) gameovertxt = "PARABÉNS!_Snow e Yuki terão_peixe por muito_tempo!";
-      else if(winGame==2) gameovertxt = "PARABÉNS!_Você zerou_Snow & Yuki!__Em breve teremos_novos jogos e_desafios, AGUARDE!!!";
+      if(winGame==1) gameovertxt = "PARABÉNS!_Você é um_super jogador!";
+      else if(winGame==2) gameovertxt = "PARABÉNS!_Você zerou_Snow & Yuki!!!";
       else gameovertxt = "FIM DE JOGO!";
       gameOverLabel = new FontSprite('score', 320, 120, gameovertxt);
       gameOverLabel.x = 72;
@@ -933,7 +949,7 @@ window.onload = function() {
       
       // Add labels
       //this.addChild(bg);
-      this.addChild(map);
+      if(winGame>=1)this.addChild(map);
       this.addChild(gameOverLabel);
       this.addChild(scoreLabel);
       this.addChild(coinLabel);
@@ -973,6 +989,10 @@ window.onload = function() {
         this.addChild(igloo2);
         this.addChild(snow);
         this.addChild(yuki);
+      }
+      
+      if( isAndroid ) {
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
       }
       
       // Listen for taps
