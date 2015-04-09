@@ -66,6 +66,7 @@ var Penguin = Class.create(Sprite, {
         else playsnd = false;
       }else{
         this.nextpos = this.positions[this.lane];
+        this.x=this.nextpos;
         //this.tl.moveTo(this.positions[this.lane], this.y, 75, enchant.Easing.QUAD_EASEINOUT).then(function(){this.x=this.positions[this.lane];});
       }
       return playsnd;
