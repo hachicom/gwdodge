@@ -44,8 +44,8 @@ var Ice = Class.create(Sprite, {
       game = Game.instance;
       level = this.parentNode.parentNode.levelcalc;
       sabbath = this.parentNode.parentNode.sabbath;
-      foglimit = 80 - (sabbath*10);
-      if(foglimit>=120) foglimit=120;
+      foglimit = 60 - (sabbath*10);
+      if(foglimit>=100) foglimit=100;
       
       //Fog effect
       if(level>4){
@@ -54,7 +54,7 @@ var Ice = Class.create(Sprite, {
       }
      
       if(this.parentNode.parentNode.gotHit!=true && this.parentNode.parentNode.buying!=true){
-        this.y += this.ySpeed + level + sabbath;
+        this.y += this.ySpeed + (level/2) + sabbath;
         this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
         if (this.y > game.height) {
           this.parentNode.removeChild(this);        
@@ -90,7 +90,7 @@ var IceFrag = Class.create(Sprite, {
       this.y += this.ySpeed;
       this.x += this.xSpeed;
       this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
-      if (this.y > game.height) {
+      if (this.y > game.height || this.x < 0 || this.x > game.width) {
         this.parentNode.removeChild(this);        
       }
     }

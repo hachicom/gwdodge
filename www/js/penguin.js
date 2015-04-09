@@ -8,7 +8,7 @@ var Penguin = Class.create(Sprite, {
       this.lane = 1;
       this.positions = [70,145,220];
       this.nextpos = x;
-      this.movespeed = 30;
+      this.movespeed = 20;
       this.x = x;
       this.y = y;
       this.movable = true;
@@ -50,7 +50,7 @@ var Penguin = Class.create(Sprite, {
   
   switchToLaneNumber: function(lane,isLit,isThere){
     if (!this.movable) return false;
-    if(this.x==this.nextpos){
+    //if(this.x==this.nextpos){
       //this.tl.clear();
       playsnd = 'jump';
       this.lane = this.lane + lane;
@@ -66,11 +66,11 @@ var Penguin = Class.create(Sprite, {
         else playsnd = false;
       }else{
         this.nextpos = this.positions[this.lane];
-        this.x=this.nextpos;
+        //this.x=this.nextpos;
         //this.tl.moveTo(this.positions[this.lane], this.y, 75, enchant.Easing.QUAD_EASEINOUT).then(function(){this.x=this.positions[this.lane];});
       }
       return playsnd;
-    }
+    //}
   },
   
   resetPosition: function(){
@@ -83,7 +83,7 @@ var Penguin = Class.create(Sprite, {
     this.endFrame = 1;
     this.animationDuration = 0;
     this.animationSpeed = 0.25;
-    this.movespeed = 30;
+    this.movespeed = 20;
   },
   
   gotHit: function(lane){     

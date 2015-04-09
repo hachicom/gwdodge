@@ -489,14 +489,12 @@ window.onload = function() {
           //Verifica a posição do pinguim e dependendo do caso dispara um som
           playSnd = this.parentNode.penguin.switchToLaneNumber(lane,this.parentNode.igloo.isLit,this.parentNode.yuki.isThere);
           if (playSnd=='jump') { //apenas moveu o pinguim
-            if( isAndroid ){
-              if(soundOn) {
-                jumpSnd.seekTo(1);
-                jumpSnd.play();
-              }
-            }/* else{
-              if(soundOn) this.parentNode.jumpSnd.play();
-            } */
+            // if( isAndroid ){
+              // if(soundOn) {
+                // jumpSnd.seekTo(1);
+                // jumpSnd.play();
+              // }
+            // }
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
               if(soundOn) powerup.play();
@@ -546,7 +544,7 @@ window.onload = function() {
       }
       if(this.level%7==0){
         this.sabbath++;
-        this.iceTimer = this.iceTimer/2;
+        if(this.sabbath==1 || this.sabbath==3) this.iceTimer = this.iceTimer/2;
         if (this.iceTimer <=80) this.iceTimer = 80;
         this.levelUpAt = 30;
         this.fishTimerExp = 20 - (2*this.sabbath);
@@ -604,13 +602,13 @@ window.onload = function() {
           if(this.startLevelMsg<=0) {
             this.levelcalc = this.level - (this.sabbath * 7);
             
-            this.generateIceTimer += 2 + this.levelcalc + this.sabbath;
+            this.generateIceTimer += 2 + (this.levelcalc/2) + this.sabbath;
             if (this.generateIceTimer >= this.iceTimer) {
               var ice;
               this.generateIceTimer = 0;
               
               //limit to 4 ice cubes at the screen
-              if(this.iceGroup.childNodes.length<=4){
+              if(this.iceGroup.childNodes.length<3){
                 ice = new Ice(Math.floor(Math.random()*3),this.levelcalc);
                 this.iceGroup.addChild(ice);
               }
@@ -620,12 +618,15 @@ window.onload = function() {
             if(this.coins != this.levelUpAt){
               this.generateFishTimer += 1;
               if (this.generateFishTimer >= this.fishTimer) {
-                var fish, isPiranha;
+                var fish, isPiranha, levellimit;
                 this.generateFishTimer = 0;
                 isPiranha = false;
+                levellimit = 3;
+                if(this.sabbath==2) levellimit = 2;
+                else if(this.sabbath>=4) levellimit = 1;
                 this.fishCount++;
                 if(this.fishCount==this.createPiranha) {
-                  if(this.levelcalc>=3) isPiranha = true;
+                  if(this.levelcalc>=levellimit) isPiranha = true;
                   this.fishCount = 0;
                   this.createPiranha = getRandom(4,6);
                 }
