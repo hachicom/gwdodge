@@ -1,7 +1,7 @@
 var keeploop = true;
 var hiscore = 1000;
 var paused = false;
-var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus;
+var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus, ending, endingstatus;
 var isAndroid = isMobile();
 var scoreRewards = [5000,10000,20000,40000,80000];
 var soundOn = true;
@@ -38,6 +38,9 @@ document.addEventListener('touchmove', function(e) {
     e.preventDefault();
 }, false);
 document.addEventListener('click', function(e) {
+    e.preventDefault();
+}, false);
+document.addEventListener('dblclick', function(e) {
     e.preventDefault();
 }, false);
 document.addEventListener('touchend', function(e) {
@@ -144,6 +147,18 @@ window.onload = function() {
 	      }
 	    );
 	    
+      ending = new Media("file:///android_asset/www/res/end.ogg",
+	      function() {
+	        //if(keeploop==true) this.play();
+	      },
+	      function(err) {
+	        console.log(JSON.stringify(err));
+	      },
+	      function(status){
+	      	endingstatus=status;
+	      }
+	    );
+      
 	    hit = new Media("file:///android_asset/www/res/hit.wav",
 	      function() {
 	        //console.log("Audio Success");
@@ -154,6 +169,15 @@ window.onload = function() {
 	    );
 	    
 	    coin = new Media("file:///android_asset/www/res/fish.wav",
+	      function() {
+	        //console.log("Audio Success");
+	      },
+	      function(err) {
+	        console.log(JSON.stringify(err));
+	      }
+	    );
+	    
+	    s_item = new Media("file:///android_asset/www/res/item.wav",
 	      function() {
 	        //console.log("Audio Success");
 	      },
@@ -668,8 +692,8 @@ window.onload = function() {
               }else if(fish.piranha && !fish.ascending && fish.y>=288){
                 if( isAndroid ) {
                   if(soundOn) {
-                    coin.seekTo(1);
-                    coin.play();
+                    s_item.seekTo(1);
+                    s_item.play();
                   }
                 }/* else{
                   if(soundOn) game.assets['res/fish.wav'].play();
@@ -823,8 +847,8 @@ window.onload = function() {
             if (heart.intersect(this.penguin)){
               if( isAndroid ) {
                 if(soundOn) {
-                  coin.seekTo(1);
-                  coin.play();
+                  s_item.seekTo(1);
+                  s_item.play();
                 }
               }/* else{
                 game.assets['res/fish.wav'].play();
@@ -1010,6 +1034,13 @@ window.onload = function() {
         this.addChild(heart);
         this.addChild(snow);
         this.addChild(yuki);
+        
+        if( isAndroid ) {
+          if(soundOn) {
+            ending.seekTo(1);
+            ending.play();
+          }
+        }
       }
       
       if(winGame==2){
@@ -1037,7 +1068,8 @@ window.onload = function() {
     
     touchToRestart: function(evt) {
       var game = Game.instance;
-      game.replaceScene(new SceneTitle(0));
+      if(winGame>=1) game.replaceScene(new SceneCredits());
+      else game.replaceScene(new SceneTitle(0));
     },
     
     update: function(evt){
@@ -1051,7 +1083,7 @@ window.onload = function() {
 
   // SceneCredits
   var SceneCredits = Class.create(Scene, {
-    initialize: function(score) {
+    initialize: function() {
       var TitleLabel, scoreLabel;
       Scene.apply(this);
       //this.backgroundColor = '#0026FF';
@@ -1120,6 +1152,9 @@ window.onload = function() {
     
     touchToStart: function(evt) {
       var game = Game.instance;
+      if( isAndroid ) {
+        if(soundOn && endingstatus==2)ending.stop();
+      }
       game.replaceScene(new SceneTitle());
     }
   });
@@ -1465,13 +1500,13 @@ window.onload = function() {
       copyright.y = game.height - 16 - 60;
       
       // Hiscore label
-      scoreLabel = new Label('HISCORE: ' + score);
-      scoreLabel.x = 0;
-      scoreLabel.y = 0;        
-      scoreLabel.color = 'white';
-      scoreLabel.font = '16px system';
-      scoreLabel.textAlign = 'center';
-      scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
+      // scoreLabel = new Label('HISCORE: ' + score);
+      // scoreLabel.x = 0;
+      // scoreLabel.y = 0;        
+      // scoreLabel.color = 'white';
+      // scoreLabel.font = '16px system';
+      // scoreLabel.textAlign = 'center';
+      // scoreLabel._style.textShadow ="-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black";
       
       // Add labels  
       this.addChild(title);
