@@ -46,6 +46,9 @@ document.addEventListener('dblclick', function(e) {
 document.addEventListener('touchend', function(e) {
     e.preventDefault();
 }, false);
+document.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+}, false);
 
 
 //game global difficulty variables
@@ -361,7 +364,7 @@ window.onload = function() {
       dpad.y = game.height - 156;
       dpad.opacity = 0.5;
       dpad.image = game.assets['res/dpad.png'];       
-      dpad.addEventListener(Event.TOUCH_START,this.handleTouchControl);
+      //dpad.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       this.dpad = dpad;
       
       labelPause = new Sprite(64, 64);
@@ -457,6 +460,7 @@ window.onload = function() {
       this.addChild(dpad);
       this.addChild(labelPause);
             
+      this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       // Update
       this.addEventListener(Event.ENTER_FRAME, this.update);
     },
@@ -481,13 +485,13 @@ window.onload = function() {
     
     handleTouchControl: function (evt) {
       var playSnd, lane;
-      if(!this.parentNode.paused){
-        if(this.parentNode.gotHit!=true && this.parentNode.buying!=true && this.parentNode.startLevelMsg<=0){
+      if(!this.paused && evt.y>=288){
+        if(this.gotHit!=true && this.buying!=true && this.startLevelMsg<=0){
           if(evt.x > game.width/2) lane=1;
           else lane=-1;
           
           //Verifica a posição do pinguim e dependendo do caso dispara um som
-          playSnd = this.parentNode.penguin.switchToLaneNumber(lane,this.parentNode.igloo.isLit,this.parentNode.yuki.isThere);
+          playSnd = this.penguin.switchToLaneNumber(lane,this.igloo.isLit,this.yuki.isThere);
           if (playSnd=='jump') { //apenas moveu o pinguim
             // if( isAndroid ){
               // if(soundOn) {
@@ -501,8 +505,8 @@ window.onload = function() {
             }/* else{
               if(soundOn) game.assets['res/powerup.wav'].play();
             } */
-            this.parentNode.buying=true;
-            this.parentNode.setCoins(this.parentNode.levelUpAt*(-1));
+            this.buying=true;
+            this.setCoins(this.levelUpAt*(-1));
           }
         }
       }
