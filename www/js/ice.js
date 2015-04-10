@@ -44,8 +44,8 @@ var Ice = Class.create(Sprite, {
       game = Game.instance;
       level = this.parentNode.parentNode.levelcalc;
       sabbath = this.parentNode.parentNode.sabbath;
-      foglimit = 60 - (sabbath*10);
-      if(foglimit>=100) foglimit=100;
+      foglimit = 80 - (sabbath*10);
+      if(foglimit>=120) foglimit=120;
       
       //Fog effect
       if(level>4){

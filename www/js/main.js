@@ -930,6 +930,7 @@ window.onload = function() {
       var gameOverLabel, scoreLabel;
       Scene.apply(this);    
       this.backgroundColor = '#000000';
+      this.winGame = winGame;
       
       // Background
       bg = new Sprite(320,128);
@@ -1069,7 +1070,7 @@ window.onload = function() {
     
     touchToRestart: function(evt) {
       var game = Game.instance;
-      if(winGame>=1) game.replaceScene(new SceneCredits());
+      if(this.winGame>=1) game.replaceScene(new SceneCredits());
       else game.replaceScene(new SceneTitle(0));
     },
     
