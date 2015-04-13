@@ -271,7 +271,7 @@ window.onload = function() {
     var admobParam=new  admob.Params();
 		//admobParam.extra={'keyword':"admob phonegame"};
 		//admobParam.isForChild=true;
-		admobParam.isTesting=true;
+		admobParam.isTesting=false;
     admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
   }
   
