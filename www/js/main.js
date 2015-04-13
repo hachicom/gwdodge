@@ -61,6 +61,7 @@ enchant();
 window.onload = function() {
   //console.log(screen.width+"X"+screen.height);
   var gameheight = (320 * screen.height)/screen.width;
+  alert(gameheight);
 	// 3 - Starting point
 	var game = new Core(320, gameheight);
 	// 4 - Preload resources
@@ -222,16 +223,14 @@ window.onload = function() {
         if(introstatus==2)intro.stop();
         if(bonusstatus==2)bonus.stop();
         game.stop();
-        console.log("paused");
-        //cr_setSuspended(true);
+        //console.log("paused");
       }, false);
 
       document.addEventListener("resume", function() {
         keeploop=true;
         if(bgmstatus==3 && !paused) bgm.play();
         game.resume();
-        console.log("resumed");
-        //cr_setSuspended(false);
+        //console.log("resumed");
       }, false);
 
       document.addEventListener("backbutton", onBackKeyDown, false);
@@ -248,7 +247,7 @@ window.onload = function() {
 	
 	    function onConfirm(buttonIndex) {
 	      if(buttonIndex == 2){
-	        if (navigator && navigator.app) {
+	        /* if (navigator && navigator.app) {
 	          navigator.app.exitApp();
 	          console.log("exiting app");
 	        } else {
@@ -256,13 +255,14 @@ window.onload = function() {
 	            navigator.device.exitApp();
 	            console.log("exiting device");
 	          }
-	        }
+	        } */
 	        keeploop=false;
 	        if(bgmstatus==2)bgm.stop();
           if(introstatus==2)intro.stop();
           if(bonusstatus==2)bonus.stop();
 	        //bgm.release();
 	        console.log("exited");
+          window.close();
 	      }else game.resume();
 	    }
       
@@ -783,7 +783,7 @@ window.onload = function() {
         
         //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
         if(this.buying==true){
-          this.msgLabel.text = 'BONUS '+(10*this.levelUpAt)*(this.sabbath+1) + 'pts';
+          this.msgLabel.text = '   BONUS '+(10*this.levelUpAt)*(this.sabbath+1) + 'pts';
           for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
             var ice;
             ice = this.iceGroup.childNodes[i];
@@ -911,7 +911,7 @@ window.onload = function() {
         } */
         
         // If Samsung android browser is detected
-        if (window.navigator && window.navigator.userAgent.indexOf('534.30') > 0) {
+        /* if (window.navigator && window.navigator.userAgent.indexOf('534.30') > 0) {
 
           // Tweak the canvas opacity, causing it to redraw
           $('canvas').css('opacity', '0.99');
@@ -920,7 +920,7 @@ window.onload = function() {
           setTimeout(function() {
               $('canvas').css('opacity', '1');
           }, 5);
-        }
+        } */
       }else{
         this.msgLabel.text = '      PAUSE';
       }

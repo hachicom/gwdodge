@@ -32,7 +32,7 @@ var Fish = Class.create(Sprite, {
     this.rotationSpeed = 50;
    
     this.x = game.width/2 - this.width/2 + (lane - 1) * distance;
-    this.y = game.height;    
+    this.y = 569;    
     this.rotation = Math.floor( Math.random() * 360 );
   },
   
