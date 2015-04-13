@@ -61,8 +61,7 @@ enchant();
 window.onload = function() {
   //console.log(screen.width+"X"+screen.height);
   var gameheight = (320 * screen.height)/screen.width;
-  alert(gameheight);
-	// 3 - Starting point
+  // 3 - Starting point
 	var game = new Core(320, gameheight);
 	// 4 - Preload resources
 	game.preload('res/penguinSheet.png',
@@ -247,22 +246,22 @@ window.onload = function() {
 	
 	    function onConfirm(buttonIndex) {
 	      if(buttonIndex == 2){
-	        /* if (navigator && navigator.app) {
+	        if (navigator && navigator.app) {
 	          navigator.app.exitApp();
-	          console.log("exiting app");
+	          window.close();
 	        } else {
 	          if (navigator && navigator.device) {
 	            navigator.device.exitApp();
-	            console.log("exiting device");
+	            window.close();
 	          }
-	        } */
+	        }
 	        keeploop=false;
 	        if(bgmstatus==2)bgm.stop();
           if(introstatus==2)intro.stop();
           if(bonusstatus==2)bonus.stop();
 	        //bgm.release();
 	        console.log("exited");
-          window.close();
+          //window.close();
 	      }else game.resume();
 	    }
       
