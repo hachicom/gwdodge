@@ -1,7 +1,7 @@
 var keeploop = true;
 var hiscore = 1000;
 var paused = false;
-var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus, ending, endingstatus;
+//var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus, ending, endingstatus;
 var currentBGM;
 var isAndroid = isMobile();
 var scoreRewards = [5000,10000,20000,40000,80000];
@@ -131,115 +131,8 @@ window.onload = function() {
         alert("erro plugin");
       }
 
-      /* bgmstatus = introstatus = 0;
-	    bgm = new Media("file:///android_asset/www/res/bgm.ogg",
-	      function() {
-	        if(keeploop==true) this.play();
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      },
-	      function(status){
-	      	bgmstatus=status;
-	      }
-	    );      
-      
-	    bonus = new Media("file:///android_asset/www/res/bonus.ogg",
-	      function() {
-	        //if(keeploop==true) this.play();
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      },
-	      function(status){
-	      	bonusstatus=status;
-	      }
-	    );
-      
-      intro = new Media("file:///android_asset/www/res/intro.ogg",
-	      function() {
-	        //if(keeploop==true) this.play();
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      },
-	      function(status){
-	      	introstatus=status;
-	      }
-	    );
-	    
-      ending = new Media("file:///android_asset/www/res/end.ogg",
-	      function() {
-	        //if(keeploop==true) this.play();
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      },
-	      function(status){
-	      	endingstatus=status;
-	      }
-	    );
-      
-	    hit = new Media("file:///android_asset/www/res/hit.wav",
-	      function() {
-	        //console.log("Audio Success");
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      }
-	    );
-	    
-	    coin = new Media("file:///android_asset/www/res/fish.wav",
-	      function() {
-	        //console.log("Audio Success");
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      }
-	    );
-	    
-	    s_item = new Media("file:///android_asset/www/res/item.wav",
-	      function() {
-	        //console.log("Audio Success");
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      }
-	    );
-	    
-	    crash = new Media("file:///android_asset/www/res/break.wav",
-	      function() {
-	        //console.log("Audio Success");
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      }
-	    );
-	    
-	     powerup = new Media("file:///android_asset/www/res/powerup.wav",
-	      function() {
-	        //console.log("Audio Success");
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      }
-	    );
-	    
-	    jumpSnd = new Media("file:///android_asset/www/res/jump.wav",
-	      function() {
-	        //console.log("Audio Success");
-	      },
-	      function(err) {
-	        console.log(JSON.stringify(err));
-	      }
-	    ); */
-      
       document.addEventListener("pause", function() {
         keeploop=false;
-        /* if(bgmstatus==2)bgm.pause();
-        if(introstatus==2)intro.stop();
-        if(bonusstatus==2)bonus.stop(); 
-        */
         window.plugins.LowLatencyAudio.stop(currentBGM);
         game.stop();
         //console.log("paused");
@@ -247,7 +140,6 @@ window.onload = function() {
 
       document.addEventListener("resume", function() {
         keeploop=true;
-        // if(bgmstatus==3 && !paused) bgm.play();
         if(currentBGM=='intro' || currentBGM=='end') 
           window.plugins.LowLatencyAudio.play(currentBGM);
         else window.plugins.LowLatencyAudio.loop(currentBGM);
@@ -279,9 +171,6 @@ window.onload = function() {
 	          }
 	        }
 	        keeploop=false;
-	        /* if(bgmstatus==2)bgm.stop();
-          if(introstatus==2)intro.stop();
-          if(bonusstatus==2)bonus.stop(); */
 	        //bgm.release();
           window.plugins.LowLatencyAudio.stop(currentBGM);
           window.plugins.LowLatencyAudio.unload('bgm');
@@ -302,12 +191,30 @@ window.onload = function() {
       
     }, false);
     
-    admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
-    var admobParam=new  admob.Params();
-		//admobParam.extra={'keyword':"admob phonegame"};
-		//admobParam.isForChild=true;
-		admobParam.isTesting=false;
-    admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+    // admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
+    // var admobParam=new  admob.Params();
+		// admobParam.isTesting=false;
+    // admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+    
+    var ad_units = {
+      android : {
+        banner: "ca-app-pub-8006522456285045/2785327219", // or DFP format "/6253334/dfp_example_ad"
+        interstitial: "ca-app-pub-8006522456285045/4262060411"
+      }
+    };
+    
+    // select the right Ad Id according to platform
+    var admobid = ad_units.android;//( /(android)/i.test(navigator.userAgent) ) ? ad_units.android : ad_units.ios;
+    
+    if(AdMob) {
+      AdMob.createBanner({
+        adId:admobid.banner, 
+        position:AdMob.AD_POSITION.BOTTOM_CENTER, 
+        overlap:true, 
+        isTesting:false,
+        autoShow:true
+      });
+    }
   }
   
 	// 7 - Start
@@ -460,11 +367,10 @@ window.onload = function() {
       
       // Background music
       if( isAndroid ) {
-        //this.bgm = bgm;
         currentBGM = 'bgm';
         if(soundOn) window.plugins.LowLatencyAudio.loop(currentBGM);
-        admob.hideBanner();
-        //this.jumpSnd = jumpSnd;
+        //Hide Banner to avoid annoying player with lags from banner
+        if(AdMob) AdMob.hideBanner();
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -1117,7 +1023,8 @@ window.onload = function() {
       }
       
       if( isAndroid ) {
-        admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+        if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
+        //admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
       }
       
       // Listen for taps
