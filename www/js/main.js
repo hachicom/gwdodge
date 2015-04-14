@@ -2,6 +2,7 @@ var keeploop = true;
 var hiscore = 1000;
 var paused = false;
 var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus, ending, endingstatus;
+var currentBGM;
 var isAndroid = isMobile();
 var scoreRewards = [5000,10000,20000,40000,80000];
 var soundOn = true;
@@ -114,7 +115,7 @@ window.onload = function() {
     document.addEventListener("deviceready", function ()
     {
       if( window.plugins && window.plugins.LowLatencyAudio ) {
-        alert("load plugin");
+        //alert("load plugin");
         window.plugins.LowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",1);
         window.plugins.LowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",1);
         window.plugins.LowLatencyAudio.preloadAudio('intro', "res/intro.ogg",1);
@@ -237,7 +238,9 @@ window.onload = function() {
         keeploop=false;
         /* if(bgmstatus==2)bgm.pause();
         if(introstatus==2)intro.stop();
-        if(bonusstatus==2)bonus.stop(); */
+        if(bonusstatus==2)bonus.stop(); 
+        */
+        window.plugins.LowLatencyAudio.stop(currentBGM);
         game.stop();
         //console.log("paused");
       }, false);
@@ -245,6 +248,9 @@ window.onload = function() {
       document.addEventListener("resume", function() {
         keeploop=true;
         // if(bgmstatus==3 && !paused) bgm.play();
+        if(currentBGM=='intro' || currentBGM=='end') 
+          window.plugins.LowLatencyAudio.play(currentBGM);
+        else window.plugins.LowLatencyAudio.loop(currentBGM);
         game.resume();
         //console.log("resumed");
       }, false);
@@ -277,6 +283,18 @@ window.onload = function() {
           if(introstatus==2)intro.stop();
           if(bonusstatus==2)bonus.stop(); */
 	        //bgm.release();
+          window.plugins.LowLatencyAudio.stop(currentBGM);
+          window.plugins.LowLatencyAudio.unload('bgm');
+          window.plugins.LowLatencyAudio.unload('bonus');
+          window.plugins.LowLatencyAudio.unload('intro');
+          window.plugins.LowLatencyAudio.unload('end');
+          
+          window.plugins.LowLatencyAudio.unload('hit');
+          window.plugins.LowLatencyAudio.unload('coin');
+          window.plugins.LowLatencyAudio.unload('item');
+          window.plugins.LowLatencyAudio.unload('crash');
+          window.plugins.LowLatencyAudio.unload('powerup');
+          window.plugins.LowLatencyAudio.unload('jump');
 	        console.log("exited");
           //window.close();
 	      }else game.resume();
@@ -443,7 +461,8 @@ window.onload = function() {
       // Background music
       if( isAndroid ) {
         //this.bgm = bgm;
-        if(soundOn) window.plugins.LowLatencyAudio.play('bgm');
+        currentBGM = 'bgm';
+        if(soundOn) window.plugins.LowLatencyAudio.loop(currentBGM);
         admob.hideBanner();
         //this.jumpSnd = jumpSnd;
       }else{
@@ -489,13 +508,13 @@ window.onload = function() {
           //bgm.pause();
         }
         if(soundOn) //this.parentNode.bgm.pause();
-          window.plugins.LowLatencyAudio.stop('bgm');
+          window.plugins.LowLatencyAudio.stop(currentBGM);
       }else {
         this.parentNode.paused = false;
         if( isAndroid ) {
           keeploop = true; 
           if(soundOn) //this.parentNode.bgm.play();
-            window.plugins.LowLatencyAudio.loop('bgm');
+            window.plugins.LowLatencyAudio.loop(currentBGM);
         }
       }
       paused = this.parentNode.paused;
@@ -579,8 +598,9 @@ window.onload = function() {
         if( isAndroid ) {
           if(soundOn) {
             keeploop = false;
-            window.plugins.LowLatencyAudio.stop('bgm');
-            window.plugins.LowLatencyAudio.loop('bonus');
+            window.plugins.LowLatencyAudio.stop(currentBGM);
+            currentBGM = 'bonus';
+            window.plugins.LowLatencyAudio.loop(currentBGM);
             /* this.bgm.stop();
             this.bgm = bonus;
             this.bgm.play(); */
@@ -596,7 +616,7 @@ window.onload = function() {
         if( isAndroid ) {
           keeploop = false;
           if(soundOn) //this.bgm.stop();
-            window.plugins.LowLatencyAudio.stop('bgm');
+            window.plugins.LowLatencyAudio.stop(currentBGM);
         }
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
       }
@@ -682,7 +702,7 @@ window.onload = function() {
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false; 
-                  if(soundOn) window.plugins.LowLatencyAudio.stop('bgm');
+                  if(soundOn) window.plugins.LowLatencyAudio.stop(currentBGM);
                   //this.bgm.stop();
                 }
                 break;
@@ -717,7 +737,7 @@ window.onload = function() {
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false;
-                  if(soundOn) window.plugins.LowLatencyAudio.stop('bgm');
+                  if(soundOn) window.plugins.LowLatencyAudio.stop(currentBGM);
                   //this.bgm.stop();
                 }
                 break;
@@ -805,7 +825,7 @@ window.onload = function() {
               if( isAndroid ) {
                 keeploop = true; 
                 if(soundOn) //this.bgm.play();
-                  window.plugins.LowLatencyAudio.loop('bgm');
+                  window.plugins.LowLatencyAudio.loop(currentBGM);
                 //bgm.play();
               }
             }
@@ -928,8 +948,9 @@ window.onload = function() {
                 this.bgm = bgm; 
                 this.bgm.play();*/
                 keeploop = true;
-                window.plugins.LowLatencyAudio.stop('bonus');
-                window.plugins.LowLatencyAudio.loop('bgm');
+                window.plugins.LowLatencyAudio.stop(currentBGM);
+                currentBGM = 'bgm';
+                window.plugins.LowLatencyAudio.loop(currentBGM);
               }
             }
           }
@@ -1076,7 +1097,8 @@ window.onload = function() {
           if(soundOn) {
             /* ending.seekTo(1);
             ending.play(); */
-            window.plugins.LowLatencyAudio.play('end');
+            currentBGM = 'end';
+            window.plugins.LowLatencyAudio.play(currentBGM);
           }
         }
       }
@@ -1192,7 +1214,7 @@ window.onload = function() {
       var game = Game.instance;
       if( isAndroid ) {
         //if(soundOn && endingstatus==2)//ending.stop();
-        if(soundOn) window.plugins.LowLatencyAudio.stop('end');
+        if(soundOn) window.plugins.LowLatencyAudio.stop(currentBGM);
       }
       game.replaceScene(new SceneTitle());
     }
@@ -1501,7 +1523,7 @@ window.onload = function() {
       PressStart.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
           //if(soundOn && introstatus==2)intro.stop();
-          if(soundOn) window.plugins.LowLatencyAudio.stop('intro');
+          if(soundOn) window.plugins.LowLatencyAudio.stop(currentBGM);
         }/* else{
           if(soundOn) game.assets['res/intro.mp3'].stop();
         } */
@@ -1521,7 +1543,7 @@ window.onload = function() {
       optionLabel.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
           //if(soundOn && introstatus==2)intro.stop();
-          if(soundOn) window.plugins.LowLatencyAudio.stop('intro');
+          if(soundOn) window.plugins.LowLatencyAudio.stop(currentBGM);
         }/* else{
           if(soundOn) game.assets['res/intro.mp3'].stop();
         } */
@@ -1563,7 +1585,8 @@ window.onload = function() {
       
       if( isAndroid ) {
         if(soundOn) {
-          //window.plugins.LowLatencyAudio.play('intro');
+          currentBGM = 'intro';
+          window.plugins.LowLatencyAudio.play(currentBGM);
           /* intro.seekTo(1);
           intro.play(); */
         }
