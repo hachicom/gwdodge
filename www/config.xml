@@ -50,7 +50,7 @@
     <preference name="keepRunning" value="true" />
     
     <!-- Plugins can also be added here. -->
-    <gap:plugin name="org.apache.cordova.media" />
+    <!--gap:plugin name="org.apache.cordova.media" /-->
     <gap:plugin name="org.apache.cordova.dialogs" />
     <gap:plugin name="com.admob.plugin" version="3.0.0" source="plugins.cordova.io" />
     <gap:plugin name="com.rjfun.cordova.plugin.lowlatencyaudio"/>
@@ -58,13 +58,14 @@
     <gap:plugin name="Example" />
     A list of available plugins are available at https://build.phonegap.com/docs/plugins
     -->
-    
+    <!--
     <gap:config-file platform="android" parent="/manifest" mode="delete">
       <uses-permission android:name="android.permission.RECORD_AUDIO" />
       <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
       <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     </gap:config-file>
+    -->
     
     <gap:config-file platform="android" parent="/manifest"> 
       <application android:hardwareAccelerated="true"/> 
