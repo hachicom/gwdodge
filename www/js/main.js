@@ -114,23 +114,23 @@ window.onload = function() {
     document.addEventListener("deviceready", function ()
     {
       alert("loading");
-      PGLowLatencyAudio.preloadAudio('bgm', "file:///android_asset/www/res/bgm.ogg",1,0,
+      PGLowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",0.5,0,
         function() {
 	        console.log("loaded ok");
 	      },
         function(err) {
 	        console.log(JSON.stringify(err));
 	      });
-      PGLowLatencyAudio.preloadAudio('bonus', "file:///android_asset/www/res/bonus.ogg");
-      PGLowLatencyAudio.preloadAudio('intro', "file:///android_asset/www/res/intro.ogg");
-      PGLowLatencyAudio.preloadAudio('end', "file:///android_asset/www/res/end.ogg");
+      PGLowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",0.5);
+      PGLowLatencyAudio.preloadAudio('intro', "res/intro.ogg",0.5);
+      PGLowLatencyAudio.preloadAudio('end', "res/end.ogg",1);
       
-      PGLowLatencyAudio.preloadFX('hit', "file:///android_asset/www/res/hit.wav");
-      PGLowLatencyAudio.preloadFX('coin', "file:///android_asset/www/res/fish.wav");
-      PGLowLatencyAudio.preloadFX('item', "file:///android_asset/www/res/item.wav");
-      PGLowLatencyAudio.preloadFX('crash', "file:///android_asset/www/res/break.wav");
-      PGLowLatencyAudio.preloadFX('powerup', "file:///android_asset/www/res/powerup.wav");
-      PGLowLatencyAudio.preloadFX('jump', "file:///android_asset/www/res/jump.wav");
+      PGLowLatencyAudio.preloadFX('hit', "res/hit.wav");
+      PGLowLatencyAudio.preloadFX('coin', "res/fish.wav");
+      PGLowLatencyAudio.preloadFX('item', "res/item.wav");
+      PGLowLatencyAudio.preloadFX('crash', "res/break.wav");
+      PGLowLatencyAudio.preloadFX('powerup', "res/powerup.wav");
+      PGLowLatencyAudio.preloadFX('jump', "res/jump.wav");
 
       /* bgmstatus = introstatus = 0;
 	    bgm = new Media("file:///android_asset/www/res/bgm.ogg",
