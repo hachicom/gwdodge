@@ -113,6 +113,7 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
+      alert("loading");
       PGLowLatencyAudio.preloadAudio('bgm', "file:///android_asset/www/res/bgm.ogg",1,0,
         function() {
 	        console.log("loaded ok");
@@ -1564,7 +1565,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         if(soundOn) {
-          PGLowLatencyAudio.play('intro');
+          //PGLowLatencyAudio.play('intro');
           /* intro.seekTo(1);
           intro.play(); */
         }
