@@ -116,9 +116,9 @@ window.onload = function() {
     {
       if( window.plugins && window.plugins.LowLatencyAudio ) {
         //alert("load plugin");
-        window.plugins.LowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",1);
-        window.plugins.LowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",1);
-        window.plugins.LowLatencyAudio.preloadAudio('intro', "res/intro.ogg",1);
+        window.plugins.LowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",0.5);
+        window.plugins.LowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",0.5);
+        window.plugins.LowLatencyAudio.preloadAudio('intro', "res/intro.ogg",0.5);
         window.plugins.LowLatencyAudio.preloadAudio('end', "res/end.ogg",1);
         
         window.plugins.LowLatencyAudio.preloadFX('hit', "res/hit.wav");
@@ -208,6 +208,7 @@ window.onload = function() {
     
     if(AdMob) {
       AdMob.createBanner({
+        //license: 'hachicom@gmail.com/xxxxxxxxxxxxxxx',
         adId:admobid.banner, 
         position:AdMob.AD_POSITION.BOTTOM_CENTER, 
         overlap:true, 
@@ -556,11 +557,13 @@ window.onload = function() {
             
             this.generateIceTimer += 2 + (this.levelcalc/2) + this.sabbath;
             if (this.generateIceTimer >= this.iceTimer) {
-              var ice;
+              var ice, icelimit;
               this.generateIceTimer = 0;
               
               //limit to 4 ice cubes at the screen
-              if(this.iceGroup.childNodes.length<3){
+              icelimit = 3;
+              if(this.sabbath>3) icelimit = 4;
+              if(this.iceGroup.childNodes.length<icelimit){
                 ice = new Ice(Math.floor(Math.random()*3),this.levelcalc);
                 this.iceGroup.addChild(ice);
               }
