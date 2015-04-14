@@ -115,15 +115,9 @@ window.onload = function() {
     {
       if( window.plugins && window.plugins.LowLatencyAudio ) {
         alert("load plugin");
-        window.plugins.LowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",0.5,0,
-          function() {
-            console.log("loaded ok");
-          },
-          function(err) {
-            console.log(JSON.stringify(err));
-          });
-        window.plugins.LowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",0.5);
-        window.plugins.LowLatencyAudio.preloadAudio('intro', "res/intro.ogg",0.5);
+        window.plugins.LowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",1);
+        window.plugins.LowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",1);
+        window.plugins.LowLatencyAudio.preloadAudio('intro', "res/intro.ogg",1);
         window.plugins.LowLatencyAudio.preloadAudio('end', "res/end.ogg",1);
         
         window.plugins.LowLatencyAudio.preloadFX('hit', "res/hit.wav");
