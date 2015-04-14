@@ -113,7 +113,13 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
-      PGLowLatencyAudio.preloadAudio('bgm', "file:///android_asset/www/res/bgm.ogg");
+      PGLowLatencyAudio.preloadAudio('bgm', "file:///android_asset/www/res/bgm.ogg",1,0,
+        function() {
+	        console.log("loaded ok");
+	      },
+        function(err) {
+	        console.log(JSON.stringify(err));
+	      });
       PGLowLatencyAudio.preloadAudio('bonus', "file:///android_asset/www/res/bonus.ogg");
       PGLowLatencyAudio.preloadAudio('intro', "file:///android_asset/www/res/intro.ogg");
       PGLowLatencyAudio.preloadAudio('end', "file:///android_asset/www/res/end.ogg");
