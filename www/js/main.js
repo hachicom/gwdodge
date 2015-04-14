@@ -113,24 +113,28 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
-      alert("loading");
-      PGLowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",0.5,0,
-        function() {
-	        console.log("loaded ok");
-	      },
-        function(err) {
-	        console.log(JSON.stringify(err));
-	      });
-      PGLowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",0.5);
-      PGLowLatencyAudio.preloadAudio('intro', "res/intro.ogg",0.5);
-      PGLowLatencyAudio.preloadAudio('end', "res/end.ogg",1);
-      
-      PGLowLatencyAudio.preloadFX('hit', "res/hit.wav");
-      PGLowLatencyAudio.preloadFX('coin', "res/fish.wav");
-      PGLowLatencyAudio.preloadFX('item', "res/item.wav");
-      PGLowLatencyAudio.preloadFX('crash', "res/break.wav");
-      PGLowLatencyAudio.preloadFX('powerup', "res/powerup.wav");
-      PGLowLatencyAudio.preloadFX('jump', "res/jump.wav");
+      if( window.plugins && window.plugins.LowLatencyAudio ) {
+        alert("load plugin");
+        window.plugins.LowLatencyAudio.preloadAudio('bgm', "res/bgm.ogg",0.5,0,
+          function() {
+            console.log("loaded ok");
+          },
+          function(err) {
+            console.log(JSON.stringify(err));
+          });
+        window.plugins.LowLatencyAudio.preloadAudio('bonus', "res/bonus.ogg",0.5);
+        window.plugins.LowLatencyAudio.preloadAudio('intro', "res/intro.ogg",0.5);
+        window.plugins.LowLatencyAudio.preloadAudio('end', "res/end.ogg",1);
+        
+        window.plugins.LowLatencyAudio.preloadFX('hit', "res/hit.wav");
+        window.plugins.LowLatencyAudio.preloadFX('coin', "res/fish.wav");
+        window.plugins.LowLatencyAudio.preloadFX('item', "res/item.wav");
+        window.plugins.LowLatencyAudio.preloadFX('crash', "res/break.wav");
+        window.plugins.LowLatencyAudio.preloadFX('powerup', "res/powerup.wav");
+        window.plugins.LowLatencyAudio.preloadFX('jump', "res/jump.wav");
+      }else{
+        alert("erro plugin");
+      }
 
       /* bgmstatus = introstatus = 0;
 	    bgm = new Media("file:///android_asset/www/res/bgm.ogg",
@@ -445,7 +449,7 @@ window.onload = function() {
       // Background music
       if( isAndroid ) {
         //this.bgm = bgm;
-        if(soundOn) PGLowLatencyAudio.play('bgm');
+        if(soundOn) window.plugins.LowLatencyAudio.play('bgm');
         admob.hideBanner();
         //this.jumpSnd = jumpSnd;
       }else{
@@ -491,13 +495,13 @@ window.onload = function() {
           //bgm.pause();
         }
         if(soundOn) //this.parentNode.bgm.pause();
-          PGLowLatencyAudio.stop('bgm');
+          window.plugins.LowLatencyAudio.stop('bgm');
       }else {
         this.parentNode.paused = false;
         if( isAndroid ) {
           keeploop = true; 
           if(soundOn) //this.parentNode.bgm.play();
-            PGLowLatencyAudio.loop('bgm');
+            window.plugins.LowLatencyAudio.loop('bgm');
         }
       }
       paused = this.parentNode.paused;
@@ -522,7 +526,7 @@ window.onload = function() {
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
               if(soundOn) //powerup.play();
-                PGLowLatencyAudio.play('powerup');
+                window.plugins.LowLatencyAudio.play('powerup');
             }/* else{
               if(soundOn) game.assets['res/powerup.wav'].play();
             } */
@@ -581,8 +585,8 @@ window.onload = function() {
         if( isAndroid ) {
           if(soundOn) {
             keeploop = false;
-            PGLowLatencyAudio.stop('bgm');
-            PGLowLatencyAudio.loop('bonus');
+            window.plugins.LowLatencyAudio.stop('bgm');
+            window.plugins.LowLatencyAudio.loop('bonus');
             /* this.bgm.stop();
             this.bgm = bonus;
             this.bgm.play(); */
@@ -598,7 +602,7 @@ window.onload = function() {
         if( isAndroid ) {
           keeploop = false;
           if(soundOn) //this.bgm.stop();
-            PGLowLatencyAudio.stop('bgm');
+            window.plugins.LowLatencyAudio.stop('bgm');
         }
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
       }
@@ -674,7 +678,7 @@ window.onload = function() {
               if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
                 if( isAndroid ) {
                   if(soundOn) //hit.play();
-                    PGLowLatencyAudio.play('hit');
+                    window.plugins.LowLatencyAudio.play('hit');
                 }/* else{
                   if(soundOn) game.assets['res/hit.wav'].play();
                 } */
@@ -684,7 +688,7 @@ window.onload = function() {
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false; 
-                  if(soundOn) PGLowLatencyAudio.stop('bgm');
+                  if(soundOn) window.plugins.LowLatencyAudio.stop('bgm');
                   //this.bgm.stop();
                 }
                 break;
@@ -693,7 +697,7 @@ window.onload = function() {
               //this.iceGroup.removeChild(ice);
               if( isAndroid ) {
                 if(soundOn) {
-                  PGLowLatencyAudio.play('crash');
+                  window.plugins.LowLatencyAudio.play('crash');
                   /* crash.seekTo(1);
                   crash.play(); */
                 }
@@ -713,20 +717,20 @@ window.onload = function() {
               if(fish.piranha && !fish.ascending && fish.y<288){
                 if( isAndroid ) {
                   if(soundOn) //hit.play();
-                    PGLowLatencyAudio.play('hit');
+                    window.plugins.LowLatencyAudio.play('hit');
                 }
                 this.gotHit = true; 
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false;
-                  if(soundOn) PGLowLatencyAudio.stop('bgm');
+                  if(soundOn) window.plugins.LowLatencyAudio.stop('bgm');
                   //this.bgm.stop();
                 }
                 break;
               }else if(fish.piranha && !fish.ascending && fish.y>=288){
                 if( isAndroid ) {
                   if(soundOn) {
-                    PGLowLatencyAudio.play('item');
+                    window.plugins.LowLatencyAudio.play('item');
                     /* s_item.seekTo(1);
                     s_item.play(); */
                   }
@@ -741,7 +745,7 @@ window.onload = function() {
               }else if(!fish.piranha){
                 if( isAndroid ) {
                   if(soundOn) {
-                    PGLowLatencyAudio.play('coin');
+                    window.plugins.LowLatencyAudio.play('coin');
                     /* coin.seekTo(1);
                     coin.play(); */
                   }
@@ -762,7 +766,7 @@ window.onload = function() {
               if (ice.intersect(fish) && fish.ascending && fish.piranha){
                 if( isAndroid ) {
                   if(soundOn) {
-                    PGLowLatencyAudio.play('crash');
+                    window.plugins.LowLatencyAudio.play('crash');
                     /* crash.seekTo(1);
                     crash.play(); */
                   }
@@ -807,7 +811,7 @@ window.onload = function() {
               if( isAndroid ) {
                 keeploop = true; 
                 if(soundOn) //this.bgm.play();
-                  PGLowLatencyAudio.loop('bgm');
+                  window.plugins.LowLatencyAudio.loop('bgm');
                 //bgm.play();
               }
             }
@@ -885,7 +889,7 @@ window.onload = function() {
             if (heart.intersect(this.penguin)){
               if( isAndroid ) {
                 if(soundOn) {
-                  PGLowLatencyAudio.play('item');
+                  window.plugins.LowLatencyAudio.play('item');
                   /* s_item.seekTo(1);
                   s_item.play(); */
                 }
@@ -930,8 +934,8 @@ window.onload = function() {
                 this.bgm = bgm; 
                 this.bgm.play();*/
                 keeploop = true;
-                PGLowLatencyAudio.stop('bonus');
-                PGLowLatencyAudio.loop('bgm');
+                window.plugins.LowLatencyAudio.stop('bonus');
+                window.plugins.LowLatencyAudio.loop('bgm');
               }
             }
           }
@@ -1078,7 +1082,7 @@ window.onload = function() {
           if(soundOn) {
             /* ending.seekTo(1);
             ending.play(); */
-            PGLowLatencyAudio.play('end');
+            window.plugins.LowLatencyAudio.play('end');
           }
         }
       }
@@ -1194,7 +1198,7 @@ window.onload = function() {
       var game = Game.instance;
       if( isAndroid ) {
         //if(soundOn && endingstatus==2)//ending.stop();
-        if(soundOn) PGLowLatencyAudio.stop('end');
+        if(soundOn) window.plugins.LowLatencyAudio.stop('end');
       }
       game.replaceScene(new SceneTitle());
     }
@@ -1503,7 +1507,7 @@ window.onload = function() {
       PressStart.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
           //if(soundOn && introstatus==2)intro.stop();
-          if(soundOn) PGLowLatencyAudio.stop('intro');
+          if(soundOn) window.plugins.LowLatencyAudio.stop('intro');
         }/* else{
           if(soundOn) game.assets['res/intro.mp3'].stop();
         } */
@@ -1523,7 +1527,7 @@ window.onload = function() {
       optionLabel.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
           //if(soundOn && introstatus==2)intro.stop();
-          if(soundOn) PGLowLatencyAudio.stop('intro');
+          if(soundOn) window.plugins.LowLatencyAudio.stop('intro');
         }/* else{
           if(soundOn) game.assets['res/intro.mp3'].stop();
         } */
@@ -1565,7 +1569,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         if(soundOn) {
-          //PGLowLatencyAudio.play('intro');
+          //window.plugins.LowLatencyAudio.play('intro');
           /* intro.seekTo(1);
           intro.play(); */
         }
