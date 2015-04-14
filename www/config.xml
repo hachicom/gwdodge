@@ -53,6 +53,7 @@
     <gap:plugin name="org.apache.cordova.media" />
     <gap:plugin name="org.apache.cordova.dialogs" />
     <gap:plugin name="com.admob.plugin" version="3.0.0" source="plugins.cordova.io" />
+    <gap:plugin name="com.rjfun.cordova.plugin.lowlatencyaudio" version="1.1.4" />
     <!--
     <gap:plugin name="Example" />
     A list of available plugins are available at https://build.phonegap.com/docs/plugins

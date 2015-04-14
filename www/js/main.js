@@ -113,7 +113,19 @@ window.onload = function() {
   if( isAndroid ) {
     document.addEventListener("deviceready", function ()
     {
-      bgmstatus = introstatus = 0;
+      PGLowLatencyAudio.preloadAudio('bgm', "file:///android_asset/www/res/bgm.ogg");
+      PGLowLatencyAudio.preloadAudio('bonus', "file:///android_asset/www/res/bonus.ogg");
+      PGLowLatencyAudio.preloadAudio('intro', "file:///android_asset/www/res/intro.ogg");
+      PGLowLatencyAudio.preloadAudio('end', "file:///android_asset/www/res/end.ogg");
+      
+      PGLowLatencyAudio.preloadFX('hit', "file:///android_asset/www/res/hit.wav");
+      PGLowLatencyAudio.preloadFX('coin', "file:///android_asset/www/res/fish.wav");
+      PGLowLatencyAudio.preloadFX('item', "file:///android_asset/www/res/item.wav");
+      PGLowLatencyAudio.preloadFX('crash', "file:///android_asset/www/res/break.wav");
+      PGLowLatencyAudio.preloadFX('powerup', "file:///android_asset/www/res/powerup.wav");
+      PGLowLatencyAudio.preloadFX('jump', "file:///android_asset/www/res/jump.wav");
+
+      /* bgmstatus = introstatus = 0;
 	    bgm = new Media("file:///android_asset/www/res/bgm.ogg",
 	      function() {
 	        if(keeploop==true) this.play();
@@ -214,20 +226,20 @@ window.onload = function() {
 	      function(err) {
 	        console.log(JSON.stringify(err));
 	      }
-	    );
+	    ); */
       
       document.addEventListener("pause", function() {
         keeploop=false;
-        if(bgmstatus==2)bgm.pause();
+        /* if(bgmstatus==2)bgm.pause();
         if(introstatus==2)intro.stop();
-        if(bonusstatus==2)bonus.stop();
+        if(bonusstatus==2)bonus.stop(); */
         game.stop();
         //console.log("paused");
       }, false);
 
       document.addEventListener("resume", function() {
         keeploop=true;
-        if(bgmstatus==3 && !paused) bgm.play();
+        // if(bgmstatus==3 && !paused) bgm.play();
         game.resume();
         //console.log("resumed");
       }, false);
@@ -256,9 +268,9 @@ window.onload = function() {
 	          }
 	        }
 	        keeploop=false;
-	        if(bgmstatus==2)bgm.stop();
+	        /* if(bgmstatus==2)bgm.stop();
           if(introstatus==2)intro.stop();
-          if(bonusstatus==2)bonus.stop();
+          if(bonusstatus==2)bonus.stop(); */
 	        //bgm.release();
 	        console.log("exited");
           //window.close();
@@ -425,8 +437,8 @@ window.onload = function() {
       
       // Background music
       if( isAndroid ) {
-        this.bgm = bgm;
-        if(soundOn) this.bgm.play();
+        //this.bgm = bgm;
+        if(soundOn) PGLowLatencyAudio.play('bgm');
         admob.hideBanner();
         //this.jumpSnd = jumpSnd;
       }else{
@@ -471,12 +483,14 @@ window.onload = function() {
           keeploop = false; 
           //bgm.pause();
         }
-        if(soundOn) this.parentNode.bgm.pause();        
+        if(soundOn) //this.parentNode.bgm.pause();
+          PGLowLatencyAudio.stop('bgm');
       }else {
         this.parentNode.paused = false;
         if( isAndroid ) {
           keeploop = true; 
-          if(soundOn) this.parentNode.bgm.play();
+          if(soundOn) //this.parentNode.bgm.play();
+            PGLowLatencyAudio.loop('bgm');
         }
       }
       paused = this.parentNode.paused;
@@ -500,7 +514,8 @@ window.onload = function() {
             // }
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
-              if(soundOn) powerup.play();
+              if(soundOn) //powerup.play();
+                PGLowLatencyAudio.play('powerup');
             }/* else{
               if(soundOn) game.assets['res/powerup.wav'].play();
             } */
@@ -559,12 +574,14 @@ window.onload = function() {
         if( isAndroid ) {
           if(soundOn) {
             keeploop = false;
-            this.bgm.stop();
+            PGLowLatencyAudio.stop('bgm');
+            PGLowLatencyAudio.loop('bonus');
+            /* this.bgm.stop();
             this.bgm = bonus;
-            this.bgm.play();
+            this.bgm.play(); */
           }
         }else{
-          console.log('ok');
+          //console.log('ok');
           //game.assets['res/powerup.wav'].play();
         }
         
@@ -573,7 +590,8 @@ window.onload = function() {
       if (this.winGame == 2) {
         if( isAndroid ) {
           keeploop = false;
-          if(soundOn) this.bgm.stop();
+          if(soundOn) //this.bgm.stop();
+            PGLowLatencyAudio.stop('bgm');
         }
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
       }
@@ -648,7 +666,8 @@ window.onload = function() {
             if(ice.y<=260){
               if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
                 if( isAndroid ) {
-                  if(soundOn) hit.play();
+                  if(soundOn) //hit.play();
+                    PGLowLatencyAudio.play('hit');
                 }/* else{
                   if(soundOn) game.assets['res/hit.wav'].play();
                 } */
@@ -658,7 +677,8 @@ window.onload = function() {
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false; 
-                  this.bgm.stop();
+                  if(soundOn) PGLowLatencyAudio.stop('bgm');
+                  //this.bgm.stop();
                 }
                 break;
               }
@@ -666,8 +686,9 @@ window.onload = function() {
               //this.iceGroup.removeChild(ice);
               if( isAndroid ) {
                 if(soundOn) {
-                  crash.seekTo(1);
-                  crash.play();
+                  PGLowLatencyAudio.play('crash');
+                  /* crash.seekTo(1);
+                  crash.play(); */
                 }
               }/* else{
                 if(soundOn) game.assets['res/break.wav'].play();
@@ -684,20 +705,23 @@ window.onload = function() {
             if (fish.intersect(this.penguin) && this.coins < this.levelUpAt){
               if(fish.piranha && !fish.ascending && fish.y<288){
                 if( isAndroid ) {
-                  if(soundOn) hit.play();
+                  if(soundOn) //hit.play();
+                    PGLowLatencyAudio.play('hit');
                 }
                 this.gotHit = true; 
                 this.penguin.gotHit();
                 if( isAndroid ) {
                   keeploop = false;
-                  this.bgm.stop();
+                  if(soundOn) PGLowLatencyAudio.stop('bgm');
+                  //this.bgm.stop();
                 }
                 break;
               }else if(fish.piranha && !fish.ascending && fish.y>=288){
                 if( isAndroid ) {
                   if(soundOn) {
-                    s_item.seekTo(1);
-                    s_item.play();
+                    PGLowLatencyAudio.play('item');
+                    /* s_item.seekTo(1);
+                    s_item.play(); */
                   }
                 }/* else{
                   if(soundOn) game.assets['res/fish.wav'].play();
@@ -710,8 +734,9 @@ window.onload = function() {
               }else if(!fish.piranha){
                 if( isAndroid ) {
                   if(soundOn) {
-                    coin.seekTo(1);
-                    coin.play();
+                    PGLowLatencyAudio.play('coin');
+                    /* coin.seekTo(1);
+                    coin.play(); */
                   }
                 }/* else{
                   if(soundOn) game.assets['res/fish.wav'].play();
@@ -730,8 +755,9 @@ window.onload = function() {
               if (ice.intersect(fish) && fish.ascending && fish.piranha){
                 if( isAndroid ) {
                   if(soundOn) {
-                    crash.seekTo(1);
-                    crash.play();
+                    PGLowLatencyAudio.play('crash');
+                    /* crash.seekTo(1);
+                    crash.play(); */
                   }
                 }
                 ice.crashToPieces();
@@ -773,7 +799,8 @@ window.onload = function() {
               this.penguin.resetPosition();
               if( isAndroid ) {
                 keeploop = true; 
-                if(soundOn) this.bgm.play();
+                if(soundOn) //this.bgm.play();
+                  PGLowLatencyAudio.loop('bgm');
                 //bgm.play();
               }
             }
@@ -851,8 +878,9 @@ window.onload = function() {
             if (heart.intersect(this.penguin)){
               if( isAndroid ) {
                 if(soundOn) {
-                  s_item.seekTo(1);
-                  s_item.play();
+                  PGLowLatencyAudio.play('item');
+                  /* s_item.seekTo(1);
+                  s_item.play(); */
                 }
               }/* else{
                 game.assets['res/fish.wav'].play();
@@ -891,20 +919,19 @@ window.onload = function() {
             
             if( isAndroid ) {
               if(soundOn) {
-                this.bgm.stop();
-                this.bgm = bgm;
+                /* this.bgm.stop();
+                this.bgm = bgm; 
+                this.bgm.play();*/
                 keeploop = true;
-                this.bgm.play();
+                PGLowLatencyAudio.stop('bonus');
+                PGLowLatencyAudio.loop('bgm');
               }
             }
           }
         }
         
         // Loop BGM
-        /* if( isAndroid ) {
-          //if(bgm.getCurrentPosition() >= bgm.getDuration()) bgm.play();
-        }
-        else
+        /*
         if (this.bgm.currentTime >= this.bgm.duration ){
           if(soundOn) this.bgm.play();
         } */
@@ -1042,8 +1069,9 @@ window.onload = function() {
         
         if( isAndroid ) {
           if(soundOn) {
-            ending.seekTo(1);
-            ending.play();
+            /* ending.seekTo(1);
+            ending.play(); */
+            PGLowLatencyAudio.play('end');
           }
         }
       }
@@ -1158,7 +1186,8 @@ window.onload = function() {
     touchToStart: function(evt) {
       var game = Game.instance;
       if( isAndroid ) {
-        if(soundOn && endingstatus==2)ending.stop();
+        //if(soundOn && endingstatus==2)//ending.stop();
+        if(soundOn) PGLowLatencyAudio.stop('end');
       }
       game.replaceScene(new SceneTitle());
     }
@@ -1466,7 +1495,8 @@ window.onload = function() {
       PressStart.y = 264;
       PressStart.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
-          if(soundOn && introstatus==2)intro.stop();
+          //if(soundOn && introstatus==2)intro.stop();
+          if(soundOn) PGLowLatencyAudio.stop('intro');
         }/* else{
           if(soundOn) game.assets['res/intro.mp3'].stop();
         } */
@@ -1485,7 +1515,8 @@ window.onload = function() {
       optionLabel.y = 344;
       optionLabel.addEventListener(Event.TOUCH_START, function(e){
         if( isAndroid ) {
-          if(soundOn && introstatus==2)intro.stop();
+          //if(soundOn && introstatus==2)intro.stop();
+          if(soundOn) PGLowLatencyAudio.stop('intro');
         }/* else{
           if(soundOn) game.assets['res/intro.mp3'].stop();
         } */
@@ -1527,8 +1558,9 @@ window.onload = function() {
       
       if( isAndroid ) {
         if(soundOn) {
-          intro.seekTo(1);
-          intro.play();
+          PGLowLatencyAudio.play('intro');
+          /* intro.seekTo(1);
+          intro.play(); */
         }
       }/* else{
         if(soundOn) game.assets['res/intro.mp3'].play();
