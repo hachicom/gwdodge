@@ -76,7 +76,7 @@ var Fish = Class.create(Sprite, {
         this.animationDuration += evt.elapsed * 0.001;       
         if (this.animationDuration >= 1) {
           this.frame = (this.frame + 1) % 2;
-          this.animationDuration = 0;
+          this.animationDuration -= 1;
         }
       }
     }

@@ -717,7 +717,7 @@ window.onload = function() {
               game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
             }else{
               this.gotHit=false;
-              this.hitDuration=0;
+              this.hitDuration-=1.5;
               this.lives-=1;
               this.multiplier=1;
               for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
@@ -765,14 +765,14 @@ window.onload = function() {
             }
             this.buying=false; 
             //this.penguin.shopping(false);
-            this.buyDuration = 0;
+            this.buyDuration -= 2;
             if (this.penguin.lane==2) {
               this.setScore((10*this.levelUpAt)*(this.sabbath+1),false);           
               this.incLevelUp();
             }
             this.yuki.smile(this.coins);
             this.yuki.price = this.igloo.price = this.levelUpAt;
-            this.startLevelMsg = 1.5;
+            this.startLevelMsg += 1.5;
             // if(this.levelcalc<=1) this.backgroundColor = this.backgroundArray[0];
             // else if(this.levelcalc<=3) this.backgroundColor = this.backgroundArray[1];
             // else 
@@ -843,8 +843,8 @@ window.onload = function() {
             this.incLevelUp();
             this.yuki.smile(this.coins);
             this.yuki.price = this.igloo.price = this.levelUpAt;
-            this.startLevelMsg = 1.5;
-            this.bonusDuration = 0;
+            this.startLevelMsg += 1.5;
+            this.bonusDuration -= 2;
             this.heartsGenerated = 0;
             this.hearts = 0;
             this.penguin.movable = true;
@@ -1044,7 +1044,7 @@ window.onload = function() {
     
     update: function(evt){
       this.timeToRestart += evt.elapsed * 0.001;
-      if(this.timeToRestart>=3){
+      if(this.timeToRestart>=4){
         var game = Game.instance;
         game.replaceScene(new SceneTitle(0));        
       }

@@ -36,7 +36,7 @@ var Igloo = Class.create(Sprite, {
       if (this.animationDuration >= this.animationSpeed) {
         if(this.frame<this.endFrame) this.frame ++;
         else this.frame = this.iniFrame;
-        this.animationDuration = 0;
+        this.animationDuration -= this.animationSpeed;
       }
     }
   }
@@ -100,7 +100,7 @@ var Yuki = Class.create(Sprite, {
       if (this.animationDuration >= this.animationSpeed) {
         if(this.frame<this.endFrame) this.frame ++;
         else this.frame = this.iniFrame;
-        this.animationDuration = 0;
+        this.animationDuration -= this.animationSpeed;
       }
     }
   }
@@ -131,8 +131,7 @@ var Heart = Class.create(Sprite, {
       
       this.ySpeed += this.yAccel;
       this.y += this.ySpeed;
-      this.x += this.xSpeed;
-      //this.rotation += this.rotationSpeed * evt.elapsed * 0.001;           
+      this.x += this.xSpeed;          
       if (this.y > game.height) {
         this.parentNode.removeChild(this);        
       }
