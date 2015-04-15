@@ -1,7 +1,8 @@
 var keeploop = true;
 var hiscore = 1000;
 var paused = false;
-//var jumpSnd, bgmstatus, bgm, intro, introstatus, hit, coin, crash, powerup, bonus, bonusstatus, ending, endingstatus;
+var oldTime = new Date();
+var fpscount = 0;
 var currentBGM;
 var isAndroid = isMobile();
 var scoreRewards = [5000,10000,20000,40000,80000];
@@ -316,6 +317,11 @@ window.onload = function() {
       labelPause.opacity = 0.6;
       labelPause.addEventListener(Event.TOUCH_START,this.pauseGame);
       
+      fpslabel = new FontSprite('score', 80, 16, 'fps30');
+      fpslabel.x = 8;
+      fpslabel.y = 32;
+      this.fpslabel = fpslabel;
+      
       // Penguin
       penguin = new Penguin(145,288);
       this.penguin = penguin;
@@ -401,6 +407,7 @@ window.onload = function() {
       this.addChild(bracket4);
       this.addChild(dpad);
       this.addChild(labelPause);
+      this.addChild(fpslabel);
             
       this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       // Update
@@ -530,6 +537,14 @@ window.onload = function() {
     },
     
     update: function(evt) {
+      fpscount++;
+      var newTime = new Date();
+      if(newTime.getTime() - oldTime.getTime() >= 1000){
+        this.fpslabel.text = fpscount + "fps";
+        fpscount = 0;
+        oldTime = newTime;
+      }
+      
       if(!this.paused){
         coinstr = levelupstr = '';
         if(this.coins < 10) coinstr = '0';
