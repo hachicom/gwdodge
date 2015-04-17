@@ -132,6 +132,7 @@ window.onload = function() {
         alert("erro plugin");
       }
 
+      /*
       document.addEventListener("pause", function() {
         keeploop=false;
         window.plugins.LowLatencyAudio.stop(currentBGM);
@@ -147,6 +148,18 @@ window.onload = function() {
         game.resume();
         //console.log("resumed");
       }, false);
+      */
+      
+      document.addEventListener("webkitvisibilitychange", onVisibilityChange, false);
+        
+      function onVisibilityChange(event) {
+        if (event.target.webkitHidden) {
+          window.plugins.LowLatencyAudio.stop(currentBGM);
+        }
+        else {
+          window.plugins.LowLatencyAudio.play(currentBGM);
+        }
+      }
 
       document.addEventListener("backbutton", onBackKeyDown, false);
             
@@ -316,7 +329,7 @@ window.onload = function() {
       labelPause.y = 70;
       labelPause.opacity = 0.6;
       labelPause.addEventListener(Event.TOUCH_START,this.pauseGame);
-      
+        
       fpslabel = new FontSprite('score', 80, 16, 'fps30');
       fpslabel.x = 8;
       fpslabel.y = 32;
@@ -344,7 +357,7 @@ window.onload = function() {
       
       // Instance variables
       this.paused = false;
-      this.startLevelMsg = 1.5;
+      this.startLevelMsg = 45;
       this.generateIceTimer = 300;
       this.generateFishTimer = 10;
       this.createPiranha = getRandom(4,6);
@@ -544,7 +557,7 @@ window.onload = function() {
         fpscount = 0;
         oldTime = newTime;
       }
-      
+        
       if(!this.paused){
         coinstr = levelupstr = '';
         if(this.coins < 10) coinstr = '0';
@@ -560,7 +573,7 @@ window.onload = function() {
         if(this.gotHit!=true && this.buying!=true && this.bonusMode!=true){
           // Deal with start message        
           if(this.startLevelMsg>0) {
-            this.startLevelMsg-=evt.elapsed * 0.001;
+            this.startLevelMsg-=1;
             this.msgLabel.text = '    ROUND '+ this.level +'_COLETE ' + this.levelUpAt + ' PEIXES!';
           }
           else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
@@ -719,8 +732,8 @@ window.onload = function() {
         //Atingido: dispara o timer e parte para o game over no término
         if(this.gotHit==true){
           //game.stop();
-          this.hitDuration += evt.elapsed * 0.001; 
-          if(this.hitDuration >= 1.5){
+          this.hitDuration += 1; 
+          if(this.hitDuration >= 60){
             //this.iceGroup.removeChild(ice);
             //game.resume();
             if(this.lives==0){
@@ -732,7 +745,7 @@ window.onload = function() {
               game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
             }else{
               this.gotHit=false;
-              this.hitDuration-=1.5;
+              this.hitDuration=0;
               this.lives-=1;
               this.multiplier=1;
               for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
@@ -765,12 +778,12 @@ window.onload = function() {
             ice.crashToPieces();
           }
           //game.stop();
-          this.buyDuration += evt.elapsed * 0.001; 
+          this.buyDuration += 1; 
           this.penguin.shopping();
           this.yuki.kiss(this.penguin.lane);
           // if(this.hitDuration <= 1 && this.duration){
           // }
-          if(this.buyDuration >= 2){
+          if(this.buyDuration >= 60){
             //this.iceGroup.removeChild(ice);
             //game.resume();
             for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
@@ -780,14 +793,14 @@ window.onload = function() {
             }
             this.buying=false; 
             //this.penguin.shopping(false);
-            this.buyDuration -= 2;
+            this.buyDuration = 0;
             if (this.penguin.lane==2) {
               this.setScore((10*this.levelUpAt)*(this.sabbath+1),false);           
               this.incLevelUp();
             }
             this.yuki.smile(this.coins);
             this.yuki.price = this.igloo.price = this.levelUpAt;
-            this.startLevelMsg += 1.5;
+            this.startLevelMsg = 45;
             // if(this.levelcalc<=1) this.backgroundColor = this.backgroundArray[0];
             // else if(this.levelcalc<=3) this.backgroundColor = this.backgroundArray[1];
             // else 
@@ -801,7 +814,7 @@ window.onload = function() {
         if(this.bonusMode == true){
           // Deal with start message        
           if(this.startLevelMsg>0) {
-            this.startLevelMsg-=evt.elapsed * 0.001;
+            this.startLevelMsg-=1;
             this.msgLabel.text = '    ROUND '+ this.level +'_  BONUS ROUND';
           }else this.msgLabel.text = ' CORAçÕES: '+this.hearts;
           
@@ -842,7 +855,7 @@ window.onload = function() {
           }
           
           if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
-            this.bonusDuration += evt.elapsed * 0.001; 
+            this.bonusDuration += 1; 
             if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! '+(2000*(this.sabbath))+'pts';
             else this.msgLabel.text += 'x'+(this.sabbath)+'0_BONUS '+10*this.hearts*(this.sabbath) + 'pts';
             this.penguin.movable = false;
@@ -850,7 +863,7 @@ window.onload = function() {
             this.penguin.shopping();
           }
             
-          if(this.bonusDuration >=2) {
+          if(this.bonusDuration >=60) {
             if(this.hearts==this.levelUpAt)this.setScore(2000*(this.sabbath),false);
             else this.setScore(10*this.hearts*(this.sabbath),false);
             
@@ -858,8 +871,8 @@ window.onload = function() {
             this.incLevelUp();
             this.yuki.smile(this.coins);
             this.yuki.price = this.igloo.price = this.levelUpAt;
-            this.startLevelMsg += 1.5;
-            this.bonusDuration -= 2;
+            this.startLevelMsg = 45;
+            this.bonusDuration = 0;
             this.heartsGenerated = 0;
             this.hearts = 0;
             this.penguin.movable = true;
@@ -1058,8 +1071,8 @@ window.onload = function() {
     },
     
     update: function(evt){
-      this.timeToRestart += evt.elapsed * 0.001;
-      if(this.timeToRestart>=4){
+      this.timeToRestart += 1;
+      if(this.timeToRestart>=120){
         var game = Game.instance;
         game.replaceScene(new SceneTitle(0));        
       }

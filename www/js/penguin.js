@@ -29,7 +29,7 @@ var Penguin = Class.create(Sprite, {
       if (this.animationDuration >= this.animationSpeed) {
         if(this.frame<this.endFrame) this.frame ++;
         else this.frame = this.iniFrame;
-        this.animationDuration -= 0.25;
+        this.animationDuration -= this.animationSpeed;
       }
       if(this.parentNode.gotHit!=true){
         if(this.x<this.nextpos) {

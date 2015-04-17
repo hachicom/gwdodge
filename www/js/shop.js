@@ -131,7 +131,7 @@ var Heart = Class.create(Sprite, {
       
       this.ySpeed += this.yAccel;
       this.y += this.ySpeed;
-      this.x += this.xSpeed;          
+      this.x += this.xSpeed;        
       if (this.y > game.height) {
         this.parentNode.removeChild(this);        
       }

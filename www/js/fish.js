@@ -37,7 +37,7 @@ var Fish = Class.create(Sprite, {
   },
   
   update: function(evt) {
-    //IMKORTANTE: É preciso que este objeto seja parte de um grupo filho da scene
+    //IMKORTANTE: ï¿½ preciso que este objeto seja parte de um grupo filho da scene
     if (!this.parentNode.parentNode.paused){
       var ySpeed, game;
      
