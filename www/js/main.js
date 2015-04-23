@@ -7,12 +7,14 @@ var currentBGM;
 var isAndroid = isMobile();
 var scoreRewards = [5000,10000,20000,40000,80000];
 var soundOn = true;
+var language = 'en_US'; //ou en_US
 var playerData = {
   scoretable: {
 		hiscore: 1000
 	},
   settings: {
-		sound: true
+		sound: true,
+    language: 'en_US'
 	},
 	// ...
 }; 
@@ -93,18 +95,20 @@ window.onload = function() {
     
     if (isLocalStorageSupported())
     {
-	    console.log("Supports Save!");
+	    //console.log("Supports Save!");
       playerDataTmp = JSON.decode(localStorage["playerData"]);
       if (playerDataTmp!=null) playerData = playerDataTmp;
-      console.dir(playerData);
+      //console.dir(playerData);
     }
     else
     {
-      console.log("Doesn't support Save!");
+      //console.log("Doesn't support Save!");
       localStorage = [];
     }
     hiscore = playerData.scoretable.hiscore;
     soundOn = playerData.settings.sound;
+    //alert(playerData.settings.language!=null);
+    if(playerData.settings.language!=null) language = playerData.settings.language;
     
     // 2 - New scene
     scene = new SceneTitle();
@@ -131,24 +135,11 @@ window.onload = function() {
       }else{
         alert("erro plugin");
       }
-
-      /*
-      document.addEventListener("pause", function() {
-        keeploop=false;
-        window.plugins.LowLatencyAudio.stop(currentBGM);
-        game.stop();
-        //console.log("paused");
-      }, false);
-
-      document.addEventListener("resume", function() {
-        keeploop=true;
-        if(currentBGM=='intro' || currentBGM=='end') 
-          window.plugins.LowLatencyAudio.play(currentBGM);
-        else window.plugins.LowLatencyAudio.loop(currentBGM);
-        game.resume();
-        //console.log("resumed");
-      }, false);
-      */
+        
+      /*navigator.globalization.getPreferredLanguage(
+        function (language) {alert(language.value);},
+        function () {alert('Error getting language');}
+      );*/
       
       document.addEventListener("webkitvisibilitychange", onVisibilityChange, false);
         
@@ -164,41 +155,43 @@ window.onload = function() {
       document.addEventListener("backbutton", onBackKeyDown, false);
             
       function onBackKeyDown(){
-	      game.stop();
+          game.stop();
 	      navigator.notification.confirm(
 	        'Deseja sair do jogo?', // message
 	        onConfirm, // callback to invoke with index of button pressed
 	        'Confirmar', // title
 	        ['Cancelar','Sair'] // buttonLabels
 	      );
+	      e.preventDefault();
 	    }
 	
 	    function onConfirm(buttonIndex) {
 	      if(buttonIndex == 2){
+            window.plugins.LowLatencyAudio.stop(currentBGM);
+            window.plugins.LowLatencyAudio.unload('bgm');
+            window.plugins.LowLatencyAudio.unload('bonus');
+            window.plugins.LowLatencyAudio.unload('intro');
+            window.plugins.LowLatencyAudio.unload('end');
+          
+            window.plugins.LowLatencyAudio.unload('hit');
+            window.plugins.LowLatencyAudio.unload('coin');
+            window.plugins.LowLatencyAudio.unload('item');
+            window.plugins.LowLatencyAudio.unload('crash');
+            window.plugins.LowLatencyAudio.unload('powerup');
+            window.plugins.LowLatencyAudio.unload('jump');
+              
 	        if (navigator && navigator.app) {
-	          navigator.app.exitApp();
+              navigator.app.exitApp();
 	          window.close();
 	        } else {
 	          if (navigator && navigator.device) {
-	            navigator.device.exitApp();
 	            window.close();
+	            navigator.device.exitApp();
 	          }
 	        }
 	        keeploop=false;
 	        //bgm.release();
-          window.plugins.LowLatencyAudio.stop(currentBGM);
-          window.plugins.LowLatencyAudio.unload('bgm');
-          window.plugins.LowLatencyAudio.unload('bonus');
-          window.plugins.LowLatencyAudio.unload('intro');
-          window.plugins.LowLatencyAudio.unload('end');
-          
-          window.plugins.LowLatencyAudio.unload('hit');
-          window.plugins.LowLatencyAudio.unload('coin');
-          window.plugins.LowLatencyAudio.unload('item');
-          window.plugins.LowLatencyAudio.unload('crash');
-          window.plugins.LowLatencyAudio.unload('powerup');
-          window.plugins.LowLatencyAudio.unload('jump');
-	        console.log("exited");
+	        //console.log("exited");
           //window.close();
 	      }else game.resume();
 	    }
@@ -222,12 +215,13 @@ window.onload = function() {
     
     if(AdMob) {
       AdMob.createBanner({
-        //license: 'hachicom@gmail.com/xxxxxxxxxxxxxxx',
+        license: 'hachicom@gmail.com/pub-8006522456285045',
         adId:admobid.banner, 
         position:AdMob.AD_POSITION.BOTTOM_CENTER, 
         overlap:true, 
         isTesting:false,
-        autoShow:true
+        autoShow:true,
+        isForChild:true
       });
     }
   }
@@ -357,7 +351,7 @@ window.onload = function() {
       
       // Instance variables
       this.paused = false;
-      this.startLevelMsg = 45;
+      this.startLevelMsg = 60;
       this.generateIceTimer = 300;
       this.generateFishTimer = 10;
       this.createPiranha = getRandom(4,6);
@@ -383,7 +377,7 @@ window.onload = function() {
       this.bonusDuration = 0; 
       this.heartsGenerated = 0;
       this.scoreTarget = 0; //posição de scoreRewards que aumenta ao ser atingida
-      this.winGame = 0; //ao passar do level 21, considera o jogo ganho e apresenta uma mensagem de parabéns no SceneGameOver
+      this.winGame = 0; //ao passar do level 34, considera o jogo ganho e apresenta uma mensagem de parabéns no SceneGameOver
       
       // Background music
       if( isAndroid ) {
@@ -420,7 +414,7 @@ window.onload = function() {
       this.addChild(bracket4);
       this.addChild(dpad);
       this.addChild(labelPause);
-      this.addChild(fpslabel);
+      //this.addChild(fpslabel);
             
       this.addEventListener(Event.TOUCH_START,this.handleTouchControl);
       // Update
@@ -538,7 +532,7 @@ window.onload = function() {
         }
         
       }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
-      if (this.level == 28) this.winGame = 1;
+      if (this.level == 35) this.winGame = 1;
       if (this.winGame == 2) {
         if( isAndroid ) {
           keeploop = false;
@@ -564,7 +558,7 @@ window.onload = function() {
         if(this.levelUpAt < 10) levelupstr = '0';
         
         this.scoreLabel.text = 'SC ' + this.score;// + '_x' + this.multiplier;
-        this.coinsLabel.text = 'PEIXE_' + coinstr + this.coins + '/' + levelupstr + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
+        this.coinsLabel.text = glossary.text.peixe[language]+'_' + coinstr + this.coins + '/' + levelupstr + this.levelUpAt;//+ '<br>' + this.generateFishTimer;
         this.levelLabel.text = 'LVL_ ' + this.level;// + ' - ' + this.iceTimer+ '<br>' + this.generateIceTimer;
         this.livesLabel.text = 'SNOW_ ' + this.lives;
         this.hiscoreLabel.text = 'TOP '+hiscore;
@@ -574,9 +568,9 @@ window.onload = function() {
           // Deal with start message        
           if(this.startLevelMsg>0) {
             this.startLevelMsg-=1;
-            this.msgLabel.text = '    ROUND '+ this.level +'_COLETE ' + this.levelUpAt + ' PEIXES!';
+            this.msgLabel.text = '    ROUND '+ this.level +'_'+ glossary.text.colete[language] + this.levelUpAt + glossary.text.peixes[language];
           }
-          else if(this.coins == this.levelUpAt) this.msgLabel.text = 'LEVE OS PEIXES_  PARA YUKI!!!';
+          else if(this.coins == this.levelUpAt) this.msgLabel.text = glossary.text.alertaYuki[language];
           else this.msgLabel.text = '';
         
           // Check if it's time to create a new set of obstacles
@@ -733,7 +727,7 @@ window.onload = function() {
         if(this.gotHit==true){
           //game.stop();
           this.hitDuration += 1; 
-          if(this.hitDuration >= 60){
+          if(this.hitDuration >= 70){
             //this.iceGroup.removeChild(ice);
             //game.resume();
             if(this.lives==0){
@@ -771,7 +765,7 @@ window.onload = function() {
         
         //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
         if(this.buying==true){
-          this.msgLabel.text = '   BONUS '+(10*this.levelUpAt)*(this.sabbath+1) + 'pts';
+          this.msgLabel.text = '  BONUS '+(10*this.levelUpAt)*(this.sabbath+1) + 'pts';
           for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
             var ice;
             ice = this.iceGroup.childNodes[i];
@@ -783,7 +777,7 @@ window.onload = function() {
           this.yuki.kiss(this.penguin.lane);
           // if(this.hitDuration <= 1 && this.duration){
           // }
-          if(this.buyDuration >= 60){
+          if(this.buyDuration >= 90){
             //this.iceGroup.removeChild(ice);
             //game.resume();
             for (var i = this.fishGroup.childNodes.length - 1; i >= 0; i--) {
@@ -816,7 +810,7 @@ window.onload = function() {
           if(this.startLevelMsg>0) {
             this.startLevelMsg-=1;
             this.msgLabel.text = '    ROUND '+ this.level +'_  BONUS ROUND';
-          }else this.msgLabel.text = ' CORAçÕES: '+this.hearts;
+          }else this.msgLabel.text = glossary.text.coracoes[language]+this.hearts;
           
           // Check if it's time to make hearts
           if(this.startLevelMsg<=0) {
@@ -863,7 +857,7 @@ window.onload = function() {
             this.penguin.shopping();
           }
             
-          if(this.bonusDuration >=60) {
+          if(this.bonusDuration >=90) {
             if(this.hearts==this.levelUpAt)this.setScore(2000*(this.sabbath),false);
             else this.setScore(10*this.hearts*(this.sabbath),false);
             
@@ -973,17 +967,19 @@ window.onload = function() {
       bracket4.y = 24;
       
       this.textbook = [
-        'DICA: Tente pegar as_piranhas pela cauda,_vale 100 pontos!',
-        'DICA: A cambalhota_de uma piranha pode_quebrar os cubos_de gelo!',
-        'DICA: Snow não pode_carregar mais peixes_que o necessário!',
-        'DICA: Pontuações_altas garantem mais_vidas!',
-        'DICA: A Cada 7 fases_a dificuldade fica_maior, assim como_o bônus ao fim de_cada fase!',
+        glossary.text.gameoverHint1[language],
+        glossary.text.gameoverHint2[language],
+        glossary.text.gameoverHint3[language],
+        glossary.text.gameoverHint4[language],
+        glossary.text.gameoverHint5[language],
+        glossary.text.gameoverHint6[language],
+        glossary.text.gameoverHint7[language]
       ];
             
       // Game Over label
-      if(winGame==1) gameovertxt = "      PARABÉNS!__Foi uma boa partida!____________Até o próximo jogo!";
-      else if(winGame==2) gameovertxt = "      PARABÉNS!__Você zerou o placar_de Snow & Yuki!!!______________Até o próximo jogo!";
-      else gameovertxt = "    FIM DE JOGO!____"+this.textbook[getRandom(0,this.textbook.length-1)];
+      if(winGame==1) gameovertxt = glossary.text.wingame1[language];
+      else if(winGame==2) gameovertxt = glossary.text.wingame2[language];
+      else gameovertxt = glossary.text.gameover[language]+"____"+this.textbook[getRandom(0,this.textbook.length-1)];
       gameOverLabel = new FontSprite('score', 320, 320, gameovertxt);
       gameOverLabel.x = 0;
       gameOverLabel.y = 140;
@@ -1072,7 +1068,7 @@ window.onload = function() {
     
     update: function(evt){
       this.timeToRestart += 1;
-      if(this.timeToRestart>=120){
+      if(this.timeToRestart>=200){
         var game = Game.instance;
         game.replaceScene(new SceneTitle(0));        
       }
@@ -1165,20 +1161,7 @@ window.onload = function() {
       Scene.apply(this);      
       this.backgroundColor = '#0000bc';
       this.page = 0;
-      this.textbook = ['  ==COMO JOGAR==__'
-                    +'Snow & Yuki é_um jogo estilo_Game & Watch_(minigame)!__'
-                    +'Use os direcionais_para mover Snow_pelo estágio__'
-                  ,
-                    '  ==COMO JOGAR==__Desvie do gelo____'
-                    +'Colete peixes____'
-                    +'Evite piranhas____'
-                    +'Cada fase tem uma_quantidade de peixes_a ser coletada.__Ao coletar os peixes_'
-                    +'leve-os para a Yuki_para passar de fase!_'
-                  ,
-                    '  ==COMO JOGAR==__Todo sétimo round_é um round bônus!_Colete corações_para ganhar pontos_______'
-                    +'Ganhe vida atingindo_a pontuação abaixo:__'
-                    +'->5000_->10000_->20000_->40000_->80000___Tente marcar 99999_pra zerar o jogo!'
-                  ];
+      this.textbook = [glossary.text.tutorialPg1[language],glossary.text.tutorialPg2[language],glossary.text.tutorialPg3[language]];
       this.spritesArr = [];
       dpad = new Sprite(320,156);
       dpad.x = 0;
@@ -1234,13 +1217,13 @@ window.onload = function() {
       label.text = this.textbook[0];
       this.labeltext = label;
       
-      previousLabel = new FontSprite('score', 144, 16, '[VOLTAR]');
+      previousLabel = new FontSprite('score', 144, 16, glossary.UI.voltar[language]);
       previousLabel.x = 20;
       previousLabel.y = game.height - 16 - 60;
       previousLabel.visible = false;
       previousLabel.addEventListener(Event.TOUCH_START, function(e){
         this.parentNode.page-=1;
-        this.parentNode.nextlabel.text = '[PROXIMO]';
+        this.parentNode.nextlabel.text = glossary.UI.proximo[language];
         if (this.parentNode.page<0) this.parentNode.page=0;
         else if (this.parentNode.page==0) this.visible = false;
         else this.visible = true;
@@ -1248,7 +1231,7 @@ window.onload = function() {
       });
       this.prevlabel = previousLabel;
       
-      nextLabel = new FontSprite('score', 144, 16, '[PROXIMO]');
+      nextLabel = new FontSprite('score', 144, 16, glossary.UI.proximo[language]);
       nextLabel.x = 160;
       nextLabel.y = game.height - 16 - 60;
       nextLabel.visible = true;
@@ -1256,8 +1239,8 @@ window.onload = function() {
         this.parentNode.page+=1;
         this.parentNode.prevlabel.visible = true;
         if (this.parentNode.page>this.parentNode.textbook.length-1) game.replaceScene(new SceneTitle());
-        else if (this.parentNode.page==this.parentNode.textbook.length-1) this.text = '[  FIM  ]';
-        else this.text = '[PROXIMO]';
+        else if (this.parentNode.page==this.parentNode.textbook.length-1) this.text = glossary.UI.fim[language];
+        else this.text = glossary.UI.proximo[language];
         //this.parentNode.labeltext.text = this.parentNode.textbook[this.parentNode.page];
       });
       this.nextlabel = nextLabel;
@@ -1319,16 +1302,13 @@ window.onload = function() {
   // SceneSettings
   var SceneSettings = Class.create(Scene, {
     initialize: function(score) {
-      var TitleLabel, scoreLabel;
+      var TitleLabel, scoreLabel, tmpLanguage, tmpSound;
       var resetHiscore = false;
       Scene.apply(this);
-      //this.backgroundColor = '#0026FF';
       
-      // Background
-      // title = new Sprite(256,160);
-      // title.x = 32;
-      // title.y = 32;
-      // title.image = game.assets['res/title.png'];      
+      tmpSound = soundOn;
+      tmpLanguage = language;
+      
       this.backgroundColor = '#000000';
       map = new Map(32, 32);
       map.image = game.assets['res/groundSheet.png'];
@@ -1346,7 +1326,7 @@ window.onload = function() {
       yuki.frame = 2;
       yuki.image = game.assets['res/yukiSheet.png']; 
       
-      label = new FontSprite('score', 320, 200, '  ==CONFIGURAÇÔES==__SOM & BGM_____RESETAR HISCORE');
+      label = new FontSprite('score', 320, 200, glossary.UI.optionsTxt[language]);
       label.x = 0;
       label.y = 8;
       
@@ -1355,7 +1335,7 @@ window.onload = function() {
       SoundOnLabel.x = 16;
       SoundOnLabel.y = 60;
       SoundOnLabel.addEventListener(Event.TOUCH_START, function(e){
-        soundOn = true;
+        tmpSound = true;
         this.text = '>[ON]';
         SoundOffLabel.text = ' [OFF]';
       });
@@ -1365,41 +1345,73 @@ window.onload = function() {
       SoundOffLabel.x = 140;
       SoundOffLabel.y = 60;
       SoundOffLabel.addEventListener(Event.TOUCH_START, function(e){
-        soundOn = false;
+        tmpSound = false;
         this.text = '>[OFF]';
         SoundOnLabel.text = ' [ON]';
       });
       if (!soundOn) SoundOffLabel.text = '>[OFF]';
       
+      // LANGUAGE SETTINGS
+      PtBrLabel = new FontSprite('score', 144, 16, " [BRASIL]");
+      PtBrLabel.x = 16;
+      PtBrLabel.y = 126;
+      PtBrLabel.addEventListener(Event.TOUCH_START, function(e){
+        tmpLanguage = 'pt_BR';
+        this.text = '>[BRASIL]';
+        EnUsLabel.text = ' [WORLD]';
+      });
+      if (language == 'pt_BR') PtBrLabel.text = '>[BRASIL]';
+      
+      EnUsLabel = new FontSprite('score', 128, 16, ' [WORLD]');
+      EnUsLabel.x = 172;
+      EnUsLabel.y = 126;
+      EnUsLabel.addEventListener(Event.TOUCH_START, function(e){
+        tmpLanguage = 'en_US';
+        this.text = '>[WORLD]';
+        PtBrLabel.text = ' [BRASIL]';
+      });
+      if (language == 'en_US') EnUsLabel.text = '>[WORLD]';
+      
       // HISCORE SETTINGS
-      ResetYesLabel = new FontSprite('score', 96, 16, " [SIM]");
+      ResetYesLabel = new FontSprite('score', 96, 16, " "+glossary.UI.sim[language]);
       ResetYesLabel.x = 16;
-      ResetYesLabel.y = 142;
+      ResetYesLabel.y = 190;
       ResetYesLabel.addEventListener(Event.TOUCH_START, function(e){
         resetHiscore = true;
-        this.text = '>[SIM]';
-        ResetNoLabel.text = ' [NAO]';
+        this.text = '>'+glossary.UI.sim[language];
+        ResetNoLabel.text = ' '+glossary.UI.nao[language];
       });
-      if (resetHiscore) ResetYesLabel.text = '>[SIM]';
+      if (resetHiscore) ResetYesLabel.text = '>'+glossary.UI.sim[language];
       
-      ResetNoLabel = new FontSprite('score', 96, 16, ' [NAO]');
+      ResetNoLabel = new FontSprite('score', 96, 16, ' '+glossary.UI.nao[language]);
       ResetNoLabel.x = 140;
-      ResetNoLabel.y = 142;
+      ResetNoLabel.y = 190;
       ResetNoLabel.addEventListener(Event.TOUCH_START, function(e){
         resetHiscore = false;
-        this.text = '>[NAO]';
-        ResetYesLabel.text = ' [SIM]';
+        this.text = '>'+glossary.UI.nao[language];
+        ResetYesLabel.text = ' '+glossary.UI.sim[language];
       });
-      if (!resetHiscore) ResetNoLabel.text = '>[NAO]';
+      if (!resetHiscore) ResetNoLabel.text = '>'+glossary.UI.nao[language];
       
-      exitLabel = new FontSprite('score', 144, 16, '[VOLTAR]');
+      saveLabel = new FontSprite('score', 144, 16, glossary.UI.salvar[language]);
+      saveLabel.x = 160;
+      saveLabel.y = 240;
+      saveLabel.addEventListener(Event.TOUCH_START, function(e){
+        if(resetHiscore) hiscore = 0;
+        soundOn = tmpSound;
+        language = tmpLanguage;
+        playerData.scoretable.hiscore = hiscore;
+        playerData.settings.sound = soundOn;
+        playerData.settings.language = language;
+        
+        localStorage["playerData"] = JSON.encode(playerData);
+        game.replaceScene(new SceneTitle());
+      });
+      
+      exitLabel = new FontSprite('score', 144, 16, glossary.UI.voltar[language]);
       exitLabel.x = 16;
       exitLabel.y = 240;
       exitLabel.addEventListener(Event.TOUCH_START, function(e){
-        if(resetHiscore) hiscore = 0;
-        playerData.scoretable.hiscore = hiscore;
-        playerData.settings.sound = soundOn;
-        localStorage["playerData"] = JSON.encode(playerData);
         game.replaceScene(new SceneTitle());
       });
             
@@ -1411,12 +1423,12 @@ window.onload = function() {
       this.addChild(label);
       this.addChild(SoundOnLabel);
       this.addChild(SoundOffLabel);
+      this.addChild(PtBrLabel);
+      this.addChild(EnUsLabel);
       this.addChild(ResetYesLabel);
       this.addChild(ResetNoLabel);
       this.addChild(exitLabel);
-      
-      // Listen for taps
-      this.addEventListener(Event.TOUCH_START, this.touchToStart);
+      this.addChild(saveLabel);
     }
   });
   
@@ -1450,12 +1462,12 @@ window.onload = function() {
       this.hiscoreLabel = label6;
       
       // Title label
-      TitleLabel = new FontSprite('score', 112, 16, "ICEFALL");
-      TitleLabel.x = 104;
-      TitleLabel.y = 198;
+      // TitleLabel = new FontSprite('score', 112, 16, "ICEFALL");
+      // TitleLabel.x = 104;
+      // TitleLabel.y = 198;
       
       // Press Start label
-      PressStart = new FontSprite('score', 192, 16, "[START GAME]");
+      PressStart = new FontSprite('score', 192, 16, glossary.UI.start[language]);
       PressStart.x = 64;
       PressStart.y = 264;
       PressStart.addEventListener(Event.TOUCH_START, function(e){
@@ -1468,14 +1480,14 @@ window.onload = function() {
         game.replaceScene(new SceneGame());
       });
       
-      tutorialLabel = new FontSprite('score', 160, 16, '[TUTORIAL]');
+      tutorialLabel = new FontSprite('score', 192, 16, glossary.UI.tutorial[language]);
       tutorialLabel.x = 64;
       tutorialLabel.y = 304;
       tutorialLabel.addEventListener(Event.TOUCH_START, function(e){
         game.replaceScene(new SceneTutorial());
       });
       
-      optionLabel = new FontSprite('score', 160, 16, '[SETTINGS]');
+      optionLabel = new FontSprite('score', 160, 16, glossary.UI.settings[language]);
       optionLabel.x = 64;
       optionLabel.y = 344;
       optionLabel.addEventListener(Event.TOUCH_START, function(e){
@@ -1488,7 +1500,7 @@ window.onload = function() {
         game.replaceScene(new SceneSettings());
       });
       
-      creditLabel = new FontSprite('score', 144, 16, '[CREDITS]');
+      creditLabel = new FontSprite('score', 160, 16, glossary.UI.credits[language]);
       creditLabel.x = 64;
       creditLabel.y = 384;
       creditLabel.addEventListener(Event.TOUCH_START, function(e){
@@ -1513,7 +1525,7 @@ window.onload = function() {
       this.addChild(title);
       //this.addChild(map);
       this.addChild(copyright);
-      this.addChild(TitleLabel); 
+      //this.addChild(TitleLabel); 
       this.addChild(PressStart);
       this.addChild(tutorialLabel);
       this.addChild(optionLabel);
