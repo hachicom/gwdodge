@@ -20,7 +20,7 @@ var playerData = {
 }; 
 
 //Desligando os eventos de mouse (Android hack)
-document.addEventListener('mousedown', function (e) {
+/*document.addEventListener('mousedown', function (e) {
   //console.log("cliquei");
   e.stopImmediatePropagation();
   e.preventDefault();
@@ -53,7 +53,7 @@ document.addEventListener('touchend', function(e) {
 document.addEventListener('touchstart', function(e) {
     e.preventDefault();
 }, false);
-
+*/
 
 //game global difficulty variables
 var levelUpAt = 4;
@@ -64,9 +64,10 @@ enchant();
 // 2 - On document load 
 window.onload = function() {
   //console.log(screen.width+"X"+screen.height);
-  var gameheight = (320 * screen.height)/screen.width;
+  //var gameheight = (320 * screen.height)/screen.width;
+  var gameheight = 568;
   // 3 - Starting point
-	var game = new Core(320, gameheight);
+	var game = new Core(320, 569);
 	// 4 - Preload resources
 	game.preload('res/penguinSheet.png',
                'res/Ice.png',
@@ -211,7 +212,7 @@ window.onload = function() {
     };
     
     // select the right Ad Id according to platform
-    var admobid = ad_units.android;//( /(android)/i.test(navigator.userAgent) ) ? ad_units.android : ad_units.ios;
+    /*var admobid = ad_units.android;//( /(android)/i.test(navigator.userAgent) ) ? ad_units.android : ad_units.ios;
     
     if(AdMob) {
       AdMob.createBanner({
@@ -223,7 +224,7 @@ window.onload = function() {
         autoShow:true,
         isForChild:true
       });
-    }
+    }*/
   }
   
 	// 7 - Start
@@ -384,7 +385,7 @@ window.onload = function() {
         currentBGM = 'bgm';
         if(soundOn) window.plugins.LowLatencyAudio.loop(currentBGM);
         //Hide Banner to avoid annoying player with lags from banner
-        if(AdMob) AdMob.hideBanner();
+        //if(AdMob) AdMob.hideBanner();
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -1050,7 +1051,7 @@ window.onload = function() {
       }
       
       if( isAndroid ) {
-        if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
+        //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
         //admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
       }
       
