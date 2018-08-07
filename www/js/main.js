@@ -122,10 +122,10 @@ window.onload = function() {
     {
       if( window.plugins && window.plugins.NativeAudio ) {
         //alert("load plugin");
-        window.plugins.NativeAudio.preloadComplex('bgm', "res/bgm.mp3",1);
-        window.plugins.NativeAudio.preloadComplex('bonus', "res/bonus.mp3",1);
-        window.plugins.NativeAudio.preloadComplex('intro', "res/intro.mp3",1);
-        window.plugins.NativeAudio.preloadComplex('end', "res/end.mp3",1);
+        window.plugins.NativeAudio.preloadComplex('bgm', "res/bgm.mp3",1,1,0,function(msg){console.log( 'ok: ' + msg );}, function(msg){console.log( 'error: ' + msg );});
+        window.plugins.NativeAudio.preloadComplex('bonus', "res/bonus.mp3",1,1,0);
+        window.plugins.NativeAudio.preloadComplex('intro', "res/intro.mp3",1,1,0);
+        window.plugins.NativeAudio.preloadComplex('end', "res/end.mp3",1,1,0);
         
         window.plugins.NativeAudio.preloadSimple('hit', "res/hit.wav");
         window.plugins.NativeAudio.preloadSimple('coin', "res/fish.wav");
