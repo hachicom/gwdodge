@@ -122,10 +122,10 @@ window.onload = function() {
     {
       if( window.plugins && window.plugins.NativeAudio ) {
         //alert("load plugin");
-        window.plugins.NativeAudio.preloadComplex('bgm', "res/bgm.ogg",1);
-        window.plugins.NativeAudio.preloadComplex('bonus', "res/bonus.ogg",1);
-        window.plugins.NativeAudio.preloadComplex('intro', "res/intro.ogg",1);
-        window.plugins.NativeAudio.preloadComplex('end', "res/end.ogg",1);
+        window.plugins.NativeAudio.preloadComplex('bgm', "res/bgm.mp3",1);
+        window.plugins.NativeAudio.preloadComplex('bonus', "res/bonus.mp3",1);
+        window.plugins.NativeAudio.preloadComplex('intro', "res/intro.mp3",1);
+        window.plugins.NativeAudio.preloadComplex('end', "res/end.mp3",1);
         
         window.plugins.NativeAudio.preloadSimple('hit', "res/hit.wav");
         window.plugins.NativeAudio.preloadSimple('coin', "res/fish.wav");
@@ -1125,7 +1125,7 @@ window.onload = function() {
                   +'Adinan Batista Alves___'
                   +'ENCHANT.JS TUTORIAL_Thongrop Rodsavas_(raywenderlich.com)___'
                   +'8BIT TRACKS BY_'
-                  +'Bart Kelsey_(OpenGameArt.Org)___'
+                  +'Bart Kelsey/Codemanu_(OpenGameArt.Org)___'
                   +'BMFONT PLUGIN BY_'
                   +'COFFEE DOG GAMES___'
                   +'SOUND EFFECTS_'
