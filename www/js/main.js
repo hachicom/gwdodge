@@ -353,6 +353,8 @@ window.onload = function() {
       // Instance variables
       this.paused = false;
       this.startLevelMsg = 60;
+      this.bonusMsg = 0;
+	  this.bonusPts = ' 000';
       this.generateIceTimer = 300;
       this.generateFishTimer = 10;
       this.createPiranha = getRandom(4,6);
@@ -452,12 +454,13 @@ window.onload = function() {
           //Verifica a posição do pinguim e dependendo do caso dispara um som
           playSnd = this.penguin.switchToLaneNumber(lane,this.igloo.isLit,this.yuki.isThere);
           if (playSnd=='jump') { //apenas moveu o pinguim
-            // if( isAndroid ){
-              // if(soundOn) {
+            if( isAndroid ){
+              if(soundOn) {
+				window.plugins.NativeAudio.play('jump');
                 // jumpSnd.seekTo(1);
                 // jumpSnd.play();
-              // }
-            // }
+              }
+            }
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
               if(soundOn) //powerup.play();
@@ -571,7 +574,14 @@ window.onload = function() {
             this.startLevelMsg-=1;
             this.msgLabel.text = '    ROUND '+ this.level +'_'+ glossary.text.colete[language] + this.levelUpAt + glossary.text.peixes[language];
           }
+		  // Deal with bonus message
+		  else if(this.bonusMsg>0) {
+            this.bonusMsg-=1;
+            this.msgLabel.text = '  SECRET BONUS_   '+this.bonusPts+' pts!!';
+          }
+		  // Deal with end level message
           else if(this.coins == this.levelUpAt) this.msgLabel.text = glossary.text.alertaYuki[language];
+		  // Show no message
           else this.msgLabel.text = '';
         
           // Check if it's time to create a new set of obstacles
@@ -622,22 +632,22 @@ window.onload = function() {
             ice = this.iceGroup.childNodes[i];
             if(ice.y<=260){
               if (ice.intersect(this.penguin) && this.penguin.isVulnerable()){
-                if( isAndroid ) {
-                  if(soundOn) //hit.play();
-                    window.plugins.NativeAudio.play('hit');
-                }/* else{
-                  if(soundOn) game.assets['res/hit.wav'].play();
-                } */
-                //console.log(ice.y);
-                ice.crashToPieces();
-                this.gotHit = true; 
-                this.penguin.gotHit();
-                if( isAndroid ) {
-                  keeploop = false; 
-                  if(soundOn) window.plugins.NativeAudio.stop(currentBGM);
-                  //this.bgm.stop();
-                }
-                break;
+					if( isAndroid ) {
+					  if(soundOn) //hit.play();
+						window.plugins.NativeAudio.play('hit');
+					}/* else{
+					  if(soundOn) game.assets['res/hit.wav'].play();
+					} */
+					//console.log(ice.y);
+					ice.crashToPieces();
+					this.gotHit = true; 
+					this.penguin.gotHit();
+					if( isAndroid ) {
+					  keeploop = false; 
+					  if(soundOn) window.plugins.NativeAudio.stop(currentBGM);
+					  //this.bgm.stop();
+					}
+					break;
               }
             }else{
               //this.iceGroup.removeChild(ice);
@@ -683,22 +693,35 @@ window.onload = function() {
                 }/* else{
                   if(soundOn) game.assets['res/fish.wav'].play();
                 } */
-                this.setScore(100,false);
+				this.bonusMsg = 45;
+				this.bonusPts = ' 500';
+                this.setScore(500,false);
                 this.setCoins(1);
                 //if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
                 this.fishGroup.removeChild(fish);
                 break;
               }else if(!fish.piranha){
-                if( isAndroid ) {
-                  if(soundOn) {
-                    window.plugins.NativeAudio.play('coin');
-                    /* coin.seekTo(1);
-                    coin.play(); */
-                  }
-                }/* else{
-                  if(soundOn) game.assets['res/fish.wav'].play();
-                } */
-                this.setScore(10,false);
+                if(!fish.ascending && fish.y>=288){
+					if( isAndroid ) {
+					  if(soundOn) {
+						window.plugins.NativeAudio.play('item');
+					  }
+					}/* else{
+					  if(soundOn) game.assets['res/fish.wav'].play();
+					} */
+					this.bonusMsg = 45;					
+					this.bonusPts = ' 100';
+					this.setScore(100,false);
+				}else{
+					if( isAndroid ) {
+					  if(soundOn) {
+						window.plugins.NativeAudio.play('coin');
+					  }
+					}/* else{
+					  if(soundOn) game.assets['res/fish.wav'].play();
+					} */
+					this.setScore(10,false);
+				}
                 this.setCoins(1);
                 //if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
                 this.fishGroup.removeChild(fish);
@@ -766,7 +789,8 @@ window.onload = function() {
         
         //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
         if(this.buying==true){
-          this.msgLabel.text = '  BONUS '+(10*this.levelUpAt)*(this.sabbath+1) + 'pts';
+		  this.bonusMsg = 0;
+          this.msgLabel.text = '  BONUS '+((100*this.levelUpAt)*(this.sabbath+1)) + 'pts';
           for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
             var ice;
             ice = this.iceGroup.childNodes[i];
@@ -790,7 +814,7 @@ window.onload = function() {
             //this.penguin.shopping(false);
             this.buyDuration = 0;
             if (this.penguin.lane==2) {
-              this.setScore((10*this.levelUpAt)*(this.sabbath+1),false);           
+              this.setScore((100*this.levelUpAt)*(this.sabbath+1),false);           
               this.incLevelUp();
             }
             this.yuki.smile(this.coins);
@@ -1123,13 +1147,11 @@ window.onload = function() {
       
       label.text = '  ==SNOW & YUKI==__CODE, ART & DESIGN_'
                   +'Adinan Batista Alves___'
-                  +'ENCHANT.JS TUTORIAL_Thongrop Rodsavas_(raywenderlich.com)___'
                   +'8BIT TRACKS BY_'
-                  +'Bart Kelsey/Codemanu_(OpenGameArt.Org)___'
+                  +'Bart Kelsey_Codemanu_Alex McCulloch_(OpenGameArt.Org)___'
                   +'BMFONT PLUGIN BY_'
                   +'COFFEE DOG GAMES___'
-                  +'SOUND EFFECTS_'
-                  +'CREATED IN BFXR.NET___'
+                  +'SFX IN BFXR.NET___'
                   +'THANKS FOR PLAYING!';
             
       // Add labels  

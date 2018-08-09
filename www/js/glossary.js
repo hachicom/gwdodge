@@ -99,8 +99,8 @@ var glossary = {
       en_US: '   HEARTS: '
     },
     gameoverHint1: { //glossary.text.gameoverHint1[language]
-      pt_BR: 'DICA: Tente pegar as_piranhas pela cauda,_vale 100 pontos!',
-      en_US: 'HINT: Try getting_piranas by tail,_scores 100 points!'
+      pt_BR: 'DICA: Tente pegar as_piranhas quando_não puderem morder_sua cabeça,_vale 500 pontos!',
+      en_US: "HINT: Try getting_piranas when they_can't bite your_head, it's_worth 500 points!"
     },
     gameoverHint2: { //glossary.text.gameoverHint2[language]
       pt_BR: 'DICA: A cambalhota_de uma piranha pode_quebrar os cubos_de gelo!',
@@ -111,8 +111,8 @@ var glossary = {
       en_US: "HINT: Snow can't get_more fish than stage_requirement!"
     },
     gameoverHint4: { //glossary.text.gameoverHint4[language]
-      pt_BR: 'DICA: Pontuações_altas garantem mais_vidas!',
-      en_US: "HINT: High scores_reward extra lives!"
+      pt_BR: 'DICA: Tente pegar os_peixes quando_estiverem perto_dos seus pés,_vale 500 pontos!',
+      en_US: "HINT: Try getting_fish when they_are almost_under your feet_, it's_worth_500 points!"
     },
     gameoverHint5: { //glossary.text.gameoverHint5[language]
       pt_BR: 'DICA: A Cada 7 fases_o jogo fica mais_difícil, mas também_aumenta o bônus_ao fim da fase!',
