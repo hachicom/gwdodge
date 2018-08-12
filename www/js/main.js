@@ -199,17 +199,19 @@ window.onload = function() {
       
     }, false);
     
-    // admob.initAdmob("ca-app-pub-8006522456285045/2785327219","ca-app-pub-8006522456285045/4262060411");
-    // var admobParam=new  admob.Params();
-		// admobParam.isTesting=false;
-    // admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
+    var admobParam=new  admob.Params();
+    admobParam.isTesting=true;
+    //admobParam.extra={'keyword':"admob phonegame"};
+    admobParam.isForChild=true;
+    admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
     
-    var ad_units = {
+    /*var ad_units = {
       android : {
-        banner: "ca-app-pub-8006522456285045/2785327219", // or DFP format "/6253334/dfp_example_ad"
-        interstitial: "ca-app-pub-8006522456285045/4262060411"
+        banner: "ca-app-pub-8006522456285045/7713778574", // or DFP format "/6253334/dfp_example_ad"
+        interstitial: "ca-app-pub-8006522456285045/5046402573"
       }
-    };
+    };*/
     
     // select the right Ad Id according to platform
     /*var admobid = ad_units.android;//( /(android)/i.test(navigator.userAgent) ) ? ad_units.android : ad_units.ios;
@@ -388,6 +390,7 @@ window.onload = function() {
         if(soundOn) window.plugins.NativeAudio.loop(currentBGM);
         //Hide Banner to avoid annoying player with lags from banner
         //if(AdMob) AdMob.hideBanner();
+        admob.hideBanner();
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -456,15 +459,17 @@ window.onload = function() {
           if (playSnd=='jump') { //apenas moveu o pinguim
             if( isAndroid ){
               if(soundOn) {
-				window.plugins.NativeAudio.play('jump');
+				        window.plugins.NativeAudio.play('jump');
                 // jumpSnd.seekTo(1);
                 // jumpSnd.play();
               }
             }
           }else if(playSnd=='powerup') { //dispara o modo de entrega dos peixes
             if( isAndroid ) {
-              if(soundOn) //powerup.play();
+              if(soundOn) {//powerup.play();
                 window.plugins.NativeAudio.play('powerup');
+                window.plugins.NativeAudio.stop(currentBGM);
+              }
             }/* else{
               if(soundOn) game.assets['res/powerup.wav'].play();
             } */
@@ -544,6 +549,22 @@ window.onload = function() {
             window.plugins.NativeAudio.stop(currentBGM);
         }
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
+      }else{
+        //deal with music change
+        if( isAndroid ) {
+          if(soundOn) {
+            keeploop = false;
+            window.plugins.NativeAudio.stop(currentBGM);
+            currentBGM = 'bgm';
+            window.plugins.NativeAudio.loop(currentBGM);
+            /* this.bgm.stop();
+            this.bgm = bonus;
+            this.bgm.play(); */
+          }
+        }else{
+          //console.log('ok');
+          //game.assets['res/powerup.wav'].play();
+        }
       }
     },
     
@@ -694,8 +715,8 @@ window.onload = function() {
                   if(soundOn) game.assets['res/fish.wav'].play();
                 } */
 				this.bonusMsg = 45;
-				this.bonusPts = ' 500';
-                this.setScore(500,false);
+				this.bonusPts = ' 250';
+                this.setScore(250,false);
                 this.setCoins(1);
                 //if(this.multiplier<8) this.multiplier=this.multiplier * 2; 
                 this.fishGroup.removeChild(fish);
@@ -710,8 +731,8 @@ window.onload = function() {
 					  if(soundOn) game.assets['res/fish.wav'].play();
 					} */
 					this.bonusMsg = 45;					
-					this.bonusPts = ' 100';
-					this.setScore(100,false);
+					this.bonusPts = ' 50';
+					this.setScore(50,false);
 				}else{
 					if( isAndroid ) {
 					  if(soundOn) {
@@ -789,8 +810,8 @@ window.onload = function() {
         
         //Comprando(iglu ou Yuki): dispara o timer, executa as ações necessárias e libera o jogador ao término
         if(this.buying==true){
-		  this.bonusMsg = 0;
-          this.msgLabel.text = '  BONUS '+((100*this.levelUpAt)*(this.sabbath+1)) + 'pts';
+		      this.bonusMsg = 0;
+          this.msgLabel.text = '  BONUS '+(100*this.level) + 'pts';
           for (var i = this.iceGroup.childNodes.length - 1; i >= 0; i--) {
             var ice;
             ice = this.iceGroup.childNodes[i];
@@ -814,7 +835,7 @@ window.onload = function() {
             //this.penguin.shopping(false);
             this.buyDuration = 0;
             if (this.penguin.lane==2) {
-              this.setScore((100*this.levelUpAt)*(this.sabbath+1),false);           
+              this.setScore((100*this.level),false);           
               this.incLevelUp();
             }
             this.yuki.smile(this.coins);
@@ -875,16 +896,16 @@ window.onload = function() {
           
           if(this.heartGroup.childNodes.length == 0 && this.heartsGenerated >= this.levelUpAt){
             this.bonusDuration += 1; 
-            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! '+(2000*(this.sabbath))+'pts';
-            else this.msgLabel.text += 'x'+(this.sabbath)+'0_BONUS '+10*this.hearts*(this.sabbath) + 'pts';
+            if(this.hearts==this.levelUpAt) this.msgLabel.text += '_PERFECT! 2000pts';
+            else this.msgLabel.text += 'x'+(this.sabbath)+'0_BONUS '+20*this.hearts + 'pts';
             this.penguin.movable = false;
             this.penguin.lane = 2;
             this.penguin.shopping();
           }
             
           if(this.bonusDuration >=90) {
-            if(this.hearts==this.levelUpAt)this.setScore(2000*(this.sabbath),false);
-            else this.setScore(10*this.hearts*(this.sabbath),false);
+            if(this.hearts==this.levelUpAt)this.setScore(2000,false);
+            else this.setScore(20*this.hearts,false);
             
             this.bonusMode = false;
             this.incLevelUp();
@@ -898,17 +919,14 @@ window.onload = function() {
             this.backgroundColor = this.backgroundArray[0];
             this.penguin.resetPosition();
             
-            if( isAndroid ) {
+            /*if( isAndroid ) {
               if(soundOn) {
-                /* this.bgm.stop();
-                this.bgm = bgm; 
-                this.bgm.play();*/
                 keeploop = true;
                 window.plugins.NativeAudio.stop(currentBGM);
                 currentBGM = 'bgm';
                 window.plugins.NativeAudio.loop(currentBGM);
               }
-            }
+            }*/
           }
         }
         
@@ -1076,7 +1094,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        //admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
       }
       
       // Listen for taps
