@@ -136,6 +136,8 @@ window.onload = function() {
       }else{
         alert("erro plugin");
       }
+
+      admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -199,7 +201,6 @@ window.onload = function() {
       
     }, false);
     
-    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
     var admobParam=new  admob.Params();
     admobParam.isTesting=true;
     //admobParam.extra={'keyword':"admob phonegame"};
@@ -246,7 +247,7 @@ window.onload = function() {
       keeploop=true;
       // 3 - Create child nodes
       // Background
-      bg = new Sprite(320,128);
+      bg = new Sprite(320,240);
       bg.y = 200;
       bg.scale(1,2);
       bg.image = game.assets['res/mountain.png'];
@@ -356,7 +357,7 @@ window.onload = function() {
       this.paused = false;
       this.startLevelMsg = 60;
       this.bonusMsg = 0;
-	  this.bonusPts = ' 000';
+	    this.bonusPts = ' 000';
       this.generateIceTimer = 300;
       this.generateFishTimer = 10;
       this.createPiranha = getRandom(4,6);
@@ -401,7 +402,7 @@ window.onload = function() {
       // 4 - Add child nodes
       this.addChild(iceGroup);
       this.addChild(gui);
-      //this.addChild(bg);
+      this.addChild(bg);
       this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
@@ -540,7 +541,20 @@ window.onload = function() {
           //game.assets['res/powerup.wav'].play();
         }
         
-      }else this.levelUpAt = nextLevelUp(this.level,this.sabbath);
+      }else {
+        this.levelUpAt = nextLevelUp(this.level,this.sabbath);
+        if( isAndroid ) {
+          if(soundOn) {
+            keeploop = false;
+            window.plugins.NativeAudio.stop(currentBGM);
+            currentBGM = 'bgm';
+            window.plugins.NativeAudio.loop(currentBGM);
+          }
+        }else{
+          //console.log('ok');
+          //game.assets['res/powerup.wav'].play();
+        }
+      }
       if (this.level == 35) this.winGame = 1;
       if (this.winGame == 2) {
         if( isAndroid ) {
@@ -551,22 +565,6 @@ window.onload = function() {
         this.score = 99999;
         hiscore = this.score;
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
-      }else{
-        //deal with music change
-        if( isAndroid ) {
-          if(soundOn) {
-            keeploop = false;
-            window.plugins.NativeAudio.stop(currentBGM);
-            currentBGM = 'bgm';
-            window.plugins.NativeAudio.loop(currentBGM);
-            /* this.bgm.stop();
-            this.bgm = bonus;
-            this.bgm.play(); */
-          }
-        }else{
-          //console.log('ok');
-          //game.assets['res/powerup.wav'].play();
-        }
       }
     },
     
