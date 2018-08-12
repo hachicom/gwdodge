@@ -50,7 +50,7 @@
     <preference name="keepRunning" value="true" />
     
     <!-- Plugins can also be added here. -->
-    <gap:plugin name="com-admob-plugin" version="5.3.1" source="npm"/>
+    <gap:plugin name="com-admob-plugin" version="5.5.0" source="npm"/>
     <gap:plugin name="cordova-plugin-nativeaudio" version="3.0.9" source="npm"/>
     <gap:plugin name="cordova-plugin-dialogs" version="2.0.1" source="npm"/>
 

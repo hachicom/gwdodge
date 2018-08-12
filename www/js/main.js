@@ -548,6 +548,8 @@ window.onload = function() {
           if(soundOn) //this.bgm.stop();
             window.plugins.NativeAudio.stop(currentBGM);
         }
+        this.score = 99999;
+        hiscore = this.score;
         game.replaceScene(new SceneGameOver(this.scoreLabel,this.coinsLabel,this.levelLabel,this.livesLabel,this.hiscoreLabel,this.winGame)); 
       }else{
         //deal with music change
