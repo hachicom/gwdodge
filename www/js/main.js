@@ -195,17 +195,17 @@ window.onload = function() {
 	        //console.log("exited");
           //window.close();
 	      }else game.resume();
-	    }
+      }
+      
+      admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
       
     }, false);
-    
-    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
-      
+          
     var admobParam=new admob.Params();
     admobParam.isTesting=true;
     //admobParam.extra={'keyword':"admob phonegame"};
     admobParam.isForChild=true;
-    //admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+    admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
 
     /*var ad_units = {
       android : {
@@ -1093,7 +1093,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_CENTER,admobParam);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
       }
       
       // Listen for taps
@@ -1575,7 +1575,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_CENTER,admobParam);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
         
         if(soundOn) {
           currentBGM = 'intro';
