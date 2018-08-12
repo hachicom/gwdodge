@@ -136,14 +136,6 @@ window.onload = function() {
       }else{
         alert("erro plugin");
       }
-
-      admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
-      
-      var admobParam=new admob.Params();
-      admobParam.isTesting=true;
-      //admobParam.extra={'keyword':"admob phonegame"};
-      admobParam.isForChild=true;
-      admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -207,6 +199,14 @@ window.onload = function() {
       
     }, false);
     
+    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
+      
+    var admobParam=new admob.Params();
+    admobParam.isTesting=true;
+    //admobParam.extra={'keyword':"admob phonegame"};
+    admobParam.isForChild=true;
+    admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+
     /*var ad_units = {
       android : {
         banner: "ca-app-pub-8006522456285045/7713778574", // or DFP format "/6253334/dfp_example_ad"
