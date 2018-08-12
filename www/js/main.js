@@ -205,7 +205,7 @@ window.onload = function() {
     admobParam.isTesting=true;
     //admobParam.extra={'keyword':"admob phonegame"};
     admobParam.isForChild=true;
-    admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+    //admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
 
     /*var ad_units = {
       android : {
@@ -248,7 +248,7 @@ window.onload = function() {
       // 3 - Create child nodes
       // Background
       bg = new Sprite(320,240);
-      bg.y = 200;
+      bg.y = 140;
       bg.image = game.assets['res/mountain.png'];
       this.backgroundArray = ['#00e8d8','#6888fc','#0058f8','#0000bc','#004058','#000000','#6844fc'];
       this.backgroundColor = this.backgroundArray[0];
@@ -1093,7 +1093,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_CENTER,admobParam);
       }
       
       // Listen for taps
@@ -1574,6 +1574,9 @@ window.onload = function() {
       this.addChild(label6);
       
       if( isAndroid ) {
+        //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_CENTER,admobParam);
+        
         if(soundOn) {
           currentBGM = 'intro';
           window.plugins.NativeAudio.play(currentBGM);
