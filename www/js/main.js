@@ -138,6 +138,12 @@ window.onload = function() {
       }
 
       admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
+      
+      var admobParam=new admob.Params();
+      admobParam.isTesting=true;
+      //admobParam.extra={'keyword':"admob phonegame"};
+      admobParam.isForChild=true;
+      admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -201,12 +207,6 @@ window.onload = function() {
       
     }, false);
     
-    var admobParam=new  admob.Params();
-    admobParam.isTesting=true;
-    //admobParam.extra={'keyword':"admob phonegame"};
-    admobParam.isForChild=true;
-    admob.showBanner(admob.BannerSize.BANNER, admob.Position.TOP_APP,admobParam);
-    
     /*var ad_units = {
       android : {
         banner: "ca-app-pub-8006522456285045/7713778574", // or DFP format "/6253334/dfp_example_ad"
@@ -249,7 +249,6 @@ window.onload = function() {
       // Background
       bg = new Sprite(320,240);
       bg.y = 200;
-      bg.scale(1,2);
       bg.image = game.assets['res/mountain.png'];
       this.backgroundArray = ['#00e8d8','#6888fc','#0058f8','#0000bc','#004058','#000000','#6844fc'];
       this.backgroundColor = this.backgroundArray[0];
@@ -400,9 +399,9 @@ window.onload = function() {
       }
       
       // 4 - Add child nodes
+      this.addChild(bg);
       this.addChild(iceGroup);
       this.addChild(gui);
-      this.addChild(bg);
       this.addChild(map);
       this.addChild(igloo);
       this.addChild(penguin);
