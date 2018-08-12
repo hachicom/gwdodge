@@ -197,10 +197,10 @@ window.onload = function() {
 	      }else game.resume();
       }
       
-      admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
       
     }, false);
           
+    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
     var admobParam=new admob.Params();
     admobParam.isTesting=true;
     //admobParam.extra={'keyword':"admob phonegame"};
