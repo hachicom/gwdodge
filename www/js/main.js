@@ -20,8 +20,10 @@ var playerData = {
 }; 
 
 var admobid = { // for Android
-  banner: 'ca-app-pub-8006522456285045/7713778574',
-  interstitial: 'ca-app-pub-8006522456285045/5046402573'
+  //banner: 'ca-app-pub-8006522456285045/7713778574',
+  //interstitial: 'ca-app-pub-8006522456285045/5046402573'
+  banner: 'ca-app-pub-3940256099942544/6300978111',
+  interstitial: 'ca-app-pub-3940256099942544/1033173712',
 };
 
 //Desligando os eventos de mouse (Android hack)
