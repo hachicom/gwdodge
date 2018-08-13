@@ -19,6 +19,11 @@ var playerData = {
 	// ...
 }; 
 
+var admobid = {
+  banner: 'ca-app-pub-8006522456285045/7713778574',
+  interstitial: 'ca-app-pub-8006522456285045/5046402573',
+}
+
 //Desligando os eventos de mouse (Android hack)
 /*document.addEventListener('mousedown', function (e) {
   //console.log("cliquei");
@@ -136,6 +141,13 @@ window.onload = function() {
       }else{
         alert("erro plugin");
       }
+
+      admob.banner.config({
+        id: admobid.banner,
+        isTesting: true,
+        autoShow: true,
+      })
+      admob.banner.prepare();
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -199,35 +211,10 @@ window.onload = function() {
       
       
     }, false);
-          
-    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
-    var admobParam=new admob.Params();
-    admobParam.isTesting=true;
-    //admobParam.extra={'keyword':"admob phonegame"};
-    admobParam.isForChild=true;
-    admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
 
-    /*var ad_units = {
-      android : {
-        banner: "ca-app-pub-8006522456285045/7713778574", // or DFP format "/6253334/dfp_example_ad"
-        interstitial: "ca-app-pub-8006522456285045/5046402573"
-      }
-    };*/
-    
-    // select the right Ad Id according to platform
-    /*var admobid = ad_units.android;//( /(android)/i.test(navigator.userAgent) ) ? ad_units.android : ad_units.ios;
-    
-    if(AdMob) {
-      AdMob.createBanner({
-        license: 'hachicom@gmail.com/pub-8006522456285045',
-        adId:admobid.banner, 
-        position:AdMob.AD_POSITION.BOTTOM_CENTER, 
-        overlap:true, 
-        isTesting:false,
-        autoShow:true,
-        isForChild:true
-      });
-    }*/
+    document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
+      console.log(event)
+    });
   }
   
 	// 7 - Start
@@ -389,8 +376,7 @@ window.onload = function() {
         currentBGM = 'bgm';
         if(soundOn) window.plugins.NativeAudio.loop(currentBGM);
         //Hide Banner to avoid annoying player with lags from banner
-        //if(AdMob) AdMob.hideBanner();
-        admob.hideBanner();
+        admob.banner.hide();
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -1092,8 +1078,7 @@ window.onload = function() {
       }
       
       if( isAndroid ) {
-        //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
+        admob.banner.show();
       }
       
       // Listen for taps
@@ -1574,8 +1559,7 @@ window.onload = function() {
       this.addChild(label6);
       
       if( isAndroid ) {
-        //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
+        admob.banner.show();
         
         if(soundOn) {
           currentBGM = 'intro';
