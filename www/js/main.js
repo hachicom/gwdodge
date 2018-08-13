@@ -19,11 +19,6 @@ var playerData = {
 	// ...
 }; 
 
-var admobid = {
-  banner: 'ca-app-pub-8006522456285045/7713778574',
-  interstitial: 'ca-app-pub-8006522456285045/5046402573',
-}
-
 //Desligando os eventos de mouse (Android hack)
 /*document.addEventListener('mousedown', function (e) {
   //console.log("cliquei");
@@ -141,13 +136,6 @@ window.onload = function() {
       }else{
         alert("erro plugin");
       }
-
-      admob.banner.config({
-        id: admobid.banner,
-        isTesting: true,
-        autoShow: true,
-      })
-      admob.banner.prepare();
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -211,10 +199,13 @@ window.onload = function() {
       
       
     }, false);
-
-    document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
-      console.log(event)
-    });
+          
+    admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
+    var admobParam=new admob.Params();
+    admobParam.isTesting=false;
+    //admobParam.extra={'keyword':"admob phonegame"};
+    admobParam.isForChild=true;
+    admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
   }
   
 	// 7 - Start
@@ -376,7 +367,8 @@ window.onload = function() {
         currentBGM = 'bgm';
         if(soundOn) window.plugins.NativeAudio.loop(currentBGM);
         //Hide Banner to avoid annoying player with lags from banner
-        admob.banner.hide();
+        //if(AdMob) AdMob.hideBanner();
+        admob.hideBanner();
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -1078,7 +1070,8 @@ window.onload = function() {
       }
       
       if( isAndroid ) {
-        admob.banner.show();
+        //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
       }
       
       // Listen for taps
@@ -1559,7 +1552,8 @@ window.onload = function() {
       this.addChild(label6);
       
       if( isAndroid ) {
-        admob.banner.show();
+        //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
+        admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
         
         if(soundOn) {
           currentBGM = 'intro';
