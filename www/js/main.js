@@ -142,14 +142,12 @@ window.onload = function() {
         alert("erro plugin");
       }
 
-      if (AdMob) {
-        AdMob.createBanner({
-          adId : admobid.banner,
-          position : AdMob.AD_POSITION.BOTTOM_CENTER,
-          isTesting: true,
-          autoShow : true
-        });
-      }
+      admob.banner.config({
+	id: admobid.banner,
+	isTesting: true,
+	autoShow: true,
+      })
+      admob.banner.prepare()
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -214,12 +212,13 @@ window.onload = function() {
       
     }, false);
           
-    /*admob.initAdmob("ca-app-pub-8006522456285045/7713778574","ca-app-pub-8006522456285045/5046402573");
-    var admobParam=new admob.Params();
-    admobParam.isTesting=false;
-    //admobParam.extra={'keyword':"admob phonegame"};
-    admobParam.isForChild=true;
-    admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);*/
+    document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
+      console.log(event)
+    });
+
+    document.addEventListener('admob.interstitial.events.LOAD_FAIL', function(event) {
+      console.log(event)
+    });
   }
   
 	// 7 - Start
