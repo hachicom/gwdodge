@@ -149,8 +149,8 @@ window.onload = function() {
 	id: admobid.banner,
 	isTesting: true,
 	autoShow: true,
-      })
-      admob.banner.prepare()
+      });
+      admob.banner.prepare();
         
       /*navigator.globalization.getPreferredLanguage(
         function (language) {alert(language.value);},
@@ -222,6 +222,8 @@ window.onload = function() {
     document.addEventListener('admob.interstitial.events.LOAD_FAIL', function(event) {
       console.log(event)
     });
+	  
+    admob.banner.show();
   }
   
 	// 7 - Start
