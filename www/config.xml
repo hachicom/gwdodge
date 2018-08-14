@@ -5,7 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" 
     id = "com.hachicom.snowyukipocket"
     version = "1.0.0">
-    <name>Snow & Yuki Pocket</name>
+    <name>Snow and Yuki Pocket</name>
     
     <description>
       Simple LCD handheld game hommage powered by Enchant.js
