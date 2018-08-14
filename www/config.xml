@@ -5,12 +5,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android" 
     id = "com.hachicom.snowyukipocket"
     version = "1.0.0">
-    <name>Snow e Yuki</name>
+    <name>Snow & Yuki Pocket</name>
     
     <description>
       Simple LCD handheld game hommage powered by Enchant.js
       Help Snow dodge ice cubes while collecting fish on the bridge
-      Give fishs to Yuki to make her happy
+      Give fishs to Yuki to make her happy and finish the level
     </description>
     
     <author email="adinan0803@gmail.com">
