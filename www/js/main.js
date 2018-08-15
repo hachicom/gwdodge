@@ -1542,9 +1542,14 @@ window.onload = function() {
       });
       
       // Copyright label
-      copyright = new FontSprite('score', 240, 16, "© 2015 HACHICOM");
-      copyright.x = 40;
+      copyright = new FontSprite('score', 320, 16, "© 2015-2018 HACHICOM");
+      copyright.x = 0;
       copyright.y = game.height - 16 - 60;
+      
+      // Pocket label
+      pocketlabel = new FontSprite('score', 240, 16, "POCKET!");
+      pocketlabel.x = 180;
+      pocketlabel.y = 200;
       
       // Hiscore label
       // scoreLabel = new Label('HISCORE: ' + score);
@@ -1557,7 +1562,7 @@ window.onload = function() {
       
       // Add labels  
       this.addChild(title);
-      //this.addChild(map);
+      this.addChild(pocketlabel);
       this.addChild(copyright);
       //this.addChild(TitleLabel); 
       this.addChild(PressStart);
