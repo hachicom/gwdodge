@@ -22,8 +22,6 @@ var playerData = {
 var admobid = { // for Android
   banner: 'ca-app-pub-8006522456285045/7713778574',
   interstitial: 'ca-app-pub-8006522456285045/5046402573'
-  //banner: 'ca-app-pub-3940256099942544/6300978111',
-  //interstitial: 'ca-app-pub-3940256099942544/1033173712',
 };
 
 //Desligando os eventos de mouse (Android hack)
@@ -146,9 +144,9 @@ window.onload = function() {
 
       console.log(admobid.banner);
       admob.banner.config({
-	id: admobid.banner,
-	isTesting: true,
-	autoShow: true,
+	      id: admobid.banner,
+        isTesting: true,
+        autoShow: true,
       });
       admob.banner.prepare();
         
@@ -386,7 +384,7 @@ window.onload = function() {
         if(soundOn) window.plugins.NativeAudio.loop(currentBGM);
         //Hide Banner to avoid annoying player with lags from banner
         //if(AdMob) AdMob.hideBanner();
-        //admob.hideBanner();
+        admob.banner.hide();
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -1089,7 +1087,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        //admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
+        admob.banner.show();
       }
       
       // Listen for taps
@@ -1571,7 +1569,7 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        //admob.showBanner(admob.BannerSize.BANNER, admob.Position.BOTTOM_APP,admobParam);
+        admob.banner.show();
         
         if(soundOn) {
           currentBGM = 'intro';
