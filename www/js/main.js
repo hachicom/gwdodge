@@ -216,6 +216,7 @@ window.onload = function() {
     document.addEventListener('admob.banner.events.LOAD', function(event) {
       console.log(event)
 	  showBanner = true;
+	    admob.banner.show();
     });
 	  
     document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
