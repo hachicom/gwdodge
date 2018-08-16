@@ -18,6 +18,7 @@ var playerData = {
 	},
 	// ...
 }; 
+var showBanner = true;
 
 var admobid = { // for Android
   banner: 'ca-app-pub-8006522456285045/7713778574',
@@ -142,10 +143,9 @@ window.onload = function() {
         alert("erro plugin");
       }
 
-      console.log(admobid.banner);
       admob.banner.config({
 	      id: admobid.banner,
-        isTesting: true,
+        isTesting: false,
         autoShow: true,
       });
       admob.banner.prepare();
@@ -215,13 +215,16 @@ window.onload = function() {
           
     document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
       console.log(event)
+	  showBanner = false;
     });
 
     document.addEventListener('admob.interstitial.events.LOAD_FAIL', function(event) {
       console.log(event)
     });
-	  
-    admob.banner.show();
+	
+	if (showBanner == true){
+		admob.banner.show();
+	}
   }
   
 	// 7 - Start
@@ -384,7 +387,9 @@ window.onload = function() {
         if(soundOn) window.plugins.NativeAudio.loop(currentBGM);
         //Hide Banner to avoid annoying player with lags from banner
         //if(AdMob) AdMob.hideBanner();
-        admob.banner.hide();
+		if (showBanner == true){
+			admob.banner.hide();
+		}
       }else{
         //this.bgm = game.assets['res/bgm.mp3']; // Add this line
         //this.jumpSnd = game.assets['res/jump.wav'];
@@ -1087,7 +1092,9 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.banner.show();
+        if (showBanner == true){
+			admob.banner.show();
+		}
       }
       
       // Listen for taps
@@ -1574,7 +1581,9 @@ window.onload = function() {
       
       if( isAndroid ) {
         //if(AdMob) AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
-        admob.banner.show();
+        if (showBanner == true){
+			admob.banner.show();
+		}
         
         if(soundOn) {
           currentBGM = 'intro';
