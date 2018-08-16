@@ -213,18 +213,21 @@ window.onload = function() {
       
     }, false);
           
+    document.addEventListener('admob.banner.events.LOAD', function(event) {
+      console.log(event)
+	  showBanner = true;
+	    admob.banner.show();
+    });
+	  
     document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
       console.log(event)
 	  showBanner = false;
+	    admob.banner.hide();
     });
 
     document.addEventListener('admob.interstitial.events.LOAD_FAIL', function(event) {
       console.log(event)
     });
-	
-	if (showBanner == true){
-		admob.banner.show();
-	}
   }
   
 	// 7 - Start
