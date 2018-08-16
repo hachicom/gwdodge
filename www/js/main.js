@@ -1552,7 +1552,7 @@ window.onload = function() {
       });
       
       // Copyright label
-      copyright = new FontSprite('score', 320, 16, "© 2015-2018__HACHICOM SOFT");
+      copyright = new FontSprite('score', 320, 16, "© 2015-2018 HACHICOM");
       copyright.x = 0;
       copyright.y = game.height - 16 - 60;
       
