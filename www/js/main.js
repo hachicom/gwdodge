@@ -18,7 +18,7 @@ var playerData = {
 	},
 	// ...
 }; 
-var showBanner = true;
+var showBanner = false;
 
 var admobid = { // for Android
   banner: 'ca-app-pub-8006522456285045/7713778574',
@@ -216,7 +216,6 @@ window.onload = function() {
     document.addEventListener('admob.banner.events.LOAD', function(event) {
       console.log(event)
 	  showBanner = true;
-	    admob.banner.show();
     });
 	  
     document.addEventListener('admob.banner.events.LOAD_FAIL', function(event) {
@@ -1552,7 +1551,7 @@ window.onload = function() {
       });
       
       // Copyright label
-      copyright = new FontSprite('score', 320, 16, "© 2015-2018 HACHICOM");
+      copyright = new FontSprite('score', 320, 16, "© 2015-2018__HACHICOM SOFT");
       copyright.x = 0;
       copyright.y = game.height - 16 - 60;
       
