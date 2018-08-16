@@ -145,8 +145,8 @@ window.onload = function() {
 
       admob.banner.config({
 	      id: admobid.banner,
-        isTesting: false,
-        autoShow: true,
+        isTesting: true,
+        autoShow: false,
       });
       admob.banner.prepare();
         
