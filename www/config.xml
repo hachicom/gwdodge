@@ -80,12 +80,12 @@
     
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
-    <icon src="ldpi.png" gap:platform="android" gap:density="ldpi" />
-    <icon src="mdpi.png" gap:platform="android" gap:density="mdpi" />
-    <icon src="hdpi.png" gap:platform="android" gap:density="hdpi" />
-    <icon src="xhdpi.png" gap:platform="android" gap:density="xhdpi" />
-    <icon src="xxhdpi.png" gap:platform="android" gap:qualifier="xxhdpi" />
-    <icon src="fr-xxhdpi.png" gap:platform="android" gap:qualifier="fr-xxhdpi" />
+    <!--icon src="asset/mipmap-ldpi/ic_launcher.png" gap:platform="android" gap:density="ldpi" /-->
+    <icon src="asset/mipmap-mdpi/ic_launcher.png" gap:platform="android" gap:density="mdpi" />
+    <icon src="asset/mipmap-hdpi/ic_launcher.png" gap:platform="android" gap:density="hdpi" />
+    <icon src="asset/mipmap-xhdpi/ic_launcher.png" gap:platform="android" gap:density="xhdpi" />
+    <icon src="asset/mipmap-xxhdpi/ic_launcher.png" gap:platform="android" gap:qualifier="xxhdpi" />
+    <icon src="asset/mipmap-xxxhdpi/ic_launcher.png" gap:platform="android" gap:qualifier="xxxhdpi" />
     <!--
     <icon src="res/icon/blackberry/icon-80.png" gap:platform="blackberry" />
     <icon src="res/icon/blackberry/icon-80.png" gap:platform="blackberry" gap:state="hover"/>
@@ -99,13 +99,14 @@
     -->
     
     <!-- Define app splash screen for each platform. -->
+    <!--
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
     <gap:splash src="screen-ldpi-portrait.png" gap:platform="android" gap:density="ldpi" />
     <gap:splash src="screen-mdpi-portrait.png" gap:platform="android" gap:density="mdpi" />
     <gap:splash src="screen-hdpi-portrait.png" gap:platform="android" gap:density="hdpi" />
     <gap:splash src="screen-xhdpi-portrait.png" gap:platform="android" gap:density="xhdpi" />
-    <!--
+
     <gap:splash src="res/screen/blackberry/screen-225.png" gap:platform="blackberry" />
     <gap:splash src="res/screen/ios/screen-iphone-portrait.png" gap:platform="ios" width="320" height="480" />
     <gap:splash src="res/screen/ios/screen-iphone-portrait-2x.png" gap:platform="ios" width="640" height="960" />
